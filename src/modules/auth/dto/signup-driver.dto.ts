@@ -2,16 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class SignUpDriverDto {
-  @ApiProperty({ example: 'abc@gmail.com', required: false })
+  @ApiProperty({ example: 'driver01@gmail.com', required: false })
   @IsOptional()
   @IsEmail({}, { message: 'Email is not valid' })
   email: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ example: 'driver01', required: true })
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ example: 'Nguyen Van A', required: true })
   @IsNotEmpty()
   fullName: string;
 

@@ -10,3 +10,11 @@ export interface IRefreshTokenResponse {
   token: string;
   refreshToken: string;
 }
+
+export interface IJWTPayload {
+  data: {
+    email: string;
+    phoneNumber: string;
+    driverId: number;
+  };
+}

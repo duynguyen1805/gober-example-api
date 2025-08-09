@@ -6,12 +6,16 @@ import { CacheService } from '../../../modules/cache/cache.service';
 export class LogOutUseCase {
   constructor(private readonly cacheService: CacheService) {}
 
-  async addTokenToBlackList(token: string, refreshToken: string) {
+  async addTokenToBlackList(
+    token: string,
+    refreshToken: string
+  ): Promise<boolean> {
     const blackListToken = `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${token}`;
     const blackListRefreshToken = `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${refreshToken}`;
-    return Promise.all([
+    await Promise.all([
       this.cacheService.set(blackListToken, true),
       this.cacheService.set(blackListRefreshToken, true)
     ]);
+    return true;
   }
 }

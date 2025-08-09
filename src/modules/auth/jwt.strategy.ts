@@ -8,6 +8,7 @@ import { CacheService } from '../cache/cache.service';
 import { ERedisKey } from '../../common/enums/system/redis.enum';
 import { makeSure, mustExist } from '../../common/helpers/server-error.helper';
 import { EError, EErrorDetail } from '../../common/enums/auth/auth.enum';
+import { IJWTPayload } from './interface/auth-driver.interface';
 
 @Injectable()
 /* It extends the PassportStrategy class and overrides the validate method */
@@ -38,7 +39,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @param {any} payload - The payload that was sent to the server.
    * @returns The payload data, and the permissions.
    */
-  async validate(req: Request, payload: any) {
+  async validate(req: Request, payload: IJWTPayload) {
     /* Getting the email and id from the payload.data, then it is getting the permissions from the
     cache. If the permissions are not in the cache, it gets them from the database. */
     const authHeader = req.headers['authorization'] || '';
@@ -58,7 +59,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // Kiểm tra driver tồn tại
-    const driverId = payload.data;
+    const driverId = payload.data.driverId;
     mustExist(driverId, EError.DRIVER_NOT_FOUND, EErrorDetail.DRIVER_NOT_FOUND);
     const driver = await this.driverService.findDriverById(driverId);
     mustExist(driver, EError.DRIVER_NOT_FOUND, EErrorDetail.DRIVER_NOT_FOUND);

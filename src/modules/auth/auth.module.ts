@@ -10,8 +10,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SignUpUseCase } from './use-cases/sign-up.use-case';
 import { SignInUseCase } from './use-cases/sign-in.use-case';
 import { LogOutUseCase } from './use-cases/logout.use-case';
-import { DriverEntity } from 'src/database/entities/driver.entity';
+import { DriverEntity } from '../../database/entities/driver.entity';
 import { DriverService } from '../driver/driver.service';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DriverService } from '../driver/driver.service';
     AuthService,
     SignUpUseCase,
     SignInUseCase,
+    RefreshTokenUseCase,
     LogOutUseCase,
     DriverService
   ],

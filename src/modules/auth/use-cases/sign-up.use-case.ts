@@ -23,7 +23,7 @@ export class SignUpUseCase {
   ) {}
 
   async signUpAccount(driver: SignUpDriverDto): Promise<DriverEntity> {
-    this.validateDriverDto(driver);
+    await this.validateDriverDto(driver);
     try {
       const driverRegistered = await this.saveDriver(driver);
       const code = generateRandomCodeNumber(6);

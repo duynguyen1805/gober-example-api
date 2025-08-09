@@ -62,6 +62,12 @@ export class RefreshTokenUseCase {
         EErrorDetail.INVALID_REFRESH_TOKEN,
         401
       );
+    } else {
+      // thu hồi refresh token
+      await this.cacheService.set(
+        `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${oldRefreshToken}`,
+        true
+      );
     }
 
     return payload;
