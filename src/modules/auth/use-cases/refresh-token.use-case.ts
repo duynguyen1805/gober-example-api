@@ -17,6 +17,12 @@ export class RefreshTokenUseCase {
     private jwtService: JwtService
   ) {}
 
+  /**
+   * Kiểm tra, thu hồi refresh token cũ, tạo cặp access token, refresh token mới
+   * @param oldRefreshToken refresh token cũ
+   * @returns object chưa cặp access token, refresh token
+   * @throws EError nếu token invalid hoặc đã bị thu hồi
+   */
   async getRefreshToken(
     oldRefreshToken: string
   ): Promise<IRefreshTokenResponse> {
@@ -32,8 +38,15 @@ export class RefreshTokenUseCase {
     };
   }
 
+  /**
+   * Validate old refresh token và kiểm tra đã bị thêm vào blacklist hay không.
+   * Nếu hợp lệ, thực hiện thu hồi và cấu lại cập access token, refresh token mới.
+   * @param oldRefreshToken refresh token cũ
+   * @returns  payload sau khi decoded token
+   * @throws EError nếu token invalid hoặc đã bị thu hồi
+   */
   async validateOldRefreshToken(oldRefreshToken: string) {
-    // Decoded token lấy payload
+    // Decoded token lấy giá trị payload
     let payload: any;
     try {
       const decoded = this.jwtService.verify(oldRefreshToken);
@@ -63,7 +76,7 @@ export class RefreshTokenUseCase {
         401
       );
     } else {
-      // thu hồi refresh token
+      // Thu hồi refresh token
       await this.cacheService.set(
         `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${oldRefreshToken}`,
         true

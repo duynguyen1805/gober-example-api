@@ -83,7 +83,7 @@ export class SignInUseCase {
 
   /**
    * Tìm kiếm driver có email hoặc phone number trùng với tham số
-   * @param driver Tham số chứa email và/hoặc phone number
+   * @param driver Tham số identifier là email hoặc phone number
    * @returns DriverEntity nếu tìm thấy, ngược lại trả về null
    */
   async findDriver(driver: SignInDriverDto): Promise<DriverEntity> {

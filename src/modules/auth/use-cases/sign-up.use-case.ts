@@ -22,6 +22,17 @@ export class SignUpUseCase {
     private driverRepository: Repository<DriverEntity>
   ) {}
 
+  /**
+   * Đăng ký tài khoản cho driver
+   *
+   * Validates SignUpDriverDto
+   * Tạo verification code. Có thể gửi cho người dùng qua email hoặc SMS
+   *
+   * @param driver - SignUpDriverDto chứa thông tin chi tiết của driver
+   * @returns Thông tin driver sau khi đăng ký.
+   * @throws EError nếu có lỗi trong quá trình validation và đăng ký.
+   */
+
   async signUpAccount(driver: SignUpDriverDto): Promise<DriverEntity> {
     await this.validateDriverDto(driver);
     try {

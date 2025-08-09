@@ -6,6 +6,14 @@ import { CacheService } from '../../../modules/cache/cache.service';
 export class LogOutUseCase {
   constructor(private readonly cacheService: CacheService) {}
 
+  /**
+   * Thêm access token và refresh token vào blacklist trong cache redis
+   *
+   * @param {string} token - access token.
+   * @param {string} refreshToken - refresh token.
+   * @returns {Promise<boolean>} - trả về true nếu thêm thành công.
+   */
+
   async addTokenToBlackList(
     token: string,
     refreshToken: string
