@@ -13,6 +13,8 @@ import { LogOutUseCase } from './use-cases/logout.use-case';
 import { DriverEntity } from '../../database/entities/driver.entity';
 import { DriverService } from '../driver/driver.service';
 import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
+import { UpdateDriverInfomationUseCase } from '../driver/use-case/update-driver-infomation.use-case';
+import { FileModule } from '../file/file.module';
 
 @Module({
   imports: [
@@ -23,7 +25,8 @@ import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
     }),
     CustomeCacheModule,
     HttpModule,
-    TypeOrmModule.forFeature([DriverEntity])
+    TypeOrmModule.forFeature([DriverEntity]),
+    FileModule
   ],
   controllers: [AuthController],
   providers: [
@@ -32,6 +35,7 @@ import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
     SignInUseCase,
     RefreshTokenUseCase,
     LogOutUseCase,
+    UpdateDriverInfomationUseCase,
     DriverService
   ],
   exports: [AuthService]

@@ -1,129 +1,162 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
-  ApiCreatedResponse,
-  ApiOkResponse,
   ApiOperation,
-  ApiParam,
-  ApiQuery,
+  ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
 import { DriverService } from './driver.service';
-import { CreateDriverDto } from './dto/create-driver.dto';
 import { DriverEntity } from '../../database/entities/driver.entity';
-import { QueryDriverDto } from './dto/query-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from '../../common/decorators/user.decorator';
 
 @ApiTags('drivers')
 @Controller('drivers')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
+  @Get('find-by-id')
   @ApiOperation({
-    summary: 'Create a new driver',
-    description:
-      'Creates a driver with required fields and returns the created entity.'
+    summary: 'Lấy thông tin driver',
+    description: 'Lấy thông tin driver bằng driverId lấy từ token'
   })
-  @ApiBody({ type: CreateDriverDto, description: 'Payload to create driver' })
-  @ApiCreatedResponse({
-    description: 'Driver created',
-    type: DriverEntity,
+  @ApiResponse({
+    status: 200,
+    description: 'Lấy thông tin driver thành công',
     schema: {
-      example: {
-        driverId: 1,
-        fullName: 'Nguyen Van A',
-        phoneNumber: '+84901234567',
-        email: 'driver@example.com',
-        avatar: '123',
-        activeAreaId: 1,
-        temporaryAddress: 'HCMC',
-        isActive: true,
-        createdAt: '2025-08-08T00:00:00.000Z',
-        updatedAt: '2025-08-08T00:00:00.000Z'
+      type: 'object',
+      properties: {
+        success: {
+          type: 'boolean',
+          example: true
+        },
+        data: {
+          type: 'object',
+          example: {
+            isActive: true,
+            createdAt: '2025-08-08T22:28:44.808Z',
+            updatedAt: '2025-08-08T22:28:44.808Z',
+            deletedAt: null,
+            driverId: 3,
+            fullName: 'Nguyen Van A updated',
+            phoneNumber: '0907123456',
+            email: 'driver01@gmail.com',
+            deviceToken: null,
+            lastLogin: null,
+            emailVerifiedAt: null,
+            avatar: 1,
+            activeAreaId: 1,
+            temporaryAddress: 'hẻm 12/34, Quận 3, HCMC',
+            identityCardFrontId: 1,
+            identityCardBackId: 1,
+            status: 'inactive',
+            submittedAt: null,
+            approvalStatus: 'draft',
+            approvedAt: null,
+            approvedById: null,
+            approvedNote: null,
+            createdById: null,
+            balance: 0
+          }
+        }
       }
     }
   })
-  @ApiBadRequestResponse({ description: 'Validation error' })
-  async createDriver(@Body() body: CreateDriverDto): Promise<DriverEntity> {
-    return this.driverService.createDriver(body);
-  }
-
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'List drivers',
-    description: 'List drivers with pagination and filters.'
-  })
-  @ApiOkResponse({
-    description: 'Paged drivers',
+  @ApiBadRequestResponse({
+    description: 'Bad request - Driver không tồn tại',
     schema: {
-      example: {
-        items: [
-          { driverId: 1, fullName: 'Nguyen Van A', phoneNumber: '+84901234567' }
-        ],
-        total: 1,
-        page: 1,
-        pageSize: 20
+      type: 'object',
+      properties: {
+        messageCode: { type: 'string', example: 'DRIVER_NOT_FOUND' },
+        message: { type: 'string', example: 'DRIVER_NOT_FOUND' },
+        statusCode: { type: 'number', example: 400 },
+        timestamp: { type: 'string', format: '2025-08-09T08:44:08.429Z' },
+        success: { type: 'boolean', example: false },
+        path: { type: 'string', example: '/drivers/find-by-id' },
+        method: { type: 'string', example: 'POST' },
+        errorName: { type: 'string', example: 'ServerError' }
       }
     }
   })
-  async getListDriver(@Query() query: QueryDriverDto) {
-    return this.driverService.getListDriver(query);
-  }
-
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Get driver by id',
-    description: 'Fetch a driver by driverId.'
-  })
-  @ApiParam({ name: 'id', required: true, example: 1 })
-  @ApiOkResponse({ description: 'Driver found', type: DriverEntity })
   async findDriverById(
-    @Param('id', ParseIntPipe) id: number
+    @User('driverId') driverId: number
   ): Promise<DriverEntity | null> {
-    return this.driverService.findDriverById(id);
+    return this.driverService.findDriverById(driverId);
   }
 
-  @Patch(':id')
-  @HttpCode(HttpStatus.OK)
+  @Patch('update')
   @ApiOperation({
-    summary: 'Update driver',
-    description: 'Update a driver by driverId.'
+    summary: 'Cập nhật thông tin driver',
+    description: 'Cập nhật thông tin driver bằng driverId lấy từ token'
   })
-  @ApiParam({ name: 'id', required: true, example: 1 })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật thông tin driver thành công',
+    schema: {
+      type: 'object',
+      properties: {
+        success: {
+          type: 'boolean',
+          example: true
+        },
+        data: {
+          type: 'object',
+          example: {
+            isActive: true,
+            createdAt: '2025-08-08T22:28:44.808Z',
+            updatedAt: '2025-08-08T22:28:44.808Z',
+            deletedAt: null,
+            driverId: 3,
+            fullName: 'Nguyen Van A updated',
+            phoneNumber: '0907123456',
+            email: 'driver01@gmail.com',
+            deviceToken: null,
+            lastLogin: null,
+            emailVerifiedAt: null,
+            avatar: 1,
+            activeAreaId: 1,
+            temporaryAddress: 'hẻm 12/34, Quận 3, HCMC',
+            identityCardFrontId: 1,
+            identityCardBackId: 1,
+            status: 'inactive',
+            submittedAt: null,
+            approvalStatus: 'draft',
+            approvedAt: null,
+            approvedById: null,
+            approvedNote: null,
+            createdById: null,
+            balance: 0
+          }
+        }
+      }
+    }
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request - Avatar không hợp lệ',
+    schema: {
+      type: 'object',
+      properties: {
+        messageCode: { type: 'string', example: 'INVALID_AVATAR' },
+        message: { type: 'string', example: 'INVALID_AVATAR' },
+        statusCode: { type: 'number', example: 400 },
+        timestamp: { type: 'string', format: '2025-08-09T08:44:08.429Z' },
+        success: { type: 'boolean', example: false },
+        path: { type: 'string', example: '/drivers/update' },
+        method: { type: 'string', example: 'PATCH' },
+        errorName: { type: 'string', example: 'ServerError' }
+      }
+    }
+  })
   @ApiBody({ type: UpdateDriverDto })
-  @ApiOkResponse({ description: 'Driver updated', type: DriverEntity })
   async updateDriverInformation(
-    @Param('id', ParseIntPipe) id: number,
+    @User('driverId') driverId: number,
     @Body() body: UpdateDriverDto
   ): Promise<DriverEntity> {
-    return this.driverService.updateDriverInformation(id, body);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({
-    summary: 'Delete driver',
-    description: 'Delete a driver by driverId.'
-  })
-  @ApiParam({ name: 'id', required: true, example: 1 })
-  async removeDriver(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.driverService.removeDriver(id);
+    return this.driverService.updateDriverInformation(driverId, body);
   }
 }

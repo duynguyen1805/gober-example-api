@@ -81,8 +81,8 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        messageCode: { type: 'string', example: 'USER_EXIST' },
-        message: { type: 'string', example: 'USER_EXIST' },
+        messageCode: { type: 'string', example: 'DRIVER_EXIST' },
+        message: { type: 'string', example: 'DRIVER_EXIST' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: 'date-time' },
         success: { type: 'boolean', example: false },

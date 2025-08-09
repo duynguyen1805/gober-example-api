@@ -69,8 +69,8 @@ export class SignInUseCase {
     const currentDriver = await this.findDriver(driver);
     makeSure(
       !isNil(currentDriver),
-      EError.USER_NOT_FOUND,
-      EErrorDetail.USER_NOT_FOUND
+      EError.DRIVER_NOT_FOUND,
+      EErrorDetail.DRIVER_NOT_FOUND
     );
 
     // Kiểm tra password (có thể các rule khác)

@@ -1,34 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DriverEntity } from '../../database/entities/driver.entity';
-import { CreateDriverDto } from './dto/create-driver.dto';
 import { QueryDriverDto } from './dto/query-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
 import { PagedDriverResult } from './interfaces/driver.interface';
+import { UpdateDriverInfomationUseCase } from './use-case/update-driver-infomation.use-case';
 
 @Injectable()
 export class DriverService {
   constructor(
     @InjectRepository(DriverEntity)
-    private readonly driverRepository: Repository<DriverEntity>
+    private readonly driverRepository: Repository<DriverEntity>,
+    private readonly updateDriverUseCase: UpdateDriverInfomationUseCase
   ) {}
 
-  async createDriver(input: CreateDriverDto): Promise<DriverEntity> {
-    const entityDriver = this.driverRepository.create({
-      fullName: input.fullName,
-      phoneNumber: input.phoneNumber,
-      email: input.email,
-      deviceToken: input.deviceToken,
-      avatar:
-        typeof input.avatar === 'string'
-          ? parseInt(input.avatar)
-          : input.avatar,
-      activeAreaId: input.activeAreaId,
-      temporaryAddress: input.temporaryAddress
-    });
-    return this.driverRepository.save(entityDriver);
-  }
+  /**
+   * Lấy danh sách driver theo keyword, status, activeAreaId, phân trang
+   *
+   * @param query - chứa thuộc tính filter và phân trang
+   *   - `keyword`: tìm kiếm drivers bằng các field full name, phone number, email.
+   *   - `status`: tìm kiếm theo trạng thái driver.
+   *   - `activeAreaId`: tìm kiếm theo activeAreaId.
+   *   - `page`: Trang số
+   *   - `pageSize`: Số lượng item trong 1 trang
+   *
+   * @returns Trả về mảng drivers, tống số drivers của mảng, trang hiện tại, số lượng item trong 1 trang.
+   */
 
   async getListDriver(
     query: QueryDriverDto
@@ -60,10 +58,20 @@ export class DriverService {
     return { items, total, page, pageSize };
   }
 
+  /**
+   * Tìm driver bằng driverId
+   * @param driverId - driverId
+   * @returns thông tin driver hoặc null
+   */
   async findDriverById(driverId: number): Promise<DriverEntity | null> {
     return this.driverRepository.findOne({ where: { driverId } });
   }
 
+  /**
+   * Tìm driver bằng driverId và các file liên quan: identityCardFront, identityCardBack, avatarFile
+   * @param driverId - driverId
+   * @returns thông tin driver và các file hoặc null
+   */
   async findDriverByIdWithFiles(
     driverId: number
   ): Promise<DriverEntity | null> {
@@ -73,17 +81,16 @@ export class DriverService {
     });
   }
 
+  /**
+   * Cập nhật thông tin của driver
+   * @param driverId - driverId
+   * @param input - thông tin cần cập nhật
+   * @returns thông tin driver sau khi cập nhật
+   */
   async updateDriverInformation(
     driverId: number,
     input: UpdateDriverDto
   ): Promise<DriverEntity> {
-    const entity = await this.findDriverById(driverId);
-    if (!entity) throw new NotFoundException('Driver not found');
-    Object.assign(entity, input);
-    return this.driverRepository.save(entity);
-  }
-
-  async removeDriver(driverId: number): Promise<void> {
-    await this.driverRepository.delete({ driverId });
+    return await this.updateDriverUseCase.execute(driverId, input);
   }
 }
