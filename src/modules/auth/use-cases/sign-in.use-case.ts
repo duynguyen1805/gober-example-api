@@ -5,6 +5,7 @@ import { makeSure } from '../../../common/helpers/server-error.helper';
 import { compare } from 'bcrypt';
 import { SignInDriverDto } from '../dto/signin-driver.dto';
 import { DriverEntity } from '../../../database/entities/driver.entity';
+import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
 import { EError, EErrorDetail } from '../../../common/enums/auth/auth.enum';
 import { isValidEmail } from '../../../common/helpers/auth/index';
 import { isValidPhoneNumber } from '../../../common/helpers/auth';
@@ -18,6 +19,8 @@ export class SignInUseCase {
   constructor(
     @InjectRepository(DriverEntity)
     private driverRepository: Repository<DriverEntity>,
+    @InjectRepository(DriverRefreshTokenEntity)
+    private driverRefreshTokenRepository: Repository<DriverRefreshTokenEntity>,
     private jwtService: JwtService
   ) {}
 
@@ -36,11 +39,16 @@ export class SignInUseCase {
       driverId: driverExists.driverId
     };
 
-    const token = this.jwtService.sign({ data: payload });
+    const token = this.jwtService.sign(
+      { data: payload },
+      { expiresIn: jwtConstants.expiresInAccessToken }
+    );
     const refreshToken = this.jwtService.sign(
       { data: payload },
-      { expiresIn: jwtConstants.expiresIn }
+      { expiresIn: jwtConstants.expiresInRefreshToken }
     );
+
+    await this.createDriverRefreshToken(driverExists.driverId, refreshToken);
 
     return {
       token,
@@ -105,5 +113,25 @@ export class SignInUseCase {
       EError.INVALID_PASSWORD,
       EErrorDetail.INVALID_PASSWORD
     );
+  }
+
+  /**
+   * Tạo driver-refresh-token
+   * @param driverId id của driver
+   * @param refreshToken refresh token
+   */
+  async createDriverRefreshToken(driverId: number, refreshToken: string) {
+    const entityDriverRefreshToken = this.driverRefreshTokenRepository.create({
+      driverId,
+      token: refreshToken,
+      deviceToken: 'example device token',
+      isRevoked: false,
+      expiresAt: new Date(
+        new Date().setDate(
+          new Date().getDate() + jwtConstants.expiresInRefreshTokenNumber
+        )
+      )
+    });
+    return this.driverRefreshTokenRepository.save(entityDriverRefreshToken);
   }
 }

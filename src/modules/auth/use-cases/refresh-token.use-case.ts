@@ -9,12 +9,17 @@ import { JwtService } from '@nestjs/jwt';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { ERedisKey } from '../../../common/enums/system/redis.enum';
 import { jwtConstants } from '../../../constants';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
 
 @Injectable()
 export class RefreshTokenUseCase {
   constructor(
     private readonly cacheService: CacheService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    @InjectRepository(DriverRefreshTokenEntity)
+    private driverRefreshTokenRepository: Repository<DriverRefreshTokenEntity>
   ) {}
 
   /**
@@ -27,10 +32,15 @@ export class RefreshTokenUseCase {
     oldRefreshToken: string
   ): Promise<IRefreshTokenResponse> {
     const payloadEncoded = await this.validateOldRefreshToken(oldRefreshToken);
-    const token = this.jwtService.sign({ data: payloadEncoded.payload });
+    const token = this.jwtService.sign(
+      { data: payloadEncoded.payload },
+      {
+        expiresIn: jwtConstants.expiresInAccessToken
+      }
+    );
     const refreshToken = this.jwtService.sign(
       { data: payloadEncoded.payload },
-      { expiresIn: jwtConstants.expiresIn }
+      { expiresIn: jwtConstants.expiresInRefreshToken }
     );
     return {
       token,
@@ -81,8 +91,39 @@ export class RefreshTokenUseCase {
         `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${oldRefreshToken}`,
         true
       );
+      await this.updateDriverRefreshToken(payload.driverId, oldRefreshToken);
     }
 
     return payload;
+  }
+
+  /**
+   * Đánh dấu thu hồi refresh token trong database bảng driver_refresh_token
+   *
+   * @param {number} driverId - id của driver.
+   * @param {string} refreshToken - refresh token của driver.
+   * @throws EError nếu cập nhật không thành công
+   */
+
+  async updateDriverRefreshToken(
+    driverId: number,
+    refreshToken: string
+  ): Promise<void> {
+    const entityDriverRefreshToken =
+      await this.driverRefreshTokenRepository.update(
+        {
+          driverId,
+          token: refreshToken
+        },
+        {
+          isRevoked: true
+        }
+      );
+
+    makeSure(
+      entityDriverRefreshToken.affected > 0,
+      EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR,
+      EErrorDetail.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
+    );
   }
 }

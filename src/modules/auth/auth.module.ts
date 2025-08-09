@@ -15,6 +15,7 @@ import { DriverService } from '../driver/driver.service';
 import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
 import { UpdateDriverInfomationUseCase } from '../driver/use-case/update-driver-infomation.use-case';
 import { FileModule } from '../file/file.module';
+import { DriverRefreshTokenEntity } from '../../database/entities/driver-refresh-token.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { FileModule } from '../file/file.module';
     }),
     CustomeCacheModule,
     HttpModule,
-    TypeOrmModule.forFeature([DriverEntity]),
+    TypeOrmModule.forFeature([DriverEntity, DriverRefreshTokenEntity]),
     FileModule
   ],
   controllers: [AuthController],

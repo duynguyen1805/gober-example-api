@@ -65,11 +65,16 @@ export class AuthService {
 
   /**
    * Thu hồi access token và refresh token của driver
+   * @param driverId id của driver
    * @param token access token
    * @param refreshToken refresh token
    * @returns true nếu thu hồi thành công
    */
-  async logOut(token: string, refreshToken: string) {
-    return this.logoutUseCase.addTokenToBlackList(token, refreshToken);
+  async logOut(driverId: number, token: string, refreshToken: string) {
+    return this.logoutUseCase.addTokenToBlackList(
+      driverId,
+      token,
+      refreshToken
+    );
   }
 }

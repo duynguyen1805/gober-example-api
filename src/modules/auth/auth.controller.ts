@@ -20,6 +20,7 @@ import {
 } from './interface/auth-driver.interface';
 import { RefreshTokenDriverDto } from './dto/refresh-token-driver.dto';
 import { LogoutDriverDto } from './dto/logout-driver.dto';
+import { User } from '../../common/decorators/user.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -237,9 +238,12 @@ export class AuthController {
       }
     }
   })
-  logOut(@Body() dto: LogoutDriverDto): Promise<boolean> {
+  logOut(
+    @Body() dto: LogoutDriverDto,
+    @User('driverId') driverId: number
+  ): Promise<boolean> {
     const authHeader = this.request.headers['authorization'] || '';
     const token = authHeader.replace('Bearer ', '');
-    return this.authService.logOut(token, dto.refreshToken);
+    return this.authService.logOut(driverId, token, dto.refreshToken);
   }
 }

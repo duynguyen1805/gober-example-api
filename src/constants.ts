@@ -26,5 +26,8 @@ export const Settings = {
 
 export const jwtConstants = {
   secret: configService.getEnv('JWT_SECRET'),
-  expiresIn: '7d'
+  expiresInAccessToken: '1d',
+  expiresInRefreshToken: '30d',
+  expiresInAccessTokenNumber: 1,
+  expiresInRefreshTokenNumber: 30
 };
