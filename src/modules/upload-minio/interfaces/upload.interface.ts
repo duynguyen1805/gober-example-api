@@ -1,4 +1,4 @@
-import { EAllowedFileType, EUploadStatus } from '../enums/upload.enum';
+import { EAllowedFileType } from '../../../common/enums/upload-minio/upload.enum';
 
 export interface IUploadedFileToMinIOOutput {
   originalName: string;

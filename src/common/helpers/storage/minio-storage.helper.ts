@@ -1,16 +1,12 @@
 import * as Minio from 'minio';
-import { Readable, pipeline } from 'stream';
-import { promisify } from 'util';
 import { configService } from '../../../config/config.service';
 import {
   EAllowedFileType,
   EUploadError
-} from '../../../modules/upload-minio/enums/upload.enum';
+} from '../../enums/upload-minio/upload.enum';
 import { Settings } from '../../../constants';
 import { makeSure } from '../server-error.helper';
 import { IUploadedFileToMinIOOutput } from '../../../modules/upload-minio/interfaces/upload.interface';
-
-const pipelineAsync = promisify(pipeline);
 
 const configMinIO = configService.getMinIOConfig();
 
@@ -25,20 +21,24 @@ const minioClient = new Minio.Client({
 
 const defaultBucketName = configMinIO.MINIO_UPLOAD_BUCKET_NAME;
 
-// File type mapping
+// Mapping file type
 const FILE_TYPE_MAPPING: Record<string, EAllowedFileType> = {
   'image/jpeg': EAllowedFileType.IMAGE,
   'image/jpg': EAllowedFileType.IMAGE,
   'image/png': EAllowedFileType.IMAGE
 };
 
-// Allowed file extensions
+// File extensions cho phép
 const ALLOWED_EXTENSIONS: Record<EAllowedFileType, string[]> = {
   [EAllowedFileType.IMAGE]: ['jpg', 'jpeg', 'png']
 };
 
 /**
- * Validate file before upload
+ * Validate file trước khi upload.
+ * @param file File để validate
+ * @throws {EUploadError} Nếu file size lớn hơn cho phép.
+ * @throws {EUploadError} Nếu file type không hợp lệ.
+ * @throws {EUploadError} Nếu file extension không hợp lệ.
  */
 export function validateFile(file: Express.Multer.File): void {
   // Check file size
@@ -79,9 +79,9 @@ export function validateFile(file: Express.Multer.File): void {
 }
 
 /**
- * Generate unique filename
- * @param originalName - The original name of the file
- * @returns The unique filename
+ * Tạo tên file duy nhất - mục đích tránh ghi đè nếu tên file trùng nhau (CHƯA SỬ DỤNG)
+ * @param originalName - original name của file
+ * @returns file name duy nhất
  */
 export function generateUniqueFilename(originalName: string): string {
   const timestamp = Date.now();
@@ -96,9 +96,9 @@ export function generateUniqueFilename(originalName: string): string {
 }
 
 /**
- * Upload single file to MinIO
- * @param file - The file to upload
- * @returns The uploaded file
+ * Upload single file lên MinIO
+ * @param file - file để upload
+ * @returns Thông tin file đã upload, gồm original name, filename, URL, size, mime type, file extension, upload date
  */
 export async function uploadFileToMinIO(
   file: Express.Multer.File
@@ -114,6 +114,7 @@ export async function uploadFileToMinIO(
       'uploaded-at': new Date().toISOString()
     };
 
+    // Tải file lên MinIO
     await minioClient.putObject(
       defaultBucketName,
       file.originalname,
@@ -122,10 +123,10 @@ export async function uploadFileToMinIO(
       metadata
     );
 
-    // Generate URL
+    // Tạo URL truy cập file
     const url = `https://${configMinIO.STORAGE_LOCAL_ENDPOINT}:${configMinIO.MINIO_UPLOAD_PORT}/${defaultBucketName}/${file.originalname}`;
 
-    // Determine file type
+    // Xác định file type và extension
     const fileType = FILE_TYPE_MAPPING[file.mimetype];
     const fileExtension =
       file.originalname.split('.').pop()?.toLowerCase() || '';
@@ -151,9 +152,9 @@ export async function uploadFileToMinIO(
 }
 
 /**
- * Upload multiple files to MinIO
- * @param files - The files to upload
- * @returns The uploaded files
+ * Upload multiple files lên MinIO
+ * @param files - files để upload
+ * @returns Mảng thống tin file đã upload, gồm original name, filename, URL, size, mime type, file extension, upload date
  */
 export async function uploadMultipleFilesToMinIO(
   files: Express.Multer.File[]
@@ -163,10 +164,10 @@ export async function uploadMultipleFilesToMinIO(
 }
 
 /**
- * Delete file from MinIO
- * @param filename - The filename of the file to delete
- * @param bucketName - The bucket name of the file to delete
- * @returns The result of the deletion
+ * Xoá file trên MinIO (CHƯA SỬ DỤNG)
+ * @param filename - filename cần xoá
+ * @param bucketName - bucketName chưa file cần xoá
+ * @returns true nếu thành công.
  */
 export async function deleteFileFromMinIO(
   filename: string,
@@ -174,7 +175,6 @@ export async function deleteFileFromMinIO(
 ): Promise<boolean> {
   try {
     await minioClient.removeObject(bucketName, filename);
-
     return true;
   } catch (error) {
     makeSure(

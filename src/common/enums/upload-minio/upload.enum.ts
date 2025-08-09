@@ -11,14 +11,6 @@ export enum EUploadError {
   DELETE_FAILED = 'DELETE_FAILED'
 }
 
-export enum EUploadStatus {
-  PENDING = 'PENDING',
-  UPLOADING = 'UPLOADING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  DELETED = 'DELETED'
-}
-
 export enum EAllowedFileType {
   IMAGE = 'image'
 }

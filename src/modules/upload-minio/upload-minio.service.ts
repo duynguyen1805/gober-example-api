@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Injectable } from '@nestjs/common';
 import { uploadFileToMinIO } from '../../common/helpers/storage/minio-storage.helper';
-import { EUploadError } from './enums/upload.enum';
+import { EUploadError } from '../../common/enums/upload-minio/upload.enum';
 import { mustExist } from '../../common/helpers/server-error.helper';
 import {
   IUploadedFileInfoOutput,
@@ -13,15 +13,14 @@ export class UploadMinioService {
   constructor() {}
 
   /**
-   * Uploads a single file to MinIO storage.
-   * @param file The file to be uploaded.
-   * @returns The information of the uploaded file, including original name, filename, URL, size, mime type, file extension, and upload date.
-   * @throws {EUploadError.NO_FILE_PROVIDED} If no file is provided for upload.
+   * Uploads single file lên MinIO storage.
+   * @param file file để upload
+   * @returns Thông tin file đã upload, gồm original name, filename, URL, size, mime type, file extension, upload date.
+   * @throws {EUploadError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
    */
   async singleUploadMinio(
     file: Express.Multer.File
   ): Promise<IUploadedFileInfoOutput> {
-    console.log('singleUploadMinio: ', file);
     mustExist(file, EUploadError.NO_FILE_PROVIDED, 'No file provided');
 
     // Upload to MinIO
@@ -39,11 +38,10 @@ export class UploadMinioService {
   }
 
   /**
-   * Uploads multiple files to MinIO
-   * @param files The files to upload
-   * @returns The uploaded files information
-   * @throws {BadRequestException} If no files are provided
-   * @throws {EUploadError.UPLOAD_FAILED} If the upload process fails.
+   * Uploads multiple file lên MinIO storage.
+   * @param files files để upload
+   * @returns Mảng thông tin file đã upload, gồm original name, filename, URL, size, mime type, file extension, upload date.
+   * @throws {EUploadError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
    */
   async multiUploadMinio(files: Express.Multer.File[]): Promise<IUploadResult> {
     mustExist(files, EUploadError.NO_FILE_PROVIDED, 'No files provided');

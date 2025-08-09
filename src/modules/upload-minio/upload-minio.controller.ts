@@ -4,9 +4,7 @@ import {
   UploadedFile,
   UploadedFiles,
   UseInterceptors,
-  UseGuards,
-  HttpCode,
-  HttpStatus
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,7 +17,6 @@ import {
 } from '@nestjs/swagger';
 import { UploadMinioService } from './upload-minio.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { User } from '../../common/decorators/user.decorator';
 import {
   SingleUploadInterceptor,
   MultiUploadInterceptor
@@ -37,11 +34,10 @@ export class UploadMinioController {
   constructor(private readonly uploadService: UploadMinioService) {}
 
   @Post('single')
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Upload single file to MinIO',
+    summary: 'Upload single file lên MinIO',
     description:
-      'Upload a single file to MinIO storage and return file information'
+      'Upload single file lên MinIO storage, trả về đường dẫn và thông tin file.'
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -59,32 +55,32 @@ export class UploadMinioController {
   })
   @ApiResponse({
     status: 201,
-    description: 'File uploaded successfully',
+    description: 'Tải file thành công',
     schema: {
       type: 'object',
       properties: {
-        originalName: { type: 'string', example: 'avatar.jpg' },
-        filename: { type: 'string', example: '1234567890_abc123.jpg' },
+        originalName: { type: 'string', example: 'meo_bay_lac.png' },
+        filename: { type: 'string', example: 'meo_bay_lac.png' },
         url: {
           type: 'string',
-          example: 'https://storage.example.com/bucket/1234567890_abc123.jpg'
+          example: 'https://localhost:9000/gober/meo_bay_lac.png'
         },
-        size: { type: 'number', example: 1024000 },
-        mimeType: { type: 'string', example: 'image/jpeg' },
-        fileExtension: { type: 'string', example: 'jpg' },
-        uploadedAt: { type: 'string', format: 'date-time' }
+        size: { type: 'number', example: 455431 },
+        mimeType: { type: 'string', example: 'image/png' },
+        fileExtension: { type: 'string', example: 'png' },
+        uploadedAt: { type: 'string', format: '2025-08-09T07:11:39.639Z' }
       }
     }
   })
   @ApiBadRequestResponse({
-    description: 'Bad request - validation failed',
+    description: 'Bad request - File sai định dạng cho phép.',
     schema: {
       type: 'object',
       properties: {
         messageCode: { type: 'string', example: 'UPLOAD_FAILED' },
         message: { type: 'string', example: 'File upload failed' },
         statusCode: { type: 'number', example: 400 },
-        timestamp: { type: 'string', format: 'date-time' },
+        timestamp: { type: 'string', format: '2025-08-09T07:11:39.639Z' },
         success: { type: 'boolean', example: false },
         path: { type: 'string', example: '/upload-minio/single' },
         method: { type: 'string', example: 'POST' },
@@ -94,18 +90,16 @@ export class UploadMinioController {
   })
   @UseInterceptors(SingleUploadInterceptor)
   async singleUpload(
-    @UploadedFile() file
-    // @User('driverId') driverId: number
+    @UploadedFile() file: Express.Multer.File
   ): Promise<IUploadedFileInfoOutput> {
     return this.uploadService.singleUploadMinio(file);
   }
 
   @Post('multi')
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Upload multiple files to MinIO',
+    summary: 'Upload multiple files lên MinIO',
     description:
-      'Upload multiple files to MinIO storage and return files information'
+      'Upload multiple files lên MinIO storage,, trả về mảng đường dẫn và thông tin file.'
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -118,7 +112,7 @@ export class UploadMinioController {
             type: 'string',
             format: 'binary'
           },
-          description: 'Multiple files to upload (max 100 files, images only)'
+          description: 'Multiple files to upload (tối đa 10 files, images only)'
         }
       },
       required: ['files']
@@ -126,7 +120,7 @@ export class UploadMinioController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Files uploaded successfully',
+    description: 'Tải các file thành công.',
     schema: {
       type: 'object',
       properties: {
@@ -136,40 +130,43 @@ export class UploadMinioController {
           items: {
             type: 'object',
             properties: {
-              originalName: { type: 'string', example: 'document.jpg' },
-              filename: { type: 'string', example: '1234567890_document.jpg' },
+              originalName: { type: 'string', example: 'meo_bay_lac.png' },
+              filename: { type: 'string', example: 'meo_bay_lac.png' },
               url: {
                 type: 'string',
-                example:
-                  'https://storage.example.com/bucket/1234567890_document.jpg'
+                example: 'https://localhost:9000/gober/meo_bay_lac.png'
               },
-              size: { type: 'number', example: 2048000 },
-              mimeType: { type: 'string', example: 'image/jpeg' },
-              fileExtension: { type: 'string', example: 'jpg' },
-              uploadedAt: { type: 'string', format: 'date-time' },
-              uploadedById: { type: 'number', example: 1 }
+              size: { type: 'number', example: 455431 },
+              mimeType: { type: 'string', example: 'image/png' },
+              fileExtension: { type: 'string', example: 'png' },
+              uploadedAt: { type: 'string', format: '2025-08-09T07:11:39.639Z' }
             }
           }
         },
-        totalFiles: { type: 'number', example: 5 },
-        totalSize: { type: 'number', example: 10240000 }
+        totalFiles: { type: 'number', example: 1 },
+        totalSize: { type: 'number', example: 455431 }
       }
     }
   })
   @ApiBadRequestResponse({
-    description: 'Bad request - validation failed',
+    description: 'Bad request - File sai định dạng cho phép.',
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'File type not allowed' },
-        error: { type: 'string', example: 'File type video is not allowed' }
+        messageCode: { type: 'string', example: 'UPLOAD_FAILED' },
+        message: { type: 'string', example: 'File upload failed' },
+        statusCode: { type: 'number', example: 400 },
+        timestamp: { type: 'string', format: '2025-08-09T07:11:39.639Z' },
+        success: { type: 'boolean', example: false },
+        path: { type: 'string', example: '/upload-minio/multi' },
+        method: { type: 'string', example: 'POST' },
+        errorName: { type: 'string', example: 'ServerError' }
       }
     }
   })
   @UseInterceptors(MultiUploadInterceptor)
   async multiUpload(
     @UploadedFiles() files: Express.Multer.File[]
-    // @User('driverId') driverId: number
   ): Promise<IUploadResult> {
     return this.uploadService.multiUploadMinio(files);
   }
