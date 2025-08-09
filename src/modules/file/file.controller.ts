@@ -7,8 +7,6 @@ import {
   Param,
   ParseIntPipe,
   Query,
-  HttpCode,
-  HttpStatus,
   Patch
 } from '@nestjs/common';
 import {
@@ -27,6 +25,7 @@ import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { QueryFileDto } from './dto/query-file.dto';
 import { FileEntity } from '../../database/entities/file.entity';
+import { User } from '../../common/decorators/user.decorator';
 
 @ApiTags('files')
 @Controller('files')
@@ -35,41 +34,50 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Create a new file record',
-    description:
-      'Creates a file record with metadata and returns the created entity.'
+    summary: 'Tạo record vào bảng File',
+    description: 'Tạo record vào bảng File'
   })
-  @ApiBody({ type: CreateFileDto, description: 'File metadata to create' })
+  @ApiBody({ type: CreateFileDto, description: 'File metadata để khởi tạo' })
   @ApiCreatedResponse({
-    description: 'File created successfully',
+    description: 'Tạo record file thành công',
     type: FileEntity,
     schema: {
-      example: {
-        fileId: 1,
-        filename: 'document.pdf',
-        url: 'https://storage.example.com/files/document.pdf',
-        mimeType: 'application/pdf',
-        fileExtension: 'pdf',
-        size: 1024000,
-        uploadedById: 1,
-        isActive: true,
-        createdAt: '2025-08-08T00:00:00.000Z',
-        updatedAt: '2025-08-08T00:00:00.000Z'
+      properties: {
+        success: {
+          type: 'boolean',
+          example: true
+        },
+        data: {
+          type: 'object',
+          example: {
+            filename: 'meo_bay_lac.png',
+            url: 'https://localhost:9000/gober/meo_bay_lac.png',
+            mimeType: 'image/png',
+            fileExtension: 'png',
+            size: 455431,
+            deletedAt: null,
+            uploadedById: null,
+            isActive: true,
+            createdAt: '2025-08-09T04:56:24.998Z',
+            updatedAt: '2025-08-09T04:56:24.998Z',
+            fileId: 6
+          }
+        }
       }
     }
   })
-  @ApiBadRequestResponse({ description: 'Validation error' })
-  async create(@Body() body: CreateFileDto): Promise<FileEntity> {
-    return this.fileService.create(body);
+  async create(
+    @Body() body: CreateFileDto,
+    @User('driverId') driverId: number
+  ): Promise<FileEntity> {
+    return this.fileService.create(driverId, body);
   }
 
   @Get()
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'List files',
-    description: 'List files with pagination and filters.'
+    summary: 'Lấy danh sách cách file của driver hiện tại',
+    description: 'Lấy danh sách có kèm filters thông tin file'
   })
   @ApiOkResponse({
     description: 'Paged files',
@@ -78,10 +86,10 @@ export class FileController {
         items: [
           {
             fileId: 1,
-            filename: 'document.pdf',
-            url: 'https://storage.example.com/files/document.pdf',
-            mimeType: 'application/pdf',
-            fileExtension: 'pdf',
+            filename: 'meo_bay_lac.png',
+            url: 'https://localhost:9000/gober/meo_bay_lac.png',
+            mimeType: 'image/png',
+            fileExtension: 'png',
             size: 1024000,
             uploadedById: 1
           }
@@ -92,79 +100,71 @@ export class FileController {
       }
     }
   })
-  async list(@Query() query: QueryFileDto) {
-    return this.fileService.getListFiles(query);
+  async list(@Query() query: QueryFileDto, @User('driverId') driverId: number) {
+    return this.fileService.getListFiles(driverId, query);
   }
 
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Get file by id',
-    description: 'Fetch a file by fileId.'
+    summary: 'Lấy thông tin 1 file cụ thể',
+    description: 'Lấy thông tin file bằng fileId'
+  })
+  @ApiCreatedResponse({
+    description: 'Lấy thông tin file thành công',
+    type: FileEntity,
+    schema: {
+      properties: {
+        success: {
+          type: 'boolean',
+          example: true
+        },
+        data: {
+          type: 'object',
+          example: {
+            isActive: true,
+            createdAt: '2025-08-08T01:53:06.753Z',
+            updatedAt: '2025-08-08T01:53:06.753Z',
+            deletedAt: null,
+            fileId: 1,
+            filename: 'avatar-john.png',
+            url: '/uploads/avatar-john.png',
+            mimeType: 'image/png',
+            fileExtension: 'png',
+            size: 204800,
+            uploadedById: 1
+          }
+        }
+      }
+    }
   })
   @ApiParam({ name: 'id', required: true, example: 1 })
-  @ApiOkResponse({ description: 'File found', type: FileEntity })
   async getById(
     @Param('id', ParseIntPipe) id: number
   ): Promise<FileEntity | null> {
     return this.fileService.findFileById(id);
   }
 
-  @Get(':id/with-uploader')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Get file by id with uploader info',
-    description: 'Fetch a file by fileId including uploader information.'
-  })
-  @ApiParam({ name: 'id', required: true, example: 1 })
-  @ApiOkResponse({ description: 'File with uploader info', type: FileEntity })
-  async getByIdWithUploader(
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<FileEntity | null> {
-    return this.fileService.findFileByIdWithUploader(id);
-  }
+  // @Patch(':id')
+  // @ApiOperation({
+  //   summary: 'Update file',
+  //   description: 'Update a file by fileId.'
+  // })
+  // @ApiParam({ name: 'id', required: true, example: 1 })
+  // @ApiBody({ type: UpdateFileDto })
+  // async update(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() body: UpdateFileDto
+  // ): Promise<FileEntity> {
+  //   return this.fileService.updateFile(id, body);
+  // }
 
-  @Get('driver/:driverId')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Get files by driver',
-    description: 'Get all files uploaded by a specific driver.'
-  })
-  @ApiParam({ name: 'driverId', required: true, example: 1 })
-  @ApiOkResponse({
-    description: 'Files uploaded by driver',
-    type: [FileEntity]
-  })
-  async getFilesByDriver(
-    @Param('driverId', ParseIntPipe) driverId: number
-  ): Promise<FileEntity[]> {
-    return this.fileService.getFilesByDriver(driverId);
-  }
-
-  @Patch(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Update file',
-    description: 'Update a file by fileId.'
-  })
-  @ApiParam({ name: 'id', required: true, example: 1 })
-  @ApiBody({ type: UpdateFileDto })
-  @ApiOkResponse({ description: 'File updated', type: FileEntity })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateFileDto
-  ): Promise<FileEntity> {
-    return this.fileService.updateFile(id, body);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({
-    summary: 'Delete file',
-    description: 'Delete a file by fileId.'
-  })
-  @ApiParam({ name: 'id', required: true, example: 1 })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.fileService.removeFile(id);
-  }
+  // @Delete(':id')
+  // @ApiOperation({
+  //   summary: 'Delete file',
+  //   description: 'Delete a file by fileId.'
+  // })
+  // @ApiParam({ name: 'id', required: true, example: 1 })
+  // async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  //   return this.fileService.removeFile(id);
+  // }
 }

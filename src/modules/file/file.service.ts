@@ -16,20 +16,23 @@ export class FileService {
     private readonly fileRepository: Repository<FileEntity>
   ) {}
 
-  async create(input: CreateFileDto): Promise<FileEntity> {
+  async create(driverId: number, input: CreateFileDto): Promise<FileEntity> {
     const entityFile = this.fileRepository.create({
       filename: input.filename,
       url: input.url,
       mimeType: input.mimeType,
       fileExtension: input.fileExtension,
       size: input.size,
-      uploadedById: input.uploadedById
+      uploadedById: driverId
     });
     return this.fileRepository.save(entityFile);
   }
 
-  async getListFiles(query: QueryFileDto): Promise<PagedFileResult> {
-    const { page = 1, pageSize = 20, keyword, mimeType, uploadedById } = query;
+  async getListFiles(
+    driverId: number,
+    query: QueryFileDto
+  ): Promise<PagedFileResult> {
+    const { page = 1, pageSize = 20, keyword, mimeType } = query;
     const queryDB = this.fileRepository.createQueryBuilder('f');
 
     if (keyword) {
@@ -40,8 +43,8 @@ export class FileService {
     if (mimeType) {
       queryDB.andWhere('f.mime_type = :mimeType', { mimeType });
     }
-    if (uploadedById) {
-      queryDB.andWhere('f.uploaded_by_id = :uploadedById', { uploadedById });
+    if (driverId) {
+      queryDB.andWhere('f.uploaded_by_id = :uploadedById', { driverId });
     }
 
     queryDB
@@ -54,36 +57,24 @@ export class FileService {
   }
 
   async findFileById(fileId: number): Promise<FileEntity | null> {
-    return this.fileRepository.findOne({ where: { fileId } });
-  }
-
-  async findFileByIdWithUploader(fileId: number): Promise<FileEntity | null> {
     return this.fileRepository.findOne({
-      where: { fileId },
-      relations: ['uploadedBy']
+      where: { fileId }
     });
   }
 
-  async updateFile(fileId: number, input: UpdateFileDto): Promise<FileEntity> {
-    const entity = await this.findFileById(fileId);
-    if (!entity) {
-      mustExist(entity, EErrorFile.FILE_NOT_FOUND, EErrorFile.FILE_NOT_FOUND);
-    }
-    Object.assign(entity, input);
-    return this.fileRepository.save(entity);
-  }
+  // async updateFile(fileId: number, input: UpdateFileDto): Promise<FileEntity> {
+  //   const entity = await this.findFileById(fileId);
+  //   if (!entity) {
+  //     mustExist(entity, EErrorFile.FILE_NOT_FOUND, EErrorFile.FILE_NOT_FOUND);
+  //   }
+  //   Object.assign(entity, input);
+  //   return this.fileRepository.save(entity);
+  // }
 
-  async removeFile(fileId: number): Promise<void> {
-    const result = await this.fileRepository.delete({ fileId });
-    if (result.affected === 0) {
-      makeSure(false, EErrorFile.FILE_NOT_FOUND, EErrorFile.FILE_NOT_FOUND);
-    }
-  }
-
-  async getFilesByDriver(driverId: number): Promise<FileEntity[]> {
-    return this.fileRepository.find({
-      where: { uploadedById: driverId },
-      order: { createdAt: 'DESC' }
-    });
-  }
+  // async removeFile(fileId: number): Promise<void> {
+  //   const result = await this.fileRepository.delete({ fileId });
+  //   if (result.affected === 0) {
+  //     makeSure(false, EErrorFile.FILE_NOT_FOUND, EErrorFile.FILE_NOT_FOUND);
+  //   }
+  // }
 }
