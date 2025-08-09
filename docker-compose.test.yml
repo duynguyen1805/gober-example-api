@@ -1,0 +1,110 @@
+version: '3'
+
+services:
+  api-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: '${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+    ports:
+      - '4000:4000'
+    volumes:
+      - /Users/duynguyen/gober/.env.test:/app/.env
+      - /Users/duynguyen/gober/files:/app/files
+    environment:
+      - TZ=Asia/Bangkok
+      - SERVICE_TYPE=MainService
+    dns:
+      - 8.8.8.8
+    deploy:
+      mode: replicated
+      placement:
+        constraints: [node.role == manager]
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+    networks:
+      - gober_net
+  postgres-server:
+    image: 'postgres'
+    volumes:
+      - /Users/duynguyen/gober/postgres:/data/postgres
+    ports:
+      - '6434:5432'
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/data/postgres
+      - POSTGRES_DB=${DB_DATABASE}
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+    networks:
+      - gober_net
+  redis-server:
+    image: 'redis:6.0-alpine'
+    volumes:
+      - /Users/duynguyen/gober/redis:/data
+      - /Users/duynguyen/gober/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - '7379:6379'
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+    networks:
+      - gober_net
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'asdi-mvp-rabbitmq'
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    ports:
+      - 5772:5672
+      - 15772:15672
+    volumes:
+      - /Users/duynguyen/gober/rabbitmq/data/:/var/lib/rabbitmq/
+      - /Users/duynguyen/gober/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - gober_net
+  minio_server:
+    container_name: minio_server
+    image: minio/minio:RELEASE.2024-11-07T00-52-20Z
+    restart: 'always'
+    volumes:
+      - /Users/duynguyen/gober/minio/data/:/data/
+    environment:
+      MINIO_ROOT_USER: 'admin-gober'
+      MINIO_ROOT_PASSWORD: 'test-password'
+      #MINIO_BROWSER_REDIRECT_URL: "https://console.minio.domain.com"
+      #MINIO_SERVER_URL: "https://minio.domain.com"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    command: server --console-address ":9001" /data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - gober_net
+    deploy:
+      replicas: 1
+
+networks:
+  gober_net:
+    # driver: overlay # dụng khi docker Swarm mode
+    driver: bridge
