@@ -28,6 +28,7 @@ import { BlacklistMiddleware } from './common/middleware/system/blacklist-token.
 import { FileModule } from './modules/file/file.module';
 import { UploadMinIOModule } from './modules/upload-minio/upload-minio.module';
 import { DriverModule } from './modules/driver/driver.module';
+import { DriverRequestModule } from './modules/driver-request/driver-request.module';
 
 const configRedis = configService.getRedisConfig();
 
@@ -57,7 +58,8 @@ const configRedis = configService.getRedisConfig();
     RmqModule,
     UploadMinIOModule,
     FileModule,
-    DriverModule
+    DriverModule,
+    DriverRequestModule
   ]),
   controllers: [AppController],
   providers: [
