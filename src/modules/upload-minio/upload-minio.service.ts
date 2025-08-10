@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Injectable } from '@nestjs/common';
 import { uploadFileToMinIO } from '../../common/helpers/storage/minio-storage.helper';
-import { EUploadError } from '../../common/enums/upload-minio/upload.enum';
-import { mustExist } from '../../common/helpers/server-error.helper';
+import { EError } from '../../common/enums/error.enum';
+import { mustExist } from '../../common/helpers/system/server-error.helper';
 import {
   IUploadedFileInfoOutput,
   IUploadResult
@@ -16,12 +16,12 @@ export class UploadMinioService {
    * Uploads single file lên MinIO storage.
    * @param file file để upload
    * @returns Thông tin file đã upload, gồm original name, filename, URL, size, mime type, file extension, upload date.
-   * @throws {EUploadError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
+   * @throws {EError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
    */
   async singleUploadMinio(
     file: Express.Multer.File
   ): Promise<IUploadedFileInfoOutput> {
-    mustExist(file, EUploadError.NO_FILE_PROVIDED, 'No file provided');
+    mustExist(file, EError.NO_FILE_PROVIDED, 'No file provided');
 
     // Upload to MinIO
     const uploadedFile = await uploadFileToMinIO(file);
@@ -41,10 +41,10 @@ export class UploadMinioService {
    * Uploads multiple file lên MinIO storage.
    * @param files files để upload
    * @returns Mảng thông tin file đã upload, gồm original name, filename, URL, size, mime type, file extension, upload date.
-   * @throws {EUploadError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
+   * @throws {EError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
    */
   async multiUploadMinio(files: Express.Multer.File[]): Promise<IUploadResult> {
-    mustExist(files, EUploadError.NO_FILE_PROVIDED, 'No files provided');
+    mustExist(files, EError.NO_FILE_PROVIDED, 'No files provided');
 
     const uploadPromises = files.map(async (file) => {
       const uploadedFile = await uploadFileToMinIO(file);

@@ -14,7 +14,6 @@ export class CreateDriverRequestDto {
   })
   @IsNotEmpty()
   @IsString()
-  @MaxLength(6)
   code: string;
 
   @ApiPropertyOptional({
@@ -23,7 +22,6 @@ export class CreateDriverRequestDto {
   })
   @IsNotEmpty()
   @IsString()
-  @MaxLength(500)
   description?: string;
 
   @ApiPropertyOptional({

@@ -4,8 +4,8 @@ import { CacheService } from '../../../modules/cache/cache.service';
 import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { makeSure } from '../../../common/helpers/server-error.helper';
-import { EError, EErrorDetail } from '../../../common/enums/auth/auth.enum';
+import { makeSure } from '../../../common/helpers/system/server-error.helper';
+import { EError } from '../../../common/enums/error.enum';
 
 @Injectable()
 export class LogOutUseCase {
@@ -63,8 +63,7 @@ export class LogOutUseCase {
 
     makeSure(
       entityDriverRefreshToken.affected > 0,
-      EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR,
-      EErrorDetail.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
+      EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
     );
   }
 }

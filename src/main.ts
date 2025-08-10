@@ -9,6 +9,7 @@ import { MicroserviceOptions } from '@nestjs/microservices';
 import { RmqService } from './modules/rmq/rmq.service';
 import { rmqConsumerSetting } from './rmq.consumer';
 import { ConfigService } from '@nestjs/config';
+import { ServerErrorFilter } from './common/exceptions/server-error-exception.filter';
 
 declare const module: any;
 
@@ -28,7 +29,7 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.useGlobalInterceptors(new TransformInterceptor());
-  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(), new ServerErrorFilter());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   // Init rabbitMQ microservice

@@ -6,8 +6,6 @@ import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { QueryFileDto } from './dto/query-file.dto';
 import { PagedFileResult } from './interfaces/file.interface';
-import { makeSure, mustExist } from '../../common/helpers/server-error.helper';
-import { EErrorFile } from './enums/file.enum';
 
 @Injectable()
 export class FileService {

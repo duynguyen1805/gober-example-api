@@ -1,11 +1,9 @@
 import * as Minio from 'minio';
 import { configService } from '../../../config/config.service';
-import {
-  EAllowedFileType,
-  EUploadError
-} from '../../enums/upload-minio/upload.enum';
+import { EAllowedFileType } from '../../enums/upload-minio/upload.enum';
+import { EError } from '../../enums/error.enum';
 import { Settings } from '../../../constants';
-import { makeSure } from '../server-error.helper';
+import { makeSure } from '../system/server-error.helper';
 import { IUploadedFileToMinIOOutput } from '../../../modules/upload-minio/interfaces/upload.interface';
 
 const configMinIO = configService.getMinIOConfig();
@@ -36,9 +34,9 @@ const ALLOWED_EXTENSIONS: Record<EAllowedFileType, string[]> = {
 /**
  * Validate file trước khi upload.
  * @param file File để validate
- * @throws {EUploadError} Nếu file size lớn hơn cho phép.
- * @throws {EUploadError} Nếu file type không hợp lệ.
- * @throws {EUploadError} Nếu file extension không hợp lệ.
+ * @throws {EError} Nếu file size lớn hơn cho phép.
+ * @throws {EError} Nếu file type không hợp lệ.
+ * @throws {EError} Nếu file extension không hợp lệ.
  */
 export function validateFile(file: Express.Multer.File): void {
   // Check file size
@@ -46,7 +44,7 @@ export function validateFile(file: Express.Multer.File): void {
   if (file.size > maxFileSize) {
     makeSure(
       false,
-      EUploadError.INVALID_FILE_SIZE,
+      EError.INVALID_FILE_SIZE,
       `File size ${file.size} bytes exceeds maximum allowed size ${maxFileSize} bytes`
     );
   }
@@ -56,7 +54,7 @@ export function validateFile(file: Express.Multer.File): void {
   if (!Object.values(EAllowedFileType).includes(fileType)) {
     makeSure(
       false,
-      EUploadError.INVALID_FILE_TYPE,
+      EError.INVALID_FILE_TYPE,
       `File type ${fileType} is not allowed. Allowed types: ${Object.values(
         EAllowedFileType
       ).join(', ')}`
@@ -72,7 +70,7 @@ export function validateFile(file: Express.Multer.File): void {
   ) {
     makeSure(
       false,
-      EUploadError.INVALID_FILE_EXTENSION,
+      EError.INVALID_FILE_EXTENSION,
       `File extension .${fileExtension} is not commonly used for ${fileType} files`
     );
   }
@@ -143,11 +141,7 @@ export async function uploadFileToMinIO(
       bucketName: defaultBucketName
     };
   } catch (error) {
-    makeSure(
-      false,
-      EUploadError.UPLOAD_FAILED,
-      `Upload failed: ${error.message}`
-    );
+    makeSure(false, EError.UPLOAD_FAILED, `Upload failed: ${error.message}`);
   }
 }
 
@@ -177,10 +171,6 @@ export async function deleteFileFromMinIO(
     await minioClient.removeObject(bucketName, filename);
     return true;
   } catch (error) {
-    makeSure(
-      false,
-      EUploadError.DELETE_FAILED,
-      `Delete failed: ${error.message}`
-    );
+    makeSure(false, EError.DELETE_FAILED, `Delete failed: ${error.message}`);
   }
 }

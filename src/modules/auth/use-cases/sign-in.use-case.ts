@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { makeSure } from '../../../common/helpers/server-error.helper';
+import { makeSure } from '../../../common/helpers/system/server-error.helper';
 import { compare } from 'bcrypt';
 import { SignInDriverDto } from '../dto/signin-driver.dto';
 import { DriverEntity } from '../../../database/entities/driver.entity';
 import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
-import { EError, EErrorDetail } from '../../../common/enums/auth/auth.enum';
+import { EError } from '../../../common/enums/error.enum';
 import { isValidEmail } from '../../../common/helpers/auth/index';
 import { isValidPhoneNumber } from '../../../common/helpers/auth';
 import { isNil } from 'lodash';
@@ -66,27 +66,15 @@ export class SignInUseCase {
     // Kiểm tra indentify hợp lệ (có thể email hoặc phone number)
     if (!isValidEmail(driver.identifier)) {
       // Kiểm tra phone number
-      makeSure(
-        isValidPhoneNumber(driver.identifier),
-        EError.INVALID_INDETITY,
-        EErrorDetail.INVALID_INDETITY
-      );
+      makeSure(isValidPhoneNumber(driver.identifier), EError.INVALID_INDETITY);
     }
 
     // Kiểm tra driver đã tồn tại
     const currentDriver = await this.findDriver(driver);
-    makeSure(
-      !isNil(currentDriver),
-      EError.DRIVER_NOT_FOUND,
-      EErrorDetail.DRIVER_NOT_FOUND
-    );
+    makeSure(!isNil(currentDriver), EError.DRIVER_NOT_FOUND);
 
     // Kiểm tra password (có thể các rule khác)
-    makeSure(
-      driver.password.length >= 6,
-      EError.INVALID_PASSWORD,
-      EErrorDetail.INVALID_PASSWORD
-    );
+    makeSure(driver.password.length >= 6, EError.INVALID_PASSWORD);
   }
 
   /**
@@ -108,11 +96,7 @@ export class SignInUseCase {
    */
   async enforceCorrectPassword(driver: DriverEntity, password: string) {
     const isCorrectPassword = await compare(password, driver.password);
-    makeSure(
-      isCorrectPassword,
-      EError.INVALID_PASSWORD,
-      EErrorDetail.INVALID_PASSWORD
-    );
+    makeSure(isCorrectPassword, EError.INVALID_PASSWORD);
   }
 
   /**

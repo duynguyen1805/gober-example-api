@@ -6,8 +6,11 @@ import { Cache } from 'cache-manager';
 import { DriverService } from '../driver/driver.service';
 import { CacheService } from '../cache/cache.service';
 import { ERedisKey } from '../../common/enums/system/redis.enum';
-import { makeSure, mustExist } from '../../common/helpers/server-error.helper';
-import { EError, EErrorDetail } from '../../common/enums/auth/auth.enum';
+import {
+  makeSure,
+  mustExist
+} from '../../common/helpers/system/server-error.helper';
+import { EError } from '../../common/enums/error.enum';
 import { IJWTPayload } from './interface/auth-driver.interface';
 
 @Injectable()
@@ -50,19 +53,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${token}`
     );
     if (isBlacklisted) {
-      makeSure(
-        false,
-        EError.TOKEN_IN_BLACKLIST,
-        EErrorDetail.TOKEN_IN_BLACKLIST,
-        401
-      );
+      makeSure(false, EError.TOKEN_IN_BLACKLIST, null, 401);
     }
 
     // Kiểm tra driver tồn tại
     const driverId = payload.data.driverId;
-    mustExist(driverId, EError.DRIVER_NOT_FOUND, EErrorDetail.DRIVER_NOT_FOUND);
+    mustExist(driverId, EError.DRIVER_NOT_FOUND);
     const driver = await this.driverService.findDriverById(driverId);
-    mustExist(driver, EError.DRIVER_NOT_FOUND, EErrorDetail.DRIVER_NOT_FOUND);
+    mustExist(driver, EError.DRIVER_NOT_FOUND);
 
     return { ...payload.data };
   }

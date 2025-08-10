@@ -1,4 +1,4 @@
-import { ServerError } from '../../common/exceptions/server-error.exception.filter';
+import { ServerError } from '../../exceptions/server-error.exception';
 
 export function mustAuthenticateTwoFa(
   expression: boolean,

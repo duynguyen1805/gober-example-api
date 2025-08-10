@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import {
   makeSure,
   mustExist
-} from '../../../common/helpers/server-error.helper';
-import { EError, EErrorDetail } from '../../../common/enums/auth/auth.enum';
+} from '../../../common/helpers/system/server-error.helper';
+import { EError } from '../../../common/enums/error.enum';
 import { IRefreshTokenResponse } from '../interface/auth-driver.interface';
 import { JwtService } from '@nestjs/jwt';
 import { CacheService } from '../../../modules/cache/cache.service';
@@ -61,17 +61,9 @@ export class RefreshTokenUseCase {
     try {
       const decoded = this.jwtService.verify(oldRefreshToken);
       payload = decoded?.data;
-      mustExist(
-        payload,
-        EError.INVALID_REFRESH_TOKEN,
-        EErrorDetail.INVALID_REFRESH_TOKEN
-      );
+      mustExist(payload, EError.INVALID_REFRESH_TOKEN);
     } catch (error) {
-      makeSure(
-        false,
-        EError.INVALID_REFRESH_TOKEN,
-        EErrorDetail.INVALID_REFRESH_TOKEN
-      );
+      makeSure(false, EError.INVALID_REFRESH_TOKEN);
     }
 
     // Kiểm tra blacklist hoặc revoked token ở đây nếu cần
@@ -79,12 +71,7 @@ export class RefreshTokenUseCase {
       `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${oldRefreshToken}`
     );
     if (isBlacklisted) {
-      makeSure(
-        false,
-        EError.INVALID_REFRESH_TOKEN,
-        EErrorDetail.INVALID_REFRESH_TOKEN,
-        401
-      );
+      makeSure(false, EError.INVALID_REFRESH_TOKEN, null, 401);
     } else {
       // Thu hồi refresh token
       await this.cacheService.set(
@@ -122,8 +109,7 @@ export class RefreshTokenUseCase {
 
     makeSure(
       entityDriverRefreshToken.affected > 0,
-      EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR,
-      EErrorDetail.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
+      EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
     );
   }
 }

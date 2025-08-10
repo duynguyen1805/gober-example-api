@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SignUpDriverDto } from '../dto/signup-driver.dto';
 import { DriverEntity } from '../../../database/entities/driver.entity';
-import { EError, EErrorDetail } from '../../../common/enums/auth/auth.enum';
+import { EError } from '../../../common/enums/error.enum';
 import { generateRandomCodeNumber } from '../../../common/helpers/auth/index';
 import {
   makeSure,
   serverError
-} from '../../../common/helpers/server-error.helper';
+} from '../../../common/helpers/system/server-error.helper';
 import { isNil } from 'lodash';
 import { hash } from 'bcrypt';
 import { EDriverStatus } from '../../../common/enums/driver/driver.enum';
@@ -52,11 +52,7 @@ export class SignUpUseCase {
       return driverRegistered;
     } catch (error) {
       console.log('signUpAccount error ::: ', error);
-      serverError(
-        EError.SIGN_UP_ERROR,
-        EErrorDetail.SIGN_UP_ERROR,
-        error.statusCode
-      );
+      serverError(EError.SIGN_UP_ERROR, error.statusCode);
     }
   }
 
@@ -67,51 +63,28 @@ export class SignUpUseCase {
    */
   async validateDriverDto(driver: SignUpDriverDto): Promise<void> {
     // Kiểm tra email hợp lệ
-    makeSure(
-      isValidEmail(driver.email),
-      EError.INVALID_EMAIL,
-      EErrorDetail.INVALID_EMAIL
-    );
+    makeSure(isValidEmail(driver.email), EError.INVALID_EMAIL);
     // Kiểm tra phone number
     makeSure(
       isValidPhoneNumber(driver.phoneNumber),
-      EError.INVALID_PHONE_NUMBER,
-      EErrorDetail.INVALID_PHONE_NUMBER
+      EError.INVALID_PHONE_NUMBER
     );
     // Kiểm tra driver đã tồn tại
     const currentDriver = await this.findDriver(driver);
-    makeSure(
-      isNil(currentDriver),
-      EError.DRIVER_EXIST,
-      EErrorDetail.DRIVER_EXIST
-    );
+    makeSure(isNil(currentDriver), EError.DRIVER_EXIST);
     // Kiểm tra password (có thể các rule khác)
-    makeSure(
-      driver.password.length >= 6,
-      EError.INVALID_PASSWORD,
-      EErrorDetail.INVALID_PASSWORD
-    );
+    makeSure(driver.password.length >= 6, EError.INVALID_PASSWORD);
     // Kiểm tra avatar (có thể thêm tìm trong bảng Files)
-    if (driver.avatar)
-      makeSure(
-        !isNaN(driver.avatar),
-        EError.INVALID_AVATAR,
-        EErrorDetail.INVALID_AVATAR
-      );
+    if (driver.avatar) makeSure(!isNaN(driver.avatar), EError.INVALID_AVATAR);
     // Kiểm tra avatar (có thể thêm tìm trong bảng Files)
     if (driver.identityCardFrontId)
       makeSure(
         !isNaN(driver.identityCardFrontId),
-        EError.INVALID_IDENTITY_CARD,
-        EErrorDetail.INVALID_IDENTITY_CARD
+        EError.INVALID_IDENTITY_CARD
       );
     // Kiểm tra avatar (có thể thêm tìm trong bảng Files)
     if (driver.identityCardBackId)
-      makeSure(
-        !isNaN(driver.identityCardBackId),
-        EError.INVALID_IDENTITY_CARD,
-        EErrorDetail.INVALID_IDENTITY_CARD
-      );
+      makeSure(!isNaN(driver.identityCardBackId), EError.INVALID_IDENTITY_CARD);
   }
 
   /**

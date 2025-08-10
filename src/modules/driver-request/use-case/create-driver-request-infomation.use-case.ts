@@ -4,10 +4,10 @@ import { Repository } from 'typeorm';
 import {
   makeSure,
   mustExist
-} from '../../../common/helpers/server-error.helper';
+} from '../../../common/helpers/system/server-error.helper';
 import { DriverRequestEntity } from '../../../database/entities/driver-request.entity';
 import { RequestTypeEntity } from '../../../database/entities/request-type.entity';
-import { EError, EErrorDetail } from '../../../common/enums/auth/auth.enum';
+import { EError } from '../../../common/enums/error.enum';
 import { FileService } from '../../file/file.service';
 import { isNil } from 'lodash';
 import { CreateDriverRequestDto } from '../dto/create-driver-request.dto';
@@ -71,54 +71,33 @@ export class CreateDriverInfomationUseCase {
     // Kiểm tra các trường có thông tin trong input
     // Kiểm tra code
     if (input?.code) {
-      makeSure(
-        input.code.length === 6,
-        EError.INVALID_CODE_DRIVER_REQUEST,
-        EErrorDetail.INVALID_CODE_DRIVER_REQUEST
-      );
+      makeSure(input.code.length === 6, EError.INVALID_CODE_DRIVER_REQUEST);
     }
     // Kiểm tra description
     if (input?.description) {
       makeSure(
         input.description.length > 0,
-        EError.INVALID_DESCRIPTION_DRIVER_REQUEST,
-        EErrorDetail.INVALID_DESCRIPTION_DRIVER_REQUEST
+        EError.INVALID_DESCRIPTION_DRIVER_REQUEST
       );
     }
 
     // Kiểm tra fileId
     if (input?.fileIds && input.fileIds.length > 0) {
       for (const fileId of input.fileIds) {
-        makeSure(
-          !isNaN(Number(fileId)),
-          EError.INVALID_FILE_ID,
-          EErrorDetail.INVALID_FILE_ID
-        );
+        makeSure(!isNaN(Number(fileId)), EError.INVALID_FILE_ID);
         const file = await this.fileService.findFileById(+fileId);
-        makeSure(
-          !isNil(file),
-          EError.INVALID_FILE_ID,
-          EErrorDetail.INVALID_FILE_ID
-        );
+        makeSure(!isNil(file), EError.INVALID_FILE_ID);
       }
     }
 
     // Kiểm tra typeId
     if (input?.typeId) {
-      makeSure(
-        !isNaN(Number(input?.typeId)),
-        EError.INVALID_REQUEST_TYPE_ID,
-        EErrorDetail.INVALID_REQUEST_TYPE_ID
-      );
+      makeSure(!isNaN(Number(input?.typeId)), EError.INVALID_REQUEST_TYPE_ID);
       // Kiểm tra thêm typeId có tồn tại trong bảng RequestType
       const requestTypeResult = await this.requestTypeRepository.findOne({
         where: { requestTypeId: +input?.typeId }
       });
-      makeSure(
-        !isNil(requestTypeResult),
-        EError.INVALID_REQUEST_TYPE_ID,
-        EErrorDetail.INVALID_REQUEST_TYPE_ID
-      );
+      makeSure(!isNil(requestTypeResult), EError.INVALID_REQUEST_TYPE_ID);
     }
   }
 }
