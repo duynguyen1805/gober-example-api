@@ -76,21 +76,22 @@ export class DriverRequestService {
   }
 
   /**
-   * Tìm driver request bằng driverId
-   * @param driverId - driverId
+   * Tìm driver request bằng driverRequestId
+   * @param driverRequestId - driverRequestId
    * @returns thông tin mảng driver request hoặc null
    */
   async findDriverRequestById(
-    driverId: number
+    driverId: number,
+    driverRequestId: number
   ): Promise<DriverRequestEntity[] | null> {
     return this.driverRequestRepository.find({
-      where: { driverId },
+      where: { driverId, driverRequestId },
       relations: ['files']
     });
   }
 
   /**
-   * Cập nhật thông tin của driver request
+   * Cập nhật thông tin của driver request, chi áp dụng khi request còn ở trạng thái "pending"
    * @param driverId - driverId
    * @param input - thông tin cần cập nhật
    * @returns thông tin driver request sau khi cập nhật

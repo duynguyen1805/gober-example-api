@@ -4,25 +4,26 @@ import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 export class SignUpDriverDto {
   @ApiProperty({ example: 'driver01@gmail.com', required: false })
   @IsOptional()
-  @IsEmail({}, { message: 'Email is not valid' })
+  @IsEmail({}, { message: 'Địa chỉ email không hợp lệ' })
   email: string;
 
   @ApiProperty({ example: 'driver01', required: true })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Mật khẩu là bắt buộc' })
   password: string;
 
-  @ApiProperty({ example: 'Nguyen Van A', required: true })
-  @IsNotEmpty()
+  @ApiProperty({ example: 'Người dùng 01', required: true })
+  @IsNotEmpty({ message: 'Họ tên là bắt buộc' })
   fullName: string;
 
-  @ApiProperty({ example: '0907123456', required: true })
-  @IsNotEmpty()
+  @ApiProperty({ example: '0900000001', required: true })
+  @IsNotEmpty({ message: 'Số điện thoại là bắt buộc' })
   phoneNumber: string;
 
   @ApiProperty({
     example: 1,
     required: false,
-    description: 'fileId reviced from API upload'
+    description:
+      'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database'
   })
   @IsOptional()
   avatar: number;
@@ -30,7 +31,7 @@ export class SignUpDriverDto {
   @ApiProperty({
     example: 1,
     required: false,
-    description: 'Value of provinceId'
+    description: 'provinceId nhận từ API lấy danh sách khu vực hoạt động'
   })
   @IsOptional()
   activeAreaId: number;
@@ -38,7 +39,7 @@ export class SignUpDriverDto {
   @ApiProperty({
     example: 'Phong Dien, Can Tho',
     required: false,
-    description: ''
+    description: 'Địa chỉ tạm trú'
   })
   @IsOptional()
   temporaryAddress: string;
@@ -46,7 +47,8 @@ export class SignUpDriverDto {
   @ApiProperty({
     example: 1,
     required: false,
-    description: 'fileId reviced from API upload'
+    description:
+      'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database'
   })
   @IsOptional()
   identityCardFrontId: number;
@@ -54,7 +56,8 @@ export class SignUpDriverDto {
   @ApiProperty({
     example: 1,
     required: false,
-    description: 'fileId reviced from API upload'
+    description:
+      'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database'
   })
   @IsOptional()
   identityCardBackId: number;
@@ -62,7 +65,7 @@ export class SignUpDriverDto {
   @ApiProperty({
     example: '123456',
     required: false,
-    description: ''
+    description: 'Mã pin'
   })
   @IsOptional()
   pin: string;

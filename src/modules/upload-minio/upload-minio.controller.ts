@@ -28,8 +28,8 @@ import {
 
 @ApiTags('upload-minio')
 @Controller('upload-minio')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+// @UseGuards(JwtAuthGuard)
+// @ApiBearerAuth()
 export class UploadMinioController {
   constructor(private readonly uploadService: UploadMinioService) {}
 
@@ -37,7 +37,7 @@ export class UploadMinioController {
   @ApiOperation({
     summary: 'Upload single file lên MinIO',
     description:
-      'Upload single file lên MinIO storage, trả về đường dẫn và thông tin file.'
+      'Upload duy nhất 1 file lên MinIO storage, trả về đường dẫn và thông tin file.'
   })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -47,7 +47,7 @@ export class UploadMinioController {
         file: {
           type: 'string',
           format: 'binary',
-          description: 'File to upload (images only)'
+          description: 'Tạm thời chỉ áp dụng hình ảnh (img, jpec, png)'
         }
       },
       required: ['file']
@@ -65,6 +65,7 @@ export class UploadMinioController {
           type: 'string',
           example: 'https://localhost:9000/gober/meo_bay_lac.png'
         },
+        path: { type: 'string', example: '/gober/meo_bay_lac.png' },
         size: { type: 'number', example: 455431 },
         mimeType: { type: 'string', example: 'image/png' },
         fileExtension: { type: 'string', example: 'png' },
@@ -78,7 +79,7 @@ export class UploadMinioController {
       type: 'object',
       properties: {
         messageCode: { type: 'string', example: 'UPLOAD_FAILED' },
-        message: { type: 'string', example: 'File upload failed' },
+        message: { type: 'string', example: 'Tải tệp lên thất bại' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T07:11:39.639Z' },
         success: { type: 'boolean', example: false },
@@ -136,6 +137,7 @@ export class UploadMinioController {
                 type: 'string',
                 example: 'https://localhost:9000/gober/meo_bay_lac.png'
               },
+              path: { type: 'string', example: '/gober/meo_bay_lac.png' },
               size: { type: 'number', example: 455431 },
               mimeType: { type: 'string', example: 'image/png' },
               fileExtension: { type: 'string', example: 'png' },
@@ -154,7 +156,7 @@ export class UploadMinioController {
       type: 'object',
       properties: {
         messageCode: { type: 'string', example: 'UPLOAD_FAILED' },
-        message: { type: 'string', example: 'File upload failed' },
+        message: { type: 'string', example: 'Tải tệp lên thất bại' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T07:11:39.639Z' },
         success: { type: 'boolean', example: false },

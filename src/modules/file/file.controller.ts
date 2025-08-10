@@ -18,7 +18,8 @@ import {
   ApiBadRequestResponse,
   ApiParam,
   ApiQuery,
-  ApiBody
+  ApiBody,
+  ApiResponse
 } from '@nestjs/swagger';
 import { FileService } from './file.service';
 import { CreateFileDto } from './dto/create-file.dto';
@@ -26,6 +27,7 @@ import { UpdateFileDto } from './dto/update-file.dto';
 import { QueryFileDto } from './dto/query-file.dto';
 import { FileEntity } from '../../database/entities/file.entity';
 import { User } from '../../common/decorators/user.decorator';
+import { IFileOutput } from './interfaces/file.interface';
 
 @ApiTags('files')
 @Controller('files')
@@ -38,7 +40,7 @@ export class FileController {
     summary: 'Tạo record vào bảng File',
     description: 'Tạo record vào bảng File'
   })
-  @ApiBody({ type: CreateFileDto, description: 'File metadata để khởi tạo' })
+  @ApiBody({ type: CreateFileDto })
   @ApiCreatedResponse({
     description: 'Tạo record file thành công',
     type: FileEntity,
@@ -52,7 +54,7 @@ export class FileController {
           type: 'object',
           example: {
             filename: 'meo_bay_lac.png',
-            url: 'https://localhost:9000/gober/meo_bay_lac.png',
+            url: '/gober/meo_bay_lac.png',
             mimeType: 'image/png',
             fileExtension: 'png',
             size: 455431,
@@ -70,7 +72,7 @@ export class FileController {
   async create(
     @Body() body: CreateFileDto,
     @User('driverId') driverId: number
-  ): Promise<FileEntity> {
+  ): Promise<IFileOutput> {
     return this.fileService.create(driverId, body);
   }
 
@@ -79,14 +81,16 @@ export class FileController {
     summary: 'Lấy danh sách cách file của driver hiện tại',
     description: 'Lấy danh sách có kèm filters thông tin file'
   })
-  @ApiOkResponse({
-    description: 'Paged files',
+  @ApiResponse({
+    status: 200,
+    description: 'Lấy danh sách file thành công.',
     schema: {
       example: {
         items: [
           {
             fileId: 1,
             filename: 'meo_bay_lac.png',
+            path: '/gober/meo_bay_lac.png',
             url: 'https://localhost:9000/gober/meo_bay_lac.png',
             mimeType: 'image/png',
             fileExtension: 'png',
@@ -109,7 +113,7 @@ export class FileController {
     summary: 'Lấy thông tin 1 file cụ thể',
     description: 'Lấy thông tin file bằng fileId'
   })
-  @ApiCreatedResponse({
+  @ApiResponse({
     description: 'Lấy thông tin file thành công',
     type: FileEntity,
     schema: {
@@ -126,8 +130,9 @@ export class FileController {
             updatedAt: '2025-08-08T01:53:06.753Z',
             deletedAt: null,
             fileId: 1,
-            filename: 'avatar-john.png',
-            url: '/uploads/avatar-john.png',
+            filename: 'meo_bay_lac.png',
+            path: '/gober/meo_bay_lac.png',
+            url: 'https://localhost:9000/gober/meo_bay_lac.png',
             mimeType: 'image/png',
             fileExtension: 'png',
             size: 204800,
@@ -140,7 +145,7 @@ export class FileController {
   @ApiParam({ name: 'id', required: true, example: 1 })
   async getById(
     @Param('id', ParseIntPipe) id: number
-  ): Promise<FileEntity | null> {
+  ): Promise<IFileOutput | null> {
     return this.fileService.findFileById(id);
   }
 

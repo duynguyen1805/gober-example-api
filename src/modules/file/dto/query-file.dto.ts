@@ -1,33 +1,40 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber, IsInt, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsInt,
+  Min,
+  Max
+} from 'class-validator';
 
 export class QueryFileDto {
-  @ApiPropertyOptional({ 
-    description: 'Keyword to search by filename',
-    example: 'document'
+  @ApiPropertyOptional({
+    description: 'Từ khoá để tìm kiếm, theo filename',
+    example: 'meo_bay_lac'
   })
   @IsOptional()
   @IsString()
   keyword?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Filter by MIME type',
-    example: 'application/png'
+  @ApiPropertyOptional({
+    description: 'Lọc theo thuộc tính MIME type',
+    example: 'image/png'
   })
   @IsOptional()
   @IsString()
   mimeType?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Filter by uploaded by driver ID',
+  @ApiPropertyOptional({
+    description: 'Lọc theo id của driver',
     example: 1
   })
   @IsOptional()
   @IsNumber()
   uploadedById?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Page number (1-based)',
+  @ApiPropertyOptional({
+    description: 'Phân trang, thứ tự trang',
     example: 1,
     default: 1
   })
@@ -36,8 +43,8 @@ export class QueryFileDto {
   @Min(1)
   page?: number = 1;
 
-  @ApiPropertyOptional({ 
-    description: 'Page size',
+  @ApiPropertyOptional({
+    description: 'Số lượng item trong 1 trang',
     example: 20,
     default: 20
   })
@@ -46,4 +53,4 @@ export class QueryFileDto {
   @Min(1)
   @Max(100)
   pageSize?: number = 20;
-} 
+}

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -24,7 +32,8 @@ export class DriverRequestController {
   @Post('create')
   @ApiOperation({
     summary: 'Tạo thông tin driver request',
-    description: 'Tạo thông tin driver request, driverId lấy từ token'
+    description:
+      'Tạo thông tin driver request đăng nhập hiện tại, driverId lấy từ token'
   })
   @ApiResponse({
     status: 201,
@@ -40,7 +49,7 @@ export class DriverRequestController {
           type: 'object',
           example: {
             code: '123123',
-            description: 'Nội dung muốn yêu cầu by driver id = 1',
+            description: 'Nội dung muốn yêu cầu',
             typeId: 3,
             status: 'pending',
             driverId: 1,
@@ -51,8 +60,9 @@ export class DriverRequestController {
                 updatedAt: '2025-08-08T01:53:06.753Z',
                 deletedAt: null,
                 fileId: 1,
-                filename: 'avatar-john.png',
-                url: '/uploads/avatar-john.png',
+                filename: 'avatar-can-update.png',
+                path: '/uploads/avatar-can-update.png',
+                url: 'https://backend-server/gober/avatar-can-update.png',
                 mimeType: 'image/png',
                 fileExtension: 'png',
                 size: 204800,
@@ -78,7 +88,7 @@ export class DriverRequestController {
       type: 'object',
       properties: {
         messageCode: { type: 'string', example: 'INVALID_FILE_ID' },
-        message: { type: 'string', example: 'Invalid file id' },
+        message: { type: 'string', example: 'ID tệp không hợp lệ' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T11:14:52.713Z' },
         success: { type: 'boolean', example: false },
@@ -99,14 +109,14 @@ export class DriverRequestController {
     );
   }
 
-  @Get('find-by-id')
+  @Get('find-by-id/:driverRequestId')
   @ApiOperation({
-    summary: 'Lấy thông tin driver',
-    description: 'Lấy thông tin driver bằng driverId lấy từ token'
+    summary: 'Lấy thông tin driver request theo driverRequestId',
+    description: 'Lấy thông tin driver request theo driverRequestId'
   })
   @ApiResponse({
     status: 200,
-    description: 'Lấy thông tin driver thành công',
+    description: 'Lấy thông tin driver request thành công',
     schema: {
       type: 'object',
       properties: {
@@ -123,7 +133,7 @@ export class DriverRequestController {
             deletedAt: null,
             driverRequestId: 1,
             code: 'REQ-0001',
-            description: 'Request leave for 1 day',
+            description: 'Cập nhật thông tin tài xế',
             typeId: 1,
             status: 'pending',
             approvedById: null,
@@ -137,8 +147,9 @@ export class DriverRequestController {
                 updatedAt: '2025-08-08T01:53:06.753Z',
                 deletedAt: null,
                 fileId: 2,
-                filename: 'id-front-john.png',
-                url: '/uploads/id-front-john.png',
+                filename: 'avatar-can-update.png',
+                path: '/uploads/avatar-can-update.png',
+                url: 'https://backend-server/gober/avatar-can-update.png',
                 mimeType: 'image/png',
                 fileExtension: 'png',
                 size: 102400,
@@ -155,8 +166,8 @@ export class DriverRequestController {
     schema: {
       type: 'object',
       properties: {
-        messageCode: { type: 'string', example: 'DRIVER_REQUEST_NOT_FOUND' },
-        message: { type: 'string', example: 'DRIVER_REQUEST_NOT_FOUND' },
+        messageCode: { type: 'string', example: 'INVALID_DRIVER_REQUEST_ID' },
+        message: { type: 'string', example: 'ID yêu cầu tài xế không hợp lệ' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T08:44:08.429Z' },
         success: { type: 'boolean', example: false },
@@ -167,19 +178,23 @@ export class DriverRequestController {
     }
   })
   async findDriverRequestById(
-    @User('driverId') driverId: number
+    @User('driverId') driverId: number,
+    @Param('driverRequestId') driverRequestId: number
   ): Promise<DriverRequestEntity[] | null> {
-    return this.driverRequestService.findDriverRequestById(driverId);
+    return this.driverRequestService.findDriverRequestById(
+      driverId,
+      driverRequestId
+    );
   }
 
   @Patch('update')
   @ApiOperation({
-    summary: 'Cập nhật thông tin driver',
-    description: 'Cập nhật thông tin driver bằng driverId lấy từ token'
+    summary: 'Cập nhật thông tin driver request bằng driverRequestId',
+    description: 'Cập nhật thông tin driver request bằng driverRequestId'
   })
   @ApiResponse({
     status: 200,
-    description: 'Cập nhật thông tin driver thành công',
+    description: 'Cập nhật thông tin driver request thành công',
     schema: {
       type: 'object',
       properties: {
@@ -191,29 +206,34 @@ export class DriverRequestController {
           type: 'object',
           example: {
             isActive: true,
-            createdAt: '2025-08-08T22:28:44.808Z',
-            updatedAt: '2025-08-08T22:28:44.808Z',
+            createdAt: '2025-08-08T01:53:06.753Z',
+            updatedAt: '2025-08-08T01:53:06.753Z',
             deletedAt: null,
-            driverId: 3,
-            fullName: 'Nguyen Van A updated',
-            phoneNumber: '0907123456',
-            email: 'driver01@gmail.com',
-            deviceToken: null,
-            lastLogin: null,
-            emailVerifiedAt: null,
-            avatar: 1,
-            activeAreaId: 1,
-            temporaryAddress: 'hẻm 12/34, Quận 3, HCMC',
-            identityCardFrontId: 1,
-            identityCardBackId: 1,
-            status: 'inactive',
-            submittedAt: null,
-            approvalStatus: 'draft',
-            approvedAt: null,
+            driverRequestId: 1,
+            code: 'REQ-0001',
+            description: 'Cập nhật thông tin tài xế',
+            typeId: 1,
+            status: 'pending',
             approvedById: null,
-            approvedNote: null,
-            createdById: null,
-            balance: 0
+            approvedAt: null,
+            reason: null,
+            driverId: 1,
+            files: [
+              {
+                isActive: true,
+                createdAt: '2025-08-08T01:53:06.753Z',
+                updatedAt: '2025-08-08T01:53:06.753Z',
+                deletedAt: null,
+                fileId: 2,
+                filename: 'avatar-can-update-02.png',
+                path: '/uploads/avatar-can-update-02.png',
+                url: 'https://backend-server/gober/avatar-can-update-02.png',
+                mimeType: 'image/png',
+                fileExtension: 'png',
+                size: 102400,
+                uploadedById: 1
+              }
+            ]
           }
         }
       }
@@ -224,8 +244,8 @@ export class DriverRequestController {
     schema: {
       type: 'object',
       properties: {
-        messageCode: { type: 'string', example: 'INVALID_AVATAR' },
-        message: { type: 'string', example: 'INVALID_AVATAR' },
+        messageCode: { type: 'string', example: 'INVALID_FILE_ID' },
+        message: { type: 'string', example: 'ID tệp không hợp lệ' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T08:44:08.429Z' },
         success: { type: 'boolean', example: false },

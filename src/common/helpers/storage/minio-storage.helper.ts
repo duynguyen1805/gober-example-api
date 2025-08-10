@@ -123,6 +123,7 @@ export async function uploadFileToMinIO(
 
     // Tạo URL truy cập file
     const url = `https://${configMinIO.STORAGE_LOCAL_ENDPOINT}:${configMinIO.MINIO_UPLOAD_PORT}/${defaultBucketName}/${file.originalname}`;
+    const path = `/${defaultBucketName}/${file.originalname}`;
 
     // Xác định file type và extension
     const fileType = FILE_TYPE_MAPPING[file.mimetype];
@@ -132,7 +133,8 @@ export async function uploadFileToMinIO(
     return {
       originalName: file.originalname,
       filename: file.originalname,
-      url,
+      url: url,
+      path: path,
       size: file.size,
       mimeType: file.mimetype,
       fileExtension,

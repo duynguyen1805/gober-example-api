@@ -23,7 +23,8 @@ export class DriverController {
   @Get('find-by-id')
   @ApiOperation({
     summary: 'Lấy thông tin driver',
-    description: 'Lấy thông tin driver bằng driverId lấy từ token'
+    description:
+      'Lấy thông tin của driver đăng nhập hiện tại bằng driverId lấy từ token'
   })
   @ApiResponse({
     status: 200,
@@ -43,15 +44,15 @@ export class DriverController {
             updatedAt: '2025-08-08T22:28:44.808Z',
             deletedAt: null,
             driverId: 3,
-            fullName: 'Nguyen Van A updated',
-            phoneNumber: '0907123456',
+            fullName: 'Người dùng 01',
+            phoneNumber: '0900000001',
             email: 'driver01@gmail.com',
             deviceToken: null,
             lastLogin: null,
             emailVerifiedAt: null,
             avatar: 1,
             activeAreaId: 1,
-            temporaryAddress: 'hẻm 12/34, Quận 3, HCMC',
+            temporaryAddress: 'Phong Dien, Can Tho',
             identityCardFrontId: 1,
             identityCardBackId: 1,
             status: 'inactive',
@@ -73,7 +74,7 @@ export class DriverController {
       type: 'object',
       properties: {
         messageCode: { type: 'string', example: 'DRIVER_NOT_FOUND' },
-        message: { type: 'string', example: 'DRIVER_NOT_FOUND' },
+        message: { type: 'string', example: 'Không tìm thấy tài xế' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T08:44:08.429Z' },
         success: { type: 'boolean', example: false },
@@ -112,15 +113,15 @@ export class DriverController {
             updatedAt: '2025-08-08T22:28:44.808Z',
             deletedAt: null,
             driverId: 3,
-            fullName: 'Nguyen Van A updated',
-            phoneNumber: '0907123456',
+            fullName: 'Người dùng 01 updated',
+            phoneNumber: '0900000001',
             email: 'driver01@gmail.com',
             deviceToken: null,
             lastLogin: null,
             emailVerifiedAt: null,
             avatar: 1,
             activeAreaId: 1,
-            temporaryAddress: 'hẻm 12/34, Quận 3, HCMC',
+            temporaryAddress: 'Phong Dien, Can Tho',
             identityCardFrontId: 1,
             identityCardBackId: 1,
             status: 'inactive',
@@ -142,7 +143,7 @@ export class DriverController {
       type: 'object',
       properties: {
         messageCode: { type: 'string', example: 'INVALID_AVATAR' },
-        message: { type: 'string', example: 'INVALID_AVATAR' },
+        message: { type: 'string', example: 'Ảnh đại diện không hợp lệ' },
         statusCode: { type: 'number', example: 400 },
         timestamp: { type: 'string', format: '2025-08-09T08:44:08.429Z' },
         success: { type: 'boolean', example: false },

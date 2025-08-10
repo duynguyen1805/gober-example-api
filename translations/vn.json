@@ -21,6 +21,7 @@
   "INVALID_REQUEST_TYPE_ID": "ID loại yêu cầu không hợp lệ",
   "INVALID_FILE_ID": "ID tệp không hợp lệ",
   "INVALID_DRIVER_REQUEST_ID": "ID yêu cầu tài xế không hợp lệ",
+  "REQUEST_IS_PROCESSING": "Yêu cầu đã đang được xử lý.",
 
   "NO_FILE_PROVIDED": "Không có tệp nào được tải lên",
   "FILE_TOO_LARGE": "Tệp quá lớn",

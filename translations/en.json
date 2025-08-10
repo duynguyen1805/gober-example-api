@@ -21,6 +21,7 @@
   "INVALID_REQUEST_TYPE_ID": "Invalid request type ID",
   "INVALID_FILE_ID": "Invalid file ID",
   "INVALID_DRIVER_REQUEST_ID": "Invalid driver request ID",
+  "REQUEST_IS_PROCESSING": "Request is processing",
 
   "NO_FILE_PROVIDED": "No file provided",
   "FILE_TOO_LARGE": "File too large",

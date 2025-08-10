@@ -15,3 +15,7 @@ export interface PagedFileResult {
   page: number;
   pageSize: number;
 }
+
+export interface IFileOutput extends FileEntity {
+  url: string;
+}

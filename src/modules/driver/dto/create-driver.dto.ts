@@ -1,37 +1,26 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-  MaxLength
-} from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateDriverDto {
   @ApiPropertyOptional({
     description: 'Họ tên',
-    example: 'Nguyen Van A'
+    example: 'Người dùng 02'
   })
   @IsOptional()
-  @IsString()
-  @MaxLength(255)
   fullName?: string;
 
   @ApiProperty({
     description: 'Số điện thoại',
-    example: '0907123456'
+    example: '0900000002'
   })
   @IsNotEmpty()
-  @IsString()
   phoneNumber: string;
 
   @ApiPropertyOptional({
     description: 'Email của driver - Không bắt buộc',
-    example: 'driver01@example.com'
+    example: 'driver02@example.com'
   })
   @IsOptional()
-  @IsEmail()
   email?: string;
 
   @ApiPropertyOptional({
@@ -39,8 +28,6 @@ export class CreateDriverDto {
     example: '123123'
   })
   @IsOptional()
-  @IsString()
-  @Length(6, 100)
   password?: string;
 
   @ApiPropertyOptional({
@@ -48,7 +35,6 @@ export class CreateDriverDto {
     example: 'fcm_device_token_123'
   })
   @IsOptional()
-  @IsString()
   deviceToken?: string;
 
   @ApiPropertyOptional({
@@ -70,7 +56,5 @@ export class CreateDriverDto {
     example: 'hẻm 12/34, Quận 3, HCMC'
   })
   @IsOptional()
-  @IsString()
-  @MaxLength(500)
   temporaryAddress?: string;
 }

@@ -4,6 +4,7 @@ export interface IUploadedFileToMinIOOutput {
   originalName: string;
   filename: string;
   url: string;
+  path: string;
   size: number;
   mimeType: string;
   fileExtension: string;
@@ -16,6 +17,7 @@ export interface IUploadedFileInfoOutput {
   originalName: string;
   filename: string;
   url: string;
+  path: string;
   size: number;
   mimeType: string;
   fileExtension: string;

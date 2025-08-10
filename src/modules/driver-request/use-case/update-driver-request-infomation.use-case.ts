@@ -11,6 +11,7 @@ import { EError } from '../../../common/enums/error.enum';
 import { UpdateDriverRequestDto } from '../dto/update-driver-request.dto';
 import { FileService } from '../../file/file.service';
 import { isNil } from 'lodash';
+import { ERequestStatus } from '../../../common/enums';
 
 @Injectable()
 export class UpdateDriverRequestInfomationUseCase {
@@ -24,7 +25,7 @@ export class UpdateDriverRequestInfomationUseCase {
   ) {}
 
   /**
-   * Thực hiện cập nhật thông tin driver
+   * Thực hiện cập nhật thông tin driver, chỉ áp dụng khi request còn ở trạng thái "pending"
    *
    * @param driverId - id chỉ định driver cần cập nhật thông tin, lấy từ token
    * @param input - Thông tin cần cập nhật
@@ -74,11 +75,15 @@ export class UpdateDriverRequestInfomationUseCase {
       );
     }
 
-    // Kiểm tra driver đã tồn tại
+    // Kiểm tra driver đã tồn tại, và còn ở trạng thái Pending
     this.driverRequestExists = await this.driverRequestRepository.findOne({
       where: { driverId: driverId, driverRequestId: input.driverRequestId }
     });
     mustExist(this.driverRequestExists, EError.DRIVER_NOT_FOUND);
+    makeSure(
+      this.driverRequestExists.status === ERequestStatus.Pending,
+      EError.REQUEST_IS_PROCESSING
+    );
 
     // Kiểm tra các trường có thông tin trong input
     // Kiểm tra code

@@ -12,8 +12,8 @@ import {
 
 export class CreateFileDto {
   @ApiProperty({
-    description: 'Original filename of the uploaded file',
-    example: 'document.png'
+    description: 'fileName nhận từ API upload hình ảnh lên MinIO',
+    example: 'image.png'
   })
   @IsNotEmpty()
   @IsString()
@@ -21,23 +21,23 @@ export class CreateFileDto {
   filename: string;
 
   @ApiProperty({
-    description: 'URL where the file is stored',
-    example: 'https://domain/files/document.png'
+    description: 'Đường dẫn truy cập file đã tải lên',
+    example: '/gober/meo_bay_lac.png'
   })
   @IsNotEmpty()
   // @IsUrl()
-  url: string;
+  path: string;
 
   @ApiPropertyOptional({
-    description: 'MIME type of the file',
-    example: 'application/png'
+    description: 'MIME type của file',
+    example: 'image/png'
   })
   @IsOptional()
   @IsString()
   mimeType?: string;
 
   @ApiProperty({
-    description: 'File extension without dot',
+    description: 'File extension',
     example: 'png'
   })
   @IsNotEmpty()
@@ -46,7 +46,7 @@ export class CreateFileDto {
   fileExtension: string;
 
   @ApiPropertyOptional({
-    description: 'File size in bytes',
+    description: 'Kích thước file',
     example: 1024000
   })
   @IsOptional()

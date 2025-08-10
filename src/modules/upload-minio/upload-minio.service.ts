@@ -21,15 +21,18 @@ export class UploadMinioService {
   async singleUploadMinio(
     file: Express.Multer.File
   ): Promise<IUploadedFileInfoOutput> {
-    mustExist(file, EError.NO_FILE_PROVIDED, 'No file provided');
+    mustExist(file, EError.NO_FILE_PROVIDED);
 
     // Upload to MinIO
     const uploadedFile = await uploadFileToMinIO(file);
+
+    // Có thể triển khai thêm tạo luôn record File luôn (điều kiện: thêm UseGuard cho controller)
 
     return {
       originalName: file.originalname,
       filename: uploadedFile.filename,
       url: uploadedFile.url,
+      path: uploadedFile.path,
       size: file.size,
       mimeType: file.mimetype,
       fileExtension: file.originalname.split('.').pop()?.toLowerCase() || '',
@@ -44,15 +47,18 @@ export class UploadMinioService {
    * @throws {EError} Nếu không tìm thấy file, thông tin file không hợp lệ hoặc lỗi trong quá trình upload.
    */
   async multiUploadMinio(files: Express.Multer.File[]): Promise<IUploadResult> {
-    mustExist(files, EError.NO_FILE_PROVIDED, 'No files provided');
+    mustExist(files, EError.NO_FILE_PROVIDED);
 
     const uploadPromises = files.map(async (file) => {
       const uploadedFile = await uploadFileToMinIO(file);
+
+      // Có thể triển khai thêm tạo luôn record File luôn (điều kiện: thêm UseGuard cho controller)
 
       return {
         originalName: file.originalname,
         filename: uploadedFile.filename,
         url: uploadedFile.url,
+        path: uploadedFile.path,
         size: file.size,
         mimeType: file.mimetype,
         fileExtension: file.originalname.split('.').pop()?.toLowerCase() || '',

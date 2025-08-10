@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { DriverEntity } from './driver.entity';
 
@@ -11,7 +17,7 @@ export class FileEntity extends BaseEntity {
   filename: string;
 
   @Column()
-  url: string;
+  path: string;
 
   @Column({ name: 'mime_type', nullable: true })
   mimeType: string;
@@ -28,4 +34,4 @@ export class FileEntity extends BaseEntity {
   @ManyToOne(() => DriverEntity, (driver) => driver.driverId)
   @JoinColumn({ name: 'uploaded_by_id' })
   uploadedBy: DriverEntity;
-} 
+}

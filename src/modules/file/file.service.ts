@@ -5,7 +5,7 @@ import { FileEntity } from '../../database/entities/file.entity';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { QueryFileDto } from './dto/query-file.dto';
-import { PagedFileResult } from './interfaces/file.interface';
+import { IFileOutput, PagedFileResult } from './interfaces/file.interface';
 
 @Injectable()
 export class FileService {
@@ -14,16 +14,22 @@ export class FileService {
     private readonly fileRepository: Repository<FileEntity>
   ) {}
 
-  async create(driverId: number, input: CreateFileDto): Promise<FileEntity> {
+  async create(driverId: number, input: CreateFileDto): Promise<IFileOutput> {
     const entityFile = this.fileRepository.create({
       filename: input.filename,
-      url: input.url,
+      path: input.path, // tạm sửa lại path
       mimeType: input.mimeType,
       fileExtension: input.fileExtension,
       size: input.size,
       uploadedById: driverId
     });
-    return this.fileRepository.save(entityFile);
+    const entityFileResponse = await this.fileRepository.save(entityFile);
+    const copyEntityFile = entityFileResponse;
+    const url = `${process.env.STORAGE_ENDPOINT}${input.path}`;
+    return {
+      ...copyEntityFile,
+      url
+    };
   }
 
   async getListFiles(
@@ -54,10 +60,13 @@ export class FileService {
     return { items, total, page, pageSize };
   }
 
-  async findFileById(fileId: number): Promise<FileEntity | null> {
-    return this.fileRepository.findOne({
+  async findFileById(fileId: number): Promise<IFileOutput | null> {
+    const entityFile = await this.fileRepository.findOne({
       where: { fileId }
     });
+    // Gắn domain từ env với path file
+    const url = `${process.env.STORAGE_ENDPOINT}${entityFile.path}`;
+    return { ...entityFile, url };
   }
 
   // async updateFile(fileId: number, input: UpdateFileDto): Promise<FileEntity> {
