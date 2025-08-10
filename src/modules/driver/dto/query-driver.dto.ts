@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
-import { EDriverStatus } from '../../../common/enums/driver/driver.enum';
+import { EDriverStatus } from '../enums/driver.enum';
 
 export class QueryDriverDto {
   @ApiPropertyOptional({

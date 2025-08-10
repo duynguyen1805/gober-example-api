@@ -1,10 +1,13 @@
 import multer from 'multer';
 import { RequestHandler } from 'express';
-import { Settings } from '../../../constants';
+import { Settings } from '../../../common/constants/constants';
 
 const multerOptions = {
   storage: multer.memoryStorage(),
   limits: { fileSize: Settings.UPLOADING_FILE_SIZE }
 };
 
-export const multiUploadMiddleware = multer(multerOptions).array('files', 10) as RequestHandler;
+export const multiUploadMiddleware = multer(multerOptions).array(
+  'files',
+  10
+) as RequestHandler;

@@ -1,15 +1,12 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
-import { jwtConstants } from '../../constants';
+import { jwtConstants } from '../../common/constants/constants';
 import { Cache } from 'cache-manager';
 import { DriverService } from '../driver/driver.service';
 import { CacheService } from '../cache/cache.service';
-import { ERedisKey } from '../../common/enums/system/redis.enum';
-import {
-  makeSure,
-  mustExist
-} from '../../common/helpers/system/server-error.helper';
+import { ERedisKey } from '../../common/enums/redis.enum';
+import { makeSure, mustExist } from '../../common/helpers/server-error.helper';
 import { EError } from '../../common/enums/error.enum';
 import { IJWTPayload } from './interface/auth-driver.interface';
 

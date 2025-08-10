@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Injectable } from '@nestjs/common';
-import { uploadFileToMinIO } from '../../common/helpers/storage/minio-storage.helper';
+import { uploadFileToMinIO } from '../../common/helpers/minio-storage.helper';
 import { EError } from '../../common/enums/error.enum';
-import { mustExist } from '../../common/helpers/system/server-error.helper';
+import { mustExist } from '../../common/helpers/server-error.helper';
 import {
   IUploadedFileInfoOutput,
   IUploadResult

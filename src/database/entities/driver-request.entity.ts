@@ -1,7 +1,15 @@
-import { Entity, Column, ManyToOne, JoinColumn, ManyToMany, JoinTable, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 import { DriverEntity } from './driver.entity';
 import { BaseEntity } from './base.entity';
-import { ERequestStatus } from '../../common/enums/driver/request.enum';
+import { ERequestStatus } from '../../common/enums/request.enum';
 import { AdminEntity } from './admin.entity';
 import { FileEntity } from './file.entity';
 import { RequestTypeEntity } from './request-type.entity';
@@ -20,7 +28,11 @@ export class DriverRequestEntity extends BaseEntity {
   @Column({ name: 'type_id' })
   typeId: number;
 
-  @Column({ type: 'enum', enum: ERequestStatus, default: ERequestStatus.Pending })
+  @Column({
+    type: 'enum',
+    enum: ERequestStatus,
+    default: ERequestStatus.Pending
+  })
   status: ERequestStatus;
 
   @Column({ name: 'approved_by_id', nullable: true })
@@ -35,7 +47,9 @@ export class DriverRequestEntity extends BaseEntity {
   @Column({ name: 'driver_id' })
   driverId: number;
 
-  @ManyToOne(() => DriverEntity, (driver) => driver.driverId, { onDelete: 'CASCADE' })
+  @ManyToOne(() => DriverEntity, (driver) => driver.driverId, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'driver_id' })
   driver: DriverEntity;
 
@@ -47,11 +61,14 @@ export class DriverRequestEntity extends BaseEntity {
   @JoinTable({
     name: 'driver_request_files',
     joinColumn: { name: 'driver_request_id' },
-    inverseJoinColumn: { name: 'file_id' },
+    inverseJoinColumn: { name: 'file_id' }
   })
   files: FileEntity[];
 
-  @ManyToOne(() => RequestTypeEntity, (requestType) => requestType.requestTypeId)
+  @ManyToOne(
+    () => RequestTypeEntity,
+    (requestType) => requestType.requestTypeId
+  )
   @JoinColumn({ name: 'type_id' })
   type: RequestTypeEntity;
 }

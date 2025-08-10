@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ERedisKey } from '../../../common/enums/system/redis.enum';
+import { ERedisKey } from '../../../common/enums/redis.enum';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { makeSure } from '../../../common/helpers/system/server-error.helper';
+import { makeSure } from '../../../common/helpers/server-error.helper';
 import { EError } from '../../../common/enums/error.enum';
 
 @Injectable()

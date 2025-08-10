@@ -1,10 +1,10 @@
 import * as Minio from 'minio';
-import { configService } from '../../../config/config.service';
-import { EAllowedFileType } from '../../enums/upload-minio/upload.enum';
-import { EError } from '../../enums/error.enum';
-import { Settings } from '../../../constants';
-import { makeSure } from '../system/server-error.helper';
-import { IUploadedFileToMinIOOutput } from '../../../modules/upload-minio/interfaces/upload.interface';
+import { configService } from '../../config/config.service';
+import { EAllowedFileType } from '../enums/file.enum';
+import { EError } from '../enums/error.enum';
+import { Settings } from '../../common/constants/constants';
+import { makeSure } from './server-error.helper';
+import { IUploadedFileToMinIOOutput } from '../../modules/upload-minio/interfaces/upload.interface';
 
 const configMinIO = configService.getMinIOConfig();
 

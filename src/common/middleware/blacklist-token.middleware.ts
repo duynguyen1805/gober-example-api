@@ -1,11 +1,9 @@
-import {
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException
-} from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { CacheService } from '../../../modules/cache/cache.service';
-import { ERedisKey } from '../../enums/system/redis.enum';
+import { CacheService } from '../../modules/cache/cache.service';
+import { ERedisKey } from '../enums/redis.enum';
+import { makeSure } from '../helpers/server-error.helper';
+import { EError } from '../enums';
 
 @Injectable()
 export class BlacklistMiddleware implements NestMiddleware {
@@ -19,7 +17,7 @@ export class BlacklistMiddleware implements NestMiddleware {
         `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${token}`
       );
       if (isBlacklisted) {
-        throw new UnauthorizedException('Token is blacklisted');
+        makeSure(false, EError.TOKEN_IN_BLACKLIST, null, 401);
       }
     }
     next();

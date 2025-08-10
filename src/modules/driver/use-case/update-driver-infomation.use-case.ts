@@ -4,11 +4,11 @@ import { Repository } from 'typeorm';
 import {
   makeSure,
   mustExist
-} from '../../../common/helpers/system/server-error.helper';
+} from '../../../common/helpers/server-error.helper';
 import { DriverEntity } from '../../../database/entities/driver.entity';
 import { EError } from '../../../common/enums/error.enum';
-import { isValidEmail } from '../../../common/helpers/auth/index';
-import { isValidPhoneNumber } from '../../../common/helpers/auth';
+import { isValidEmail } from '../../../common/helpers/auth.helper';
+import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
 import { UpdateDriverDto } from '../dto/update-driver.dto';
 import { FileService } from '../../../modules/file/file.service';
 import { isNil } from 'lodash';

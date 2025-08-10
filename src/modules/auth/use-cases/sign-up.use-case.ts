@@ -4,16 +4,16 @@ import { Repository } from 'typeorm';
 import { SignUpDriverDto } from '../dto/signup-driver.dto';
 import { DriverEntity } from '../../../database/entities/driver.entity';
 import { EError } from '../../../common/enums/error.enum';
-import { generateRandomCodeNumber } from '../../../common/helpers/auth/index';
+import { generateRandomCodeNumber } from '../../../common/helpers/auth.helper';
 import {
   makeSure,
   serverError
-} from '../../../common/helpers/system/server-error.helper';
+} from '../../../common/helpers/server-error.helper';
 import { isNil } from 'lodash';
 import { hash } from 'bcrypt';
-import { EDriverStatus } from '../../../common/enums/driver/driver.enum';
-import { isValidEmail } from '../../../common/helpers/auth/index';
-import { isValidPhoneNumber } from '../../../common/helpers/auth';
+import { EDriverStatus } from '../../driver/enums/driver.enum';
+import { isValidEmail } from '../../../common/helpers/auth.helper';
+import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
 
 @Injectable()
 export class SignUpUseCase {

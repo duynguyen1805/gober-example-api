@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import {
   makeSure,
   mustExist
-} from '../../../common/helpers/system/server-error.helper';
+} from '../../../common/helpers/server-error.helper';
 import { EError } from '../../../common/enums/error.enum';
 import { IRefreshTokenResponse } from '../interface/auth-driver.interface';
 import { JwtService } from '@nestjs/jwt';
 import { CacheService } from '../../../modules/cache/cache.service';
-import { ERedisKey } from '../../../common/enums/system/redis.enum';
-import { jwtConstants } from '../../../constants';
+import { ERedisKey } from '../../../common/enums/redis.enum';
+import { jwtConstants } from '../../../common/constants/constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';

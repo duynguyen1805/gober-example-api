@@ -1,4 +1,4 @@
-import { Constants } from '../../../constants';
+import { Constants } from '../../common/constants/constants';
 
 export class TimeHelper {
   public static before(
@@ -77,4 +77,4 @@ export function isExpired(created: string | Date, expiredTime: number) {
   const time =
     typeof created === 'string' ? getTimeByString(created) : created.getTime();
   return time + expiredTime < TimeHelper.now();
-};
+}

@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { makeSure } from '../../../common/helpers/system/server-error.helper';
+import { makeSure } from '../../../common/helpers/server-error.helper';
 import { compare } from 'bcrypt';
 import { SignInDriverDto } from '../dto/signin-driver.dto';
 import { DriverEntity } from '../../../database/entities/driver.entity';
 import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
 import { EError } from '../../../common/enums/error.enum';
-import { isValidEmail } from '../../../common/helpers/auth/index';
-import { isValidPhoneNumber } from '../../../common/helpers/auth';
+import { isValidEmail } from '../../../common/helpers/auth.helper';
+import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
 import { isNil } from 'lodash';
 import { ISignInDriverResponse } from '../interface/auth-driver.interface';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../../../constants';
+import { jwtConstants } from '../../../common/constants/constants';
 
 @Injectable()
 export class SignInUseCase {

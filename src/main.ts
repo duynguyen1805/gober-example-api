@@ -5,17 +5,12 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
-import { MicroserviceOptions } from '@nestjs/microservices';
-import { RmqService } from './modules/rmq/rmq.service';
-import { rmqConsumerSetting } from './rmq.consumer';
-import { ConfigService } from '@nestjs/config';
 import { ServerErrorFilter } from './common/exceptions/server-error-exception.filter';
 
 declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const appConfigs = app.get(ConfigService);
 
   app.enableCors({
     origin: [
@@ -31,20 +26,6 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter(), new ServerErrorFilter());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
-  // Init rabbitMQ microservice
-  const queueConfigs = rmqConsumerSetting(appConfigs);
-
-  if (queueConfigs?.length) {
-    const rmqService = app.get<RmqService>(RmqService);
-    await Promise.all(
-      queueConfigs.map((config) => {
-        app.connectMicroservice<MicroserviceOptions>(
-          rmqService.getOptions(config.queueName, false, config.prefetchCount)
-        );
-      })
-    );
-  }
 
   const config = new DocumentBuilder()
     .setTitle('GOBER API')

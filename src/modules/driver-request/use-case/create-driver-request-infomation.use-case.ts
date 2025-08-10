@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import {
   makeSure,
   mustExist
-} from '../../../common/helpers/system/server-error.helper';
+} from '../../../common/helpers/server-error.helper';
 import { DriverRequestEntity } from '../../../database/entities/driver-request.entity';
 import { RequestTypeEntity } from '../../../database/entities/request-type.entity';
 import { EError } from '../../../common/enums/error.enum';

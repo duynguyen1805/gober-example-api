@@ -14,7 +14,7 @@ import { DriverBankEntity } from './driver-bank.entity';
 import {
   EDriverApprovalStatus,
   EDriverStatus
-} from '../../common/enums/driver/driver.enum';
+} from '../../modules/driver/enums/driver.enum';
 import { ServiceTypeEntity } from './service-type.entity';
 import { DriverEmergencyContactEntity } from './driver-emergency-contact.entity';
 import { DriverVehicleEntity } from './driver-vehicle.entity';
@@ -24,7 +24,7 @@ import { FileEntity } from './file.entity';
 import { DriverSignatureEntity } from './driver-signature.entity';
 import { DriverUniformEntity } from './driver-uniform.entity';
 import { DriverAvailabilityEntity } from './driver-availability.entity';
-import { encrypt, decrypt } from '../../common/helpers/utils/bcrypt';
+import { encrypt, decrypt } from '../../common/helpers/bcrypt.helper';
 import { AutoMap } from '@automapper/classes';
 
 @Entity('drivers')

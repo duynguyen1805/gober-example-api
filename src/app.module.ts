@@ -19,12 +19,9 @@ import { join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import { CustomeCacheModule } from './modules/cache/cache.module';
 import { ConfigModule } from '@nestjs/config';
-import { ScheduleModule } from '@nestjs/schedule';
 import settings from '../ormconfig.json';
-import { RmqModule } from './modules/rmq/rmq.module';
-import { EServiceType } from './common/enums/system/service-type.enum';
 import { compact } from 'lodash';
-import { BlacklistMiddleware } from './common/middleware/system/blacklist-token.middleware';
+import { BlacklistMiddleware } from './common/middleware/blacklist-token.middleware';
 import { FileModule } from './modules/file/file.module';
 import { UploadMinIOModule } from './modules/upload-minio/upload-minio.module';
 import { DriverModule } from './modules/driver/driver.module';
@@ -35,9 +32,6 @@ const configRedis = configService.getRedisConfig();
 @Module({
   imports: compact([
     ConfigModule.forRoot({ isGlobal: true }),
-    configService.getEnv('SERVICE_TYPE') === EServiceType.MAIN_SERVICE
-      ? ScheduleModule.forRoot()
-      : null,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'files')
     }),
@@ -55,7 +49,6 @@ const configRedis = configService.getRedisConfig();
     }),
     AuthModule,
     CustomeCacheModule,
-    RmqModule,
     UploadMinIOModule,
     FileModule,
     DriverModule,
@@ -77,6 +70,6 @@ export class AppModule {
       .apply(BlacklistMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL }); // Áp dụng cho tất cả route
     // Hoặc chỉ áp dụng cho một số route:
-    // .forRoutes('user', 'transactions')
+    // .forRoutes('driver', 'driver-request');
   }
 }
