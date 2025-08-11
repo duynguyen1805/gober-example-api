@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DriverRequestService } from './driver-request.service';
-import { DriverRequestController } from './driver-request.controller';
-import { UpdateDriverRequestInfomationUseCase } from './use-case/update-driver-request-infomation.use-case';
-import { FileModule } from '../file/file.module';
+// entity
 import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
 import { RequestTypeEntity } from '../../database/entities/request-type.entity';
+// module
+import { FileModule } from '../file/file.module';
+// controller
+import { DriverRequestController } from './driver-request.controller';
+// service
+import { DriverRequestService } from './driver-request.service';
+// use-case
+import { UpdateDriverRequestInfomationUseCase } from './use-case/update-driver-request-infomation.use-case';
 import { CreateDriverInfomationUseCase } from './use-case/create-driver-request-infomation.use-case';
 
 @Module({

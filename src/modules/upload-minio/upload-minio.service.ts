@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Injectable } from '@nestjs/common';
+// common/enums/helpers
 import { uploadFileToMinIO } from '../../common/helpers/minio-storage.helper';
 import { EError } from '../../common/enums/error.enum';
 import { mustExist } from '../../common/helpers/server-error.helper';
+// interfaces
 import {
   IUploadedFileInfoOutput,
   IUploadResult

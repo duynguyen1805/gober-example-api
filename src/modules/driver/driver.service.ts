@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DriverEntity } from '../../database/entities/driver.entity';
+// dto
 import { QueryDriverDto } from './dto/query-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
+// interface
 import { PagedDriverResult } from './interfaces/driver.interface';
+// entity
+import { DriverEntity } from '../../database/entities/driver.entity';
+// use-case
 import { UpdateDriverInfomationUseCase } from './use-case/update-driver-infomation.use-case';
+import { DriverRepository } from './driver.repository';
 
 @Injectable()
 export class DriverService {
   constructor(
-    @InjectRepository(DriverEntity)
-    private readonly driverRepository: Repository<DriverEntity>,
+    private readonly driverRepository: DriverRepository,
     private readonly updateDriverUseCase: UpdateDriverInfomationUseCase
   ) {}
 
@@ -27,35 +29,11 @@ export class DriverService {
    *
    * @returns Trả về mảng drivers, tống số drivers của mảng, trang hiện tại, số lượng item trong 1 trang.
    */
-
   async getListDriver(
     query: QueryDriverDto
   ): Promise<PagedDriverResult<DriverEntity>> {
-    const { page = 1, pageSize = 20, keyword, status, activeAreaId } = query;
-    const queryDB = this.driverRepository.createQueryBuilder('driver');
-
-    if (keyword) {
-      queryDB.andWhere(
-        '(driver.full_name ILIKE :kw OR driver.phone_number ILIKE :kw OR driver.email ILIKE :kw)',
-        { kw: `%${keyword}%` }
-      );
-    }
-    if (status) {
-      queryDB.andWhere('driver.status = :status', { status });
-    }
-    if (activeAreaId) {
-      queryDB.andWhere('driver.active_area_id = :activeAreaId', {
-        activeAreaId
-      });
-    }
-
-    queryDB
-      .orderBy('driver.created_at', 'DESC')
-      .skip((page - 1) * pageSize)
-      .take(pageSize);
-
-    const [items, total] = await queryDB.getManyAndCount();
-    return { items, total, page, pageSize };
+    // Cần thêm validate query
+    return await this.driverRepository.getListDrivers(query);
   }
 
   /**
@@ -64,7 +42,7 @@ export class DriverService {
    * @returns thông tin driver hoặc null
    */
   async findDriverById(driverId: number): Promise<DriverEntity | null> {
-    return this.driverRepository.findOne({ where: { driverId } });
+    return this.driverRepository.findDriverById(driverId);
   }
 
   /**
@@ -75,10 +53,7 @@ export class DriverService {
   async findDriverByIdWithFiles(
     driverId: number
   ): Promise<DriverEntity | null> {
-    return this.driverRepository.findOne({
-      where: { driverId },
-      relations: ['identityCardFront', 'identityCardBack', 'avatarFile']
-    });
+    return this.driverRepository.findDriverByIdWithFiles(driverId);
   }
 
   /**

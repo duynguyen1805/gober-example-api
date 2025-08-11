@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+// entity
 import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
+// dto
 import { QueryDriverRequestDto } from './dto/query-driver-request.dto';
 import { UpdateDriverRequestDto } from './dto/update-driver-request.dto';
-import { PagedDriverRequestResult } from './interfaces/driver-request.interface';
-import { UpdateDriverRequestInfomationUseCase } from './use-case/update-driver-request-infomation.use-case';
 import { CreateDriverRequestDto } from './dto/create-driver-request.dto';
+// interface
+import { PagedDriverRequestResult } from './interfaces/driver-request.interface';
+// use-case
+import { UpdateDriverRequestInfomationUseCase } from './use-case/update-driver-request-infomation.use-case';
 import { CreateDriverInfomationUseCase } from './use-case/create-driver-request-infomation.use-case';
 
 @Injectable()

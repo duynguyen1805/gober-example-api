@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { makeSure } from '../../../common/helpers/server-error.helper';
 import { compare } from 'bcrypt';
 import { SignInDriverDto } from '../dto/signin-driver.dto';
@@ -13,14 +11,14 @@ import { isNil } from 'lodash';
 import { ISignInDriverResponse } from '../interface/auth-driver.interface';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from '../../../common/constants/constants';
+import { DriverRepository } from '../../../modules/driver/driver.repository';
+import { DriverRefreshTokenRepository } from '../../../modules/driver-request/driver-refresh-token.repository';
 
 @Injectable()
 export class SignInUseCase {
   constructor(
-    @InjectRepository(DriverEntity)
-    private driverRepository: Repository<DriverEntity>,
-    @InjectRepository(DriverRefreshTokenEntity)
-    private driverRefreshTokenRepository: Repository<DriverRefreshTokenEntity>,
+    private readonly driverRepository: DriverRepository,
+    private readonly driverRefreshTokenRepository: DriverRefreshTokenRepository,
     private jwtService: JwtService
   ) {}
 
@@ -83,8 +81,8 @@ export class SignInUseCase {
    * @returns DriverEntity nếu tìm thấy, ngược lại trả về null
    */
   async findDriver(driver: SignInDriverDto): Promise<DriverEntity> {
-    return await this.driverRepository.findOne({
-      where: [{ email: driver.identifier }, { phoneNumber: driver.identifier }]
+    return await this.driverRepository.findDriversByEmailOrPhoneNumber({
+      identifier: driver.identifier
     });
   }
 
@@ -105,17 +103,20 @@ export class SignInUseCase {
    * @param refreshToken refresh token
    */
   async createDriverRefreshToken(driverId: number, refreshToken: string) {
-    const entityDriverRefreshToken = this.driverRefreshTokenRepository.create({
-      driverId,
-      token: refreshToken,
-      deviceToken: 'example device token',
-      isRevoked: false,
-      expiresAt: new Date(
-        new Date().setDate(
-          new Date().getDate() + jwtConstants.expiresInRefreshTokenNumber
+    const dataCreateDriverRefreshToken =
+      await this.driverRefreshTokenRepository.createDriverRefreshToken({
+        driverId,
+        token: refreshToken,
+        deviceToken: 'example device token',
+        isRevoked: false,
+        expiresAt: new Date(
+          new Date().setDate(
+            new Date().getDate() + jwtConstants.expiresInRefreshTokenNumber
+          )
         )
-      )
-    });
-    return this.driverRefreshTokenRepository.save(entityDriverRefreshToken);
+      });
+    return this.driverRefreshTokenRepository.saveDriverRefreshToken(
+      dataCreateDriverRefreshToken
+    );
   }
 }

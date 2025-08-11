@@ -2,17 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { ERedisKey } from '../../../common/enums/redis.enum';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { makeSure } from '../../../common/helpers/server-error.helper';
 import { EError } from '../../../common/enums/error.enum';
+import { DriverRefreshTokenRepository } from '../../../modules/driver-request/driver-refresh-token.repository';
 
 @Injectable()
 export class LogOutUseCase {
   constructor(
     private readonly cacheService: CacheService,
-    @InjectRepository(DriverRefreshTokenEntity)
-    private driverRefreshTokenRepository: Repository<DriverRefreshTokenEntity>
+    private readonly driverRefreshTokenRepository: DriverRefreshTokenRepository
   ) {}
 
   /**
@@ -34,7 +32,7 @@ export class LogOutUseCase {
       this.cacheService.set(blackListToken, true),
       this.cacheService.set(blackListRefreshToken, true)
     ]);
-    await this.updateDriverRefreshToken(driverId, refreshToken);
+    await this.revokeDriverRefreshToken(driverId, refreshToken);
     return true;
   }
 
@@ -46,12 +44,12 @@ export class LogOutUseCase {
    * @throws EError nếu cập nhật không thành công
    */
 
-  async updateDriverRefreshToken(
+  async revokeDriverRefreshToken(
     driverId: number,
     refreshToken: string
   ): Promise<void> {
-    const entityDriverRefreshToken =
-      await this.driverRefreshTokenRepository.update(
+    const isUpdateDriverRefreshTokenSuccess =
+      await this.driverRefreshTokenRepository.updateDriverRefreshToken(
         {
           driverId,
           token: refreshToken
@@ -62,7 +60,7 @@ export class LogOutUseCase {
       );
 
     makeSure(
-      entityDriverRefreshToken.affected > 0,
+      isUpdateDriverRefreshTokenSuccess,
       EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
     );
   }

@@ -1,24 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { isNil } from 'lodash';
+// constants/helpers
 import {
   makeSure,
   mustExist
 } from '../../../common/helpers/server-error.helper';
-import { DriverEntity } from '../../../database/entities/driver.entity';
 import { EError } from '../../../common/enums/error.enum';
 import { isValidEmail } from '../../../common/helpers/auth.helper';
 import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
+// entities
+import { DriverEntity } from '../../../database/entities/driver.entity';
+// dto
 import { UpdateDriverDto } from '../dto/update-driver.dto';
+// service
 import { FileService } from '../../../modules/file/file.service';
-import { isNil } from 'lodash';
+// repository
+import { DriverRepository } from '../driver.repository';
 
 @Injectable()
 export class UpdateDriverInfomationUseCase {
   private driverExists: DriverEntity;
   constructor(
-    @InjectRepository(DriverEntity)
-    private driverRepository: Repository<DriverEntity>,
+    private driverRepository: DriverRepository,
     private readonly fileService: FileService
   ) {}
 
@@ -37,7 +40,7 @@ export class UpdateDriverInfomationUseCase {
   ): Promise<DriverEntity> {
     await this.validateUpdateDriverInformationDto(driverId, input);
     Object.assign(this.driverExists, input);
-    return this.driverRepository.save(this.driverExists);
+    return this.driverRepository.saveDriver(this.driverExists);
   }
 
   /**
@@ -51,9 +54,7 @@ export class UpdateDriverInfomationUseCase {
     input: UpdateDriverDto
   ): Promise<void> {
     // Kiểm tra driver đã tồn tại
-    this.driverExists = await this.driverRepository.findOne({
-      where: { driverId }
-    });
+    this.driverExists = await this.driverRepository.findDriverById(driverId);
     mustExist(this.driverExists, EError.DRIVER_NOT_FOUND);
 
     // Kiểm tra các trường có thông tin trong input

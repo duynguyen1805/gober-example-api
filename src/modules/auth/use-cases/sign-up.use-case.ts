@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { SignUpDriverDto } from '../dto/signup-driver.dto';
 import { DriverEntity } from '../../../database/entities/driver.entity';
 import { EError } from '../../../common/enums/error.enum';
@@ -14,13 +12,11 @@ import { hash } from 'bcrypt';
 import { EDriverStatus } from '../../driver/enums/driver.enum';
 import { isValidEmail } from '../../../common/helpers/auth.helper';
 import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
+import { DriverRepository } from '../../../modules/driver/driver.repository';
 
 @Injectable()
 export class SignUpUseCase {
-  constructor(
-    @InjectRepository(DriverEntity)
-    private driverRepository: Repository<DriverEntity>
-  ) {}
+  constructor(private readonly driverRepository: DriverRepository) {}
 
   /**
    * Đăng ký tài khoản cho driver
@@ -89,20 +85,14 @@ export class SignUpUseCase {
 
   /**
    * Tìm kiếm driver có email hoặc phone number trùng với tham số
-   * @param driver Tham số chứa email và/hoặc phone number
+   * @param driver Tham số chứa email hoặc phone number
    * @returns DriverEntity nếu tìm thấy, ngược lại trả về null
    */
   async findDriver(driver: SignUpDriverDto): Promise<DriverEntity> {
-    const where: Object[] = [];
-    if (driver.email) {
-      where.push({ email: driver.email });
-    }
-    if (driver.phoneNumber) {
-      where.push({ phoneNumber: driver.phoneNumber });
-    }
-    if (where.length === 0) return null;
-
-    return await this.driverRepository.findOne({ where });
+    return await this.driverRepository.findDriversByEmailOrPhoneNumber({
+      email: driver.email,
+      phoneNumber: driver.phoneNumber
+    });
   }
 
   /**
@@ -114,11 +104,12 @@ export class SignUpUseCase {
 
   async saveDriver(driver: SignUpDriverDto): Promise<DriverEntity> {
     const passwordHash = await hash(driver.password, 8);
-    return await this.driverRepository.save({
+    const dataCreateDriver = {
       ...driver,
       password: passwordHash,
       status: EDriverStatus.INACTIVE,
       balance: 0
-    });
+    };
+    return await this.driverRepository.saveDriver(dataCreateDriver);
   }
 }

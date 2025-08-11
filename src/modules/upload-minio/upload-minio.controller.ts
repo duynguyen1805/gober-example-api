@@ -15,16 +15,20 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth
 } from '@nestjs/swagger';
-import { UploadMinioService } from './upload-minio.service';
+// guards
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+// interceptors
 import {
   SingleUploadInterceptor,
   MultiUploadInterceptor
 } from '../../common/interceptors/upload.interceptor';
+// interfaces
 import {
   IUploadedFileInfoOutput,
   IUploadResult
 } from './interfaces/upload.interface';
+// service
+import { UploadMinioService } from './upload-minio.service';
 
 @ApiTags('upload-minio')
 @Controller('upload-minio')

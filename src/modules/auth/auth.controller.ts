@@ -8,20 +8,25 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { ApiKeyGuard } from './guards/api-key.guard';
-import { SignInDriverDto } from './dto/signin-driver.dto';
-import { SignUpDriverDto } from './dto/signup-driver.dto';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+// decorators
+import { User } from '../../common/decorators/user.decorator';
+// guards
+import { ApiKeyGuard } from './guards/api-key.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+// dto
+import { SignInDriverDto } from './dto/signin-driver.dto';
+import { SignUpDriverDto } from './dto/signup-driver.dto';
+import { RefreshTokenDriverDto } from './dto/refresh-token-driver.dto';
+import { LogoutDriverDto } from './dto/logout-driver.dto';
+// interface
 import {
   IRefreshTokenResponse,
   ISignInDriverResponse
 } from './interface/auth-driver.interface';
-import { RefreshTokenDriverDto } from './dto/refresh-token-driver.dto';
-import { LogoutDriverDto } from './dto/logout-driver.dto';
-import { User } from '../../common/decorators/user.decorator';
+// service
+import { AuthService } from './auth.service';
 
 @ApiTags('auth')
 @Controller('auth')

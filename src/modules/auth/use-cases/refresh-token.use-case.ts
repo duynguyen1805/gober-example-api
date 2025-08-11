@@ -9,17 +9,14 @@ import { JwtService } from '@nestjs/jwt';
 import { CacheService } from '../../../modules/cache/cache.service';
 import { ERedisKey } from '../../../common/enums/redis.enum';
 import { jwtConstants } from '../../../common/constants/constants';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
+import { DriverRefreshTokenRepository } from '../../../modules/driver-request/driver-refresh-token.repository';
 
 @Injectable()
 export class RefreshTokenUseCase {
   constructor(
     private readonly cacheService: CacheService,
     private jwtService: JwtService,
-    @InjectRepository(DriverRefreshTokenEntity)
-    private driverRefreshTokenRepository: Repository<DriverRefreshTokenEntity>
+    private readonly driverRefreshTokenRepository: DriverRefreshTokenRepository
   ) {}
 
   /**
@@ -78,7 +75,7 @@ export class RefreshTokenUseCase {
         `${ERedisKey.BLACKLIST_TOKEN_PREFIX}${oldRefreshToken}`,
         true
       );
-      await this.updateDriverRefreshToken(payload.driverId, oldRefreshToken);
+      await this.revokeDriverRefreshToken(payload.driverId, oldRefreshToken);
     }
 
     return payload;
@@ -92,12 +89,12 @@ export class RefreshTokenUseCase {
    * @throws EError nếu cập nhật không thành công
    */
 
-  async updateDriverRefreshToken(
+  async revokeDriverRefreshToken(
     driverId: number,
     refreshToken: string
   ): Promise<void> {
-    const entityDriverRefreshToken =
-      await this.driverRefreshTokenRepository.update(
+    const isUpdateDriverRefreshTokenSuccess =
+      await this.driverRefreshTokenRepository.updateDriverRefreshToken(
         {
           driverId,
           token: refreshToken
@@ -108,7 +105,7 @@ export class RefreshTokenUseCase {
       );
 
     makeSure(
-      entityDriverRefreshToken.affected > 0,
+      isUpdateDriverRefreshTokenSuccess,
       EError.UPDATE_DRIVER_REFRESH_TOKEN_ERROR
     );
   }

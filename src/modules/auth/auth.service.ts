@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
+// dto
 import { SignInDriverDto } from './dto/signin-driver.dto';
 import { SignUpDriverDto } from './dto/signup-driver.dto';
-import { SignUpUseCase } from './use-cases/sign-up.use-case';
-import { SignInUseCase } from './use-cases/sign-in.use-case';
-import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
-import { LogOutUseCase } from './use-cases/logout.use-case';
-// import {
-//   Mailer,
-//   EEmailTemplate
-// } from '../../common/helpers/email-helpers/mailer.helper';
+// interface
 import {
   IRefreshTokenResponse,
   ISignInDriverResponse
 } from './interface/auth-driver.interface';
+// use-case
+import { SignUpUseCase } from './use-cases/sign-up.use-case';
+import { SignInUseCase } from './use-cases/sign-in.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
+import { LogOutUseCase } from './use-cases/logout.use-case';
 
 @Injectable()
 export class AuthService {

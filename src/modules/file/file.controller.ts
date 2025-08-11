@@ -21,13 +21,18 @@ import {
   ApiBody,
   ApiResponse
 } from '@nestjs/swagger';
-import { FileService } from './file.service';
+// decorators
+import { User } from '../../common/decorators/user.decorator';
+// entity
+import { FileEntity } from '../../database/entities/file.entity';
+// dto
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { QueryFileDto } from './dto/query-file.dto';
-import { FileEntity } from '../../database/entities/file.entity';
-import { User } from '../../common/decorators/user.decorator';
+// interface
 import { IFileOutput } from './interfaces/file.interface';
+// service
+import { FileService } from './file.service';
 
 @ApiTags('files')
 @Controller('files')

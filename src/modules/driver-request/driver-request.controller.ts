@@ -15,12 +15,17 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { DriverRequestService } from './driver-request.service';
-import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
-import { UpdateDriverRequestDto } from './dto/update-driver-request.dto';
+// guards
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+// decorators
 import { User } from '../../common/decorators/user.decorator';
+// entity
+import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
+// dto
+import { UpdateDriverRequestDto } from './dto/update-driver-request.dto';
 import { CreateDriverRequestDto } from './dto/create-driver-request.dto';
+// service
+import { DriverRequestService } from './driver-request.service';
 
 @ApiTags('drivers-request')
 @Controller('drivers-request')

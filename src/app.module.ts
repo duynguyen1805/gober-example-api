@@ -1,31 +1,43 @@
+// nestJS core modules
 import {
   CacheModule,
   MiddlewareConsumer,
   Module,
   RequestMethod
 } from '@nestjs/common';
+// typeORM configuration module
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
-import { JwtStrategy } from './modules/auth/jwt.strategy';
+// redis config types và store adapter cho cache manager
 import type { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
-import { configService } from './config/config.service';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CacheInterceptor } from './common/interceptors/cache.interceptor';
+// serve static files
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+// interceptor
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheInterceptor } from './common/interceptors/cache.interceptor';
+// util
+import { compact } from 'lodash';
+// auth
+import { JwtStrategy } from './modules/auth/jwt.strategy';
+// config
+import { ConfigModule } from '@nestjs/config';
+import { configService } from './config/config.service';
+import settings from '../ormconfig.json';
+// middleware
+import { BlacklistMiddleware } from './common/middleware/blacklist-token.middleware';
+// modules
 import { MulterModule } from '@nestjs/platform-express';
 import { CustomeCacheModule } from './modules/cache/cache.module';
-import { ConfigModule } from '@nestjs/config';
-import settings from '../ormconfig.json';
-import { compact } from 'lodash';
-import { BlacklistMiddleware } from './common/middleware/blacklist-token.middleware';
+import { AuthModule } from './modules/auth/auth.module';
 import { FileModule } from './modules/file/file.module';
 import { UploadMinIOModule } from './modules/upload-minio/upload-minio.module';
 import { DriverModule } from './modules/driver/driver.module';
 import { DriverRequestModule } from './modules/driver-request/driver-request.module';
+// controller
+import { AppController } from './app.controller';
+// service
+import { AppService } from './app.service';
 
 const configRedis = configService.getRedisConfig();
 

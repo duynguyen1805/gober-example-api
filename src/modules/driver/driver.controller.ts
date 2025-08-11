@@ -7,11 +7,16 @@ import {
   ApiResponse,
   ApiTags
 } from '@nestjs/swagger';
-import { DriverService } from './driver.service';
-import { DriverEntity } from '../../database/entities/driver.entity';
-import { UpdateDriverDto } from './dto/update-driver.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+// decorators
 import { User } from '../../common/decorators/user.decorator';
+// guards
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+//dto
+import { UpdateDriverDto } from './dto/update-driver.dto';
+// entity
+import { DriverEntity } from '../../database/entities/driver.entity';
+// service
+import { DriverService } from './driver.service';
 
 @ApiTags('drivers')
 @Controller('drivers')
