@@ -1,0 +1,60 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
+// module.repository
+import {
+  DriverRefreshToken,
+  DriverRefreshTokenDocumentWithCustomId
+} from '../../database/mongo-db/driver-refresh-token.schema';
+
+@Injectable()
+export class DriverRefreshTokenModelRepository {
+  constructor(
+    @InjectModel(DriverRefreshToken.name)
+    private readonly driveRefreshTokenModelRepository: Model<DriverRefreshTokenDocumentWithCustomId>
+  ) {}
+
+  /**
+   * Tạo mới DriverRefreshTokenDocument
+   * @param input Partial<DriverRefreshTokenDocumentWithCustomId>
+   * @returns DriverRefreshTokenDocument: thông tin bảng driver refresh token
+   */
+  async createDriverRefreshToken(
+    input: Partial<DriverRefreshTokenDocumentWithCustomId>
+  ): Promise<DriverRefreshTokenDocumentWithCustomId> {
+    return new this.driveRefreshTokenModelRepository(input);
+  }
+
+  /**
+   * Lưu thông tin driver refresh token
+   * @param driverRefreshToken DriverRefreshTokenDocument: thông tin bảng driver refresh token
+   * @returns DriverRefreshTokenDocumentWithCustomId: thông tin bảng driver refresh token
+   */
+  async saveDriverRefreshToken(
+    driverRefreshToken: DriverRefreshTokenDocumentWithCustomId
+  ): Promise<DriverRefreshTokenDocumentWithCustomId> {
+    return await driverRefreshToken.save();
+  }
+
+  /**
+   * Cập nhật trạng thái của driver refresh token
+   * @param criteria Partial<DriverRefreshTokenDocumentWithCustomId>: các điều kiện để tìm kiếm
+   * @param input Partial<DriverRefreshTokenDocumentWithCustomId>: các giá trị cần cập nhật
+   * @returns Promise<boolean>: true nếu cập nhật thành công
+   */
+  async updateDriverRefreshToken(
+    criteria: Partial<DriverRefreshTokenDocumentWithCustomId>,
+    input: Partial<DriverRefreshTokenDocumentWithCustomId>
+  ): Promise<boolean> {
+    const updateResult = await this.driveRefreshTokenModelRepository.updateOne(
+      {
+        driverId: criteria?.driverId,
+        token: criteria?.token
+      },
+      {
+        isRevoked: input?.isRevoked
+      }
+    );
+    return updateResult.modifiedCount > 0;
+  }
+}

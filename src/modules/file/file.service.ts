@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { FileEntity } from '../../database/entities/file.entity';
+// dto
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import { QueryFileDto } from './dto/query-file.dto';
+// interface
 import { IFileOutput, PagedFileResult } from './interfaces/file.interface';
-import { FileRepository } from './file.repository';
+// model.repository
+import { FileModelRepository } from './file.model.repository';
 
 @Injectable()
 export class FileService {
-  constructor(private readonly fileRepository: FileRepository) {}
+  constructor(private readonly fileModelRepository: FileModelRepository) {}
 
   /**
    * Lưu thông tin file vào database sau khi upload Minio
@@ -16,8 +18,8 @@ export class FileService {
    * @param input - CreateFileDto chứa thông tin file cần tạo
    * @returns IFileOutput - thông tin file sau khi được tạo và url đầy đủ để truy cập file
    */
-  async create(driverId: number, input: CreateFileDto): Promise<IFileOutput> {
-    const dataCreateFile = await this.fileRepository.createFile({
+  async create(driverId: string, input: CreateFileDto): Promise<IFileOutput> {
+    const dataFileDocument = await this.fileModelRepository.createFile({
       filename: input.filename,
       path: input.path,
       mimeType: input.mimeType,
@@ -25,13 +27,11 @@ export class FileService {
       size: input.size,
       uploadedById: driverId
     });
-    const entityFileResponse = await this.fileRepository.saveFile(
-      dataCreateFile
-    );
-    const copyEntityFile = entityFileResponse;
+    const savedFile = await this.fileModelRepository.saveFile(dataFileDocument);
     const url = `${process.env.STORAGE_ENDPOINT}${input.path}`;
+
     return {
-      ...copyEntityFile,
+      ...savedFile.toObject(),
       url
     };
   }
@@ -43,37 +43,21 @@ export class FileService {
    * @returns PagedFileResult - danh sách file đã được phân trang, tổng số file tìm thấy
    */
   async getListFiles(
-    driverId: number,
+    driverId: string,
     query: QueryFileDto
   ): Promise<PagedFileResult> {
-    return await this.fileRepository.getListFiles(driverId, query);
+    return await this.fileModelRepository.getListFiles(driverId, query);
   }
 
   /**
-   * Tìm kiếm FileEntity theo fileId
+   * Tìm kiếm file theo fileId
    * @param fileId - id của file
    * @returns IFileOutput thông tin file trên database và url đầy đủ để truy cập file
    */
-  async findFileById(fileId: number): Promise<IFileOutput | null> {
-    const entityFile = await this.fileRepository.findFileById(fileId);
+  async findFileById(fileId: string): Promise<IFileOutput | null> {
+    const entityFile = await this.fileModelRepository.findFileById(fileId);
     // Gắn domain từ env với path file
     const url = `${process.env.STORAGE_ENDPOINT}${entityFile.path}`;
-    return { ...entityFile, url };
+    return { ...entityFile.toObject(), url };
   }
-
-  // async updateFile(fileId: number, input: UpdateFileDto): Promise<FileEntity> {
-  //   const entity = await this.findFileById(fileId);
-  //   if (!entity) {
-  //     mustExist(entity, EErrorFile.FILE_NOT_FOUND, EErrorFile.FILE_NOT_FOUND);
-  //   }
-  //   Object.assign(entity, input);
-  //   return this.fileRepository.save(entity);
-  // }
-
-  // async removeFile(fileId: number): Promise<void> {
-  //   const result = await this.fileRepository.delete({ fileId });
-  //   if (result.affected === 0) {
-  //     makeSure(false, EErrorFile.FILE_NOT_FOUND, EErrorFile.FILE_NOT_FOUND);
-  //   }
-  // }
 }

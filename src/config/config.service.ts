@@ -42,36 +42,42 @@ class ConfigService {
     };
   }
 
-  public getPostgresConfig() {
+  // public getPostgresConfig() {
+  //   return {
+  //     host: this.getEnv('DB_HOST'),
+  //     port: parseInt(this.getEnv('DB_PORT')),
+  //     username: this.getEnv('DB_USERNAME'),
+  //     password: this.getEnv('DB_PASSWORD'),
+  //     database: this.getEnv('DB_DATABASE')
+  //   };
+  // }
+
+  public getMongoConfig() {
     return {
-      host: this.getEnv('DB_HOST'),
-      port: parseInt(this.getEnv('DB_PORT')),
-      username: this.getEnv('DB_USERNAME'),
-      password: this.getEnv('DB_PASSWORD'),
-      database: this.getEnv('DB_DATABASE')
+      uri: this.getEnv('MONGO_URI')
     };
   }
 
-  public getTypeOrmConfig() {
-    return {
-      type: 'postgres',
+  // public getTypeOrmConfig() {
+  //   return {
+  //     type: 'postgres',
 
-      host: this.getEnv('DB_HOST'),
-      port: parseInt(this.getEnv('DB_PORT')),
-      username: this.getEnv('DB_USERNAME'),
-      password: this.getEnv('DB_PASSWORD'),
-      database: this.getEnv('DB_DATABASE'),
-      entities: ['dist/src/**/*.entity{.ts,.js}'],
-      migrations: ['dist/src/migration/**/*{.js,.ts}'],
-      migrationsTableName: 'migration',
-      migrationsRun: false,
-      seeds: ['dist/src/database/seeds/**/*.seed{.js,.ts}'],
-      cli: {
-        migrationsDir: 'src/migration'
-      },
-      logging: this.getEnv('LOGGING', false)
-    };
-  }
+  //     host: this.getEnv('DB_HOST'),
+  //     port: parseInt(this.getEnv('DB_PORT')),
+  //     username: this.getEnv('DB_USERNAME'),
+  //     password: this.getEnv('DB_PASSWORD'),
+  //     database: this.getEnv('DB_DATABASE'),
+  //     entities: ['dist/src/**/*.entity{.ts,.js}'],
+  //     migrations: ['dist/src/migration/**/*{.js,.ts}'],
+  //     migrationsTableName: 'migration',
+  //     migrationsRun: false,
+  //     seeds: ['dist/src/database/seeds/**/*.seed{.js,.ts}'],
+  //     cli: {
+  //       migrationsDir: 'src/migration'
+  //     },
+  //     logging: this.getEnv('LOGGING', false)
+  //   };
+  // }
 
   public getMinIOConfig() {
     return {
@@ -88,11 +94,12 @@ class ConfigService {
 }
 
 const configService = new ConfigService(process.env).ensureValues([
-  'DB_HOST',
-  'DB_PORT',
-  'DB_USERNAME',
-  'DB_PASSWORD',
-  'DB_DATABASE',
+  // 'DB_HOST',
+  // 'DB_PORT',
+  // 'DB_USERNAME',
+  // 'DB_PASSWORD',
+  // 'DB_DATABASE',
+  'MONGO_URI',
   'REDIS_URL',
   'REDIS_HOST',
   'REDIS_PORT',

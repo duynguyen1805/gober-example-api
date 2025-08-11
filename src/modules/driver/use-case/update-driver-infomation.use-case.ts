@@ -8,20 +8,20 @@ import {
 import { EError } from '../../../common/enums/error.enum';
 import { isValidEmail } from '../../../common/helpers/auth.helper';
 import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
-// entities
-import { DriverEntity } from '../../../database/entities/driver.entity';
 // dto
 import { UpdateDriverDto } from '../dto/update-driver.dto';
 // service
 import { FileService } from '../../../modules/file/file.service';
-// repository
-import { DriverRepository } from '../driver.repository';
+// model.repository
+import { DriverModelRepository } from '../driver.model.repository';
+// schema
+import { DriverDocumentWithCustomId } from '../../../database/mongo-db/driver.schema';
 
 @Injectable()
 export class UpdateDriverInfomationUseCase {
-  private driverExists: DriverEntity;
+  private driverExists: DriverDocumentWithCustomId;
   constructor(
-    private driverRepository: DriverRepository,
+    private readonly driverModelRepository: DriverModelRepository,
     private readonly fileService: FileService
   ) {}
 
@@ -35,12 +35,12 @@ export class UpdateDriverInfomationUseCase {
    */
 
   async execute(
-    driverId: number,
+    driverId: string,
     input: UpdateDriverDto
-  ): Promise<DriverEntity> {
+  ): Promise<DriverDocumentWithCustomId> {
     await this.validateUpdateDriverInformationDto(driverId, input);
     Object.assign(this.driverExists, input);
-    return this.driverRepository.saveDriver(this.driverExists);
+    return this.driverModelRepository.saveDriver(this.driverExists);
   }
 
   /**
@@ -50,11 +50,13 @@ export class UpdateDriverInfomationUseCase {
    * @throws EError nếu có giá trị không hợp lệ
    */
   async validateUpdateDriverInformationDto(
-    driverId: number,
+    driverId: string,
     input: UpdateDriverDto
   ): Promise<void> {
     // Kiểm tra driver đã tồn tại
-    this.driverExists = await this.driverRepository.findDriverById(driverId);
+    this.driverExists = await this.driverModelRepository.findDriverById(
+      driverId
+    );
     mustExist(this.driverExists, EError.DRIVER_NOT_FOUND);
 
     // Kiểm tra các trường có thông tin trong input
@@ -77,7 +79,7 @@ export class UpdateDriverInfomationUseCase {
     if (input?.avatar) {
       makeSure(!isNaN(Number(input?.avatar)), EError.INVALID_AVATAR);
       // Kiểm tra thêm có trong bảng File chưa
-      const file = await this.fileService.findFileById(+input?.avatar);
+      const file = await this.fileService.findFileById(input?.avatar);
       makeSure(!isNil(file), EError.INVALID_AVATAR);
     }
     // Kiểm tra activeAreaId

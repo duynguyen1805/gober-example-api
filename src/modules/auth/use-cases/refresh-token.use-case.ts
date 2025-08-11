@@ -1,22 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+// helpers
 import {
   makeSure,
   mustExist
 } from '../../../common/helpers/server-error.helper';
 import { EError } from '../../../common/enums/error.enum';
-import { IRefreshTokenResponse } from '../interface/auth-driver.interface';
-import { JwtService } from '@nestjs/jwt';
-import { CacheService } from '../../../modules/cache/cache.service';
 import { ERedisKey } from '../../../common/enums/redis.enum';
 import { jwtConstants } from '../../../common/constants/constants';
-import { DriverRefreshTokenRepository } from '../../../modules/driver-request/driver-refresh-token.repository';
+// interfaces
+import { IRefreshTokenResponse } from '../interface/auth-driver.interface';
+// service
+import { CacheService } from '../../../modules/cache/cache.service';
+// model.repository
+import { DriverRefreshTokenModelRepository } from '../../driver-request/driver-refresh-token.model.repository';
 
 @Injectable()
 export class RefreshTokenUseCase {
   constructor(
     private readonly cacheService: CacheService,
     private jwtService: JwtService,
-    private readonly driverRefreshTokenRepository: DriverRefreshTokenRepository
+    private readonly driveRefreshTokenModelRepository: DriverRefreshTokenModelRepository
   ) {}
 
   /**
@@ -90,11 +94,11 @@ export class RefreshTokenUseCase {
    */
 
   async revokeDriverRefreshToken(
-    driverId: number,
+    driverId: string,
     refreshToken: string
   ): Promise<void> {
     const isUpdateDriverRefreshTokenSuccess =
-      await this.driverRefreshTokenRepository.updateDriverRefreshToken(
+      await this.driveRefreshTokenModelRepository.updateDriverRefreshToken(
         {
           driverId,
           token: refreshToken

@@ -1,4 +1,4 @@
-import { FileEntity } from '../../../database/entities/file.entity';
+import { FileDocument } from 'src/database/mongo-db/file.schema';
 
 export interface IFileUploadInput {
   fieldname: string;
@@ -10,12 +10,12 @@ export interface IFileUploadInput {
 }
 
 export interface PagedFileResult {
-  items: FileEntity[];
+  items: FileDocument[];
   total: number;
   page: number;
   pageSize: number;
 }
 
-export interface IFileOutput extends FileEntity {
+export interface IFileOutput extends FileDocument {
   url: string;
 }

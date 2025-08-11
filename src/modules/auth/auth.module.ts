@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { HttpModule } from '@nestjs/axios';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// mongoose
+import { MongooseModule } from '@nestjs/mongoose';
 // constants/helpers
 import { jwtConstants } from '../../common/constants/constants';
 // modules
@@ -14,11 +15,17 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { DriverService } from '../driver/driver.service';
 // entity
-import { DriverEntity } from '../../database/entities/driver.entity';
-import { DriverRefreshTokenEntity } from '../../database/entities/driver-refresh-token.entity';
-// repository
-import { DriverRepository } from '../driver/driver.repository';
-import { DriverRefreshTokenRepository } from '../driver-request/driver-refresh-token.repository';
+// import { DriverEntity } from '../../database/entities/driver.entity';
+// import { DriverRefreshTokenEntity } from '../../database/entities/driver-refresh-token.entity';
+// schema
+import { Driver, DriverSchema } from '../../database/mongo-db/driver.schema';
+import {
+  DriverRefreshToken,
+  DriverRefreshTokenSchema
+} from '../../database/mongo-db/driver-refresh-token.schema';
+// model.repository
+import { DriverModelRepository } from '../driver/driver.model.repository';
+import { DriverRefreshTokenModelRepository } from '../driver-request/driver-refresh-token.model.repository';
 // use-case
 import { SignUpUseCase } from './use-cases/sign-up.use-case';
 import { SignInUseCase } from './use-cases/sign-in.use-case';
@@ -35,7 +42,10 @@ import { UpdateDriverInfomationUseCase } from '../driver/use-case/update-driver-
     }),
     CustomeCacheModule,
     HttpModule,
-    TypeOrmModule.forFeature([DriverEntity, DriverRefreshTokenEntity]),
+    MongooseModule.forFeature([
+      { name: Driver.name, schema: DriverSchema },
+      { name: DriverRefreshToken.name, schema: DriverRefreshTokenSchema }
+    ]),
     FileModule
   ],
   controllers: [AuthController],
@@ -49,8 +59,8 @@ import { UpdateDriverInfomationUseCase } from '../driver/use-case/update-driver-
     LogOutUseCase,
     UpdateDriverInfomationUseCase,
 
-    DriverRepository,
-    DriverRefreshTokenRepository
+    DriverModelRepository,
+    DriverRefreshTokenModelRepository
   ],
   exports: [AuthService]
 })

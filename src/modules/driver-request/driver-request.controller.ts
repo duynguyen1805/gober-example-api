@@ -19,13 +19,12 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 // decorators
 import { User } from '../../common/decorators/user.decorator';
-// entity
-import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
 // dto
 import { UpdateDriverRequestDto } from './dto/update-driver-request.dto';
 import { CreateDriverRequestDto } from './dto/create-driver-request.dto';
 // service
 import { DriverRequestService } from './driver-request.service';
+import { DriverRequestDocumentWithCustomId } from 'src/database/mongo-db/driver-request.schema';
 
 @ApiTags('drivers-request')
 @Controller('drivers-request')
@@ -105,9 +104,9 @@ export class DriverRequestController {
   })
   @ApiBody({ type: CreateDriverRequestDto })
   async createDriverRequestInformation(
-    @User('driverId') driverId: number,
+    @User('driverId') driverId: string,
     @Body() body: CreateDriverRequestDto
-  ): Promise<DriverRequestEntity> {
+  ): Promise<DriverRequestDocumentWithCustomId> {
     return this.driverRequestService.createDriverRequestInformation(
       driverId,
       body
@@ -183,9 +182,9 @@ export class DriverRequestController {
     }
   })
   async findDriverRequestById(
-    @User('driverId') driverId: number,
-    @Param('driverRequestId') driverRequestId: number
-  ): Promise<DriverRequestEntity[] | null> {
+    @User('driverId') driverId: string,
+    @Param('driverRequestId') driverRequestId: string
+  ): Promise<DriverRequestDocumentWithCustomId | null> {
     return this.driverRequestService.findDriverRequestById(
       driverId,
       driverRequestId
@@ -262,9 +261,9 @@ export class DriverRequestController {
   })
   @ApiBody({ type: UpdateDriverRequestDto })
   async updateDriverRequestInformation(
-    @User('driverId') driverId: number,
+    @User('driverId') driverId: string,
     @Body() body: UpdateDriverRequestDto
-  ): Promise<DriverRequestEntity> {
+  ): Promise<DriverRequestDocumentWithCustomId> {
     return this.driverRequestService.updateDriverRequestInformation(
       driverId,
       body

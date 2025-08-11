@@ -247,7 +247,7 @@ export class AuthController {
   })
   logOut(
     @Body() dto: LogoutDriverDto,
-    @User('driverId') driverId: number
+    @User('driverId') driverId: string
   ): Promise<boolean> {
     const authHeader = this.request.headers['authorization'] || '';
     const token = authHeader.replace('Bearer ', '');

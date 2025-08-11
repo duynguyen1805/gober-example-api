@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-// entity
-import { FileEntity } from '../../database/entities/file.entity';
+import { MongooseModule } from '@nestjs/mongoose';
+// schema
+import { File, FileSchema } from '../../database/mongo-db/file.schema';
 // controller
 import { FileController } from './file.controller';
 // service
 import { FileService } from './file.service';
-// repository
-import { FileRepository } from './file.repository';
+// model.repository
+import { FileModelRepository } from './file.model.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FileEntity])],
+  imports: [
+    MongooseModule.forFeature([{ name: File.name, schema: FileSchema }])
+  ],
   controllers: [FileController],
-  providers: [FileService, FileRepository],
+  providers: [FileService, FileModelRepository],
   exports: [FileService]
 })
 export class FileModule {}

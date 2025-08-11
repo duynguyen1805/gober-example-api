@@ -1,24 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { makeSure } from '../../../common/helpers/server-error.helper';
 import { compare } from 'bcrypt';
-import { SignInDriverDto } from '../dto/signin-driver.dto';
-import { DriverEntity } from '../../../database/entities/driver.entity';
-import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
+import { isNil } from 'lodash';
+import { JwtService } from '@nestjs/jwt';
+// helpers/constants
+import { makeSure } from '../../../common/helpers/server-error.helper';
 import { EError } from '../../../common/enums/error.enum';
 import { isValidEmail } from '../../../common/helpers/auth.helper';
 import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
-import { isNil } from 'lodash';
-import { ISignInDriverResponse } from '../interface/auth-driver.interface';
-import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from '../../../common/constants/constants';
-import { DriverRepository } from '../../../modules/driver/driver.repository';
-import { DriverRefreshTokenRepository } from '../../../modules/driver-request/driver-refresh-token.repository';
+// schema
+import {
+  DriverDocument,
+  DriverDocumentWithCustomId
+} from '../../../database/mongo-db/driver.schema';
+// dto
+import { SignInDriverDto } from '../dto/signin-driver.dto';
+// interface
+import { ISignInDriverResponse } from '../interface/auth-driver.interface';
+// model.repository
+import { DriverModelRepository } from '../../../modules/driver/driver.model.repository';
+import { DriverRefreshTokenModelRepository } from '../../driver-request/driver-refresh-token.model.repository';
 
 @Injectable()
 export class SignInUseCase {
   constructor(
-    private readonly driverRepository: DriverRepository,
-    private readonly driverRefreshTokenRepository: DriverRefreshTokenRepository,
+    private readonly driverModelRepository: DriverModelRepository,
+    private readonly driverRefreshTokenModelRepository: DriverRefreshTokenModelRepository,
     private jwtService: JwtService
   ) {}
 
@@ -61,7 +68,8 @@ export class SignInUseCase {
    * @param driver the SignUpDriverDto object để validate
    */
   async validateDriverDto(driver: SignInDriverDto): Promise<void> {
-    // Kiểm tra indentify hợp lệ (có thể email hoặc phone number)
+    // Kiểm tra indentify hợp lệ
+    // indentify => có thể email hoặc phoneNumber
     if (!isValidEmail(driver.identifier)) {
       // Kiểm tra phone number
       makeSure(isValidPhoneNumber(driver.identifier), EError.INVALID_INDETITY);
@@ -77,22 +85,24 @@ export class SignInUseCase {
 
   /**
    * Tìm kiếm driver có email hoặc phone number trùng với tham số
-   * @param driver Tham số identifier là email hoặc phone number
+   * @param inputSignIn Tham số identifier là email hoặc phone number
    * @returns DriverEntity nếu tìm thấy, ngược lại trả về null
    */
-  async findDriver(driver: SignInDriverDto): Promise<DriverEntity> {
-    return await this.driverRepository.findDriversByEmailOrPhoneNumber({
-      identifier: driver.identifier
+  async findDriver(
+    inputSignIn: SignInDriverDto
+  ): Promise<DriverDocumentWithCustomId> {
+    return await this.driverModelRepository.findDriversByEmailOrPhoneNumber({
+      identifier: inputSignIn.identifier
     });
   }
 
   /**
    * Validate password của driver
-   * @param driver DriverEntity để verify password
+   * @param driver DriverDocument để verify password
    * @param password password để verify
    * @throws EError nếu password không trùng khớp
    */
-  async enforceCorrectPassword(driver: DriverEntity, password: string) {
+  async enforceCorrectPassword(driver: DriverDocument, password: string) {
     const isCorrectPassword = await compare(password, driver.password);
     makeSure(isCorrectPassword, EError.INVALID_PASSWORD);
   }
@@ -102,9 +112,9 @@ export class SignInUseCase {
    * @param driverId id của driver
    * @param refreshToken refresh token
    */
-  async createDriverRefreshToken(driverId: number, refreshToken: string) {
-    const dataCreateDriverRefreshToken =
-      await this.driverRefreshTokenRepository.createDriverRefreshToken({
+  async createDriverRefreshToken(driverId: string, refreshToken: string) {
+    const driverRefreshTokenDocument =
+      await this.driverRefreshTokenModelRepository.createDriverRefreshToken({
         driverId,
         token: refreshToken,
         deviceToken: 'example device token',
@@ -115,8 +125,8 @@ export class SignInUseCase {
           )
         )
       });
-    return this.driverRefreshTokenRepository.saveDriverRefreshToken(
-      dataCreateDriverRefreshToken
+    return this.driverRefreshTokenModelRepository.saveDriverRefreshToken(
+      driverRefreshTokenDocument
     );
   }
 }

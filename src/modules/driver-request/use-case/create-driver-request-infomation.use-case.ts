@@ -1,25 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { isNil } from 'lodash';
+// helpers
 import {
   makeSure,
   mustExist
 } from '../../../common/helpers/server-error.helper';
-import { DriverRequestEntity } from '../../../database/entities/driver-request.entity';
-import { RequestTypeEntity } from '../../../database/entities/request-type.entity';
 import { EError } from '../../../common/enums/error.enum';
-import { FileService } from '../../file/file.service';
-import { isNil } from 'lodash';
-import { CreateDriverRequestDto } from '../dto/create-driver-request.dto';
 import { ERequestStatus } from '../../../common/enums';
+// service
+import { FileService } from '../../file/file.service';
+// dto
+import { CreateDriverRequestDto } from '../dto/create-driver-request.dto';
+// model.repository
+import { DriverRequestModelRepository } from '../driver-request.model.repository';
+import { RequestTypeModelRepository } from '../../../modules/request-type/request-type.model.repository';
+// schema
+import { DriverRequestDocumentWithCustomId } from '../../../database/mongo-db/driver-request.schema';
 
 @Injectable()
 export class CreateDriverInfomationUseCase {
   constructor(
-    @InjectRepository(DriverRequestEntity)
-    private driverRequestRepository: Repository<DriverRequestEntity>,
-    @InjectRepository(RequestTypeEntity)
-    private requestTypeRepository: Repository<RequestTypeEntity>,
+    private readonly driverRequestModelRepository: DriverRequestModelRepository,
+    private readonly requestTypeModelRepository: RequestTypeModelRepository,
+    // @InjectRepository(RequestTypeEntity)
+    // private requestTypeRepository: Repository<RequestTypeEntity>,
     private readonly fileService: FileService
   ) {}
 
@@ -33,9 +37,9 @@ export class CreateDriverInfomationUseCase {
    */
 
   async execute(
-    driverId: number,
+    driverId: string,
     input: CreateDriverRequestDto
-  ): Promise<DriverRequestEntity> {
+  ): Promise<DriverRequestDocumentWithCustomId> {
     // validate input
     await this.validateCreateDriverRequestInformationDto(input);
 
@@ -43,20 +47,23 @@ export class CreateDriverInfomationUseCase {
     let files = [];
     if (input.fileIds && input.fileIds.length > 0) {
       files = await Promise.all(
-        input.fileIds.map(async (id) => {
-          return this.fileService.findFileById(+id);
+        input.fileIds.map(async (id: string) => {
+          return this.fileService.findFileById(id);
         })
       );
     }
 
     // tạo driver request
-    const entityDriverRequest = this.driverRequestRepository.create({
-      ...input,
-      driverId: driverId,
-      status: ERequestStatus.Pending,
-      files: files
-    });
-    return this.driverRequestRepository.save(entityDriverRequest);
+    const driverRequestDocument =
+      await this.driverRequestModelRepository.createDriverRequest({
+        ...input,
+        driverId: driverId,
+        status: ERequestStatus.Pending,
+        fileIds: files
+      });
+    return await this.driverRequestModelRepository.saveDriverRequest(
+      driverRequestDocument
+    );
   }
 
   /**
@@ -85,7 +92,7 @@ export class CreateDriverInfomationUseCase {
     if (input?.fileIds && input.fileIds.length > 0) {
       for (const fileId of input.fileIds) {
         makeSure(!isNaN(Number(fileId)), EError.INVALID_FILE_ID);
-        const file = await this.fileService.findFileById(+fileId);
+        const file = await this.fileService.findFileById(fileId);
         makeSure(!isNil(file), EError.INVALID_FILE_ID);
       }
     }
@@ -94,9 +101,8 @@ export class CreateDriverInfomationUseCase {
     if (input?.typeId) {
       makeSure(!isNaN(Number(input?.typeId)), EError.INVALID_REQUEST_TYPE_ID);
       // Kiểm tra thêm typeId có tồn tại trong bảng RequestType
-      const requestTypeResult = await this.requestTypeRepository.findOne({
-        where: { requestTypeId: +input?.typeId }
-      });
+      const requestTypeResult =
+        await this.requestTypeModelRepository.findRequestTypeById(input.typeId);
       makeSure(!isNil(requestTypeResult), EError.INVALID_REQUEST_TYPE_ID);
     }
   }

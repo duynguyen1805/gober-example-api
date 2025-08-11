@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Query,
   Patch
 } from '@nestjs/common';
@@ -23,8 +22,8 @@ import {
 } from '@nestjs/swagger';
 // decorators
 import { User } from '../../common/decorators/user.decorator';
-// entity
-import { FileEntity } from '../../database/entities/file.entity';
+// schema
+import { File } from '../../database/mongo-db/file.schema';
 // dto
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
@@ -48,7 +47,7 @@ export class FileController {
   @ApiBody({ type: CreateFileDto })
   @ApiCreatedResponse({
     description: 'Tạo record file thành công',
-    type: FileEntity,
+    type: File,
     schema: {
       properties: {
         success: {
@@ -76,7 +75,7 @@ export class FileController {
   })
   async create(
     @Body() body: CreateFileDto,
-    @User('driverId') driverId: number
+    @User('driverId') driverId: string
   ): Promise<IFileOutput> {
     return this.fileService.create(driverId, body);
   }
@@ -109,7 +108,7 @@ export class FileController {
       }
     }
   })
-  async list(@Query() query: QueryFileDto, @User('driverId') driverId: number) {
+  async list(@Query() query: QueryFileDto, @User('driverId') driverId: string) {
     return this.fileService.getListFiles(driverId, query);
   }
 
@@ -120,7 +119,7 @@ export class FileController {
   })
   @ApiResponse({
     description: 'Lấy thông tin file thành công',
-    type: FileEntity,
+    type: File,
     schema: {
       properties: {
         success: {
@@ -148,33 +147,7 @@ export class FileController {
     }
   })
   @ApiParam({ name: 'id', required: true, example: 1 })
-  async getById(
-    @Param('id', ParseIntPipe) id: number
-  ): Promise<IFileOutput | null> {
+  async getById(@Param('id') id: string): Promise<IFileOutput | null> {
     return this.fileService.findFileById(id);
   }
-
-  // @Patch(':id')
-  // @ApiOperation({
-  //   summary: 'Update file',
-  //   description: 'Update a file by fileId.'
-  // })
-  // @ApiParam({ name: 'id', required: true, example: 1 })
-  // @ApiBody({ type: UpdateFileDto })
-  // async update(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Body() body: UpdateFileDto
-  // ): Promise<FileEntity> {
-  //   return this.fileService.updateFile(id, body);
-  // }
-
-  // @Delete(':id')
-  // @ApiOperation({
-  //   summary: 'Delete file',
-  //   description: 'Delete a file by fileId.'
-  // })
-  // @ApiParam({ name: 'id', required: true, example: 1 })
-  // async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-  //   return this.fileService.removeFile(id);
-  // }
 }

@@ -1,22 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { SignUpDriverDto } from '../dto/signup-driver.dto';
-import { DriverEntity } from '../../../database/entities/driver.entity';
+import { isNil } from 'lodash';
+import { hash } from 'bcrypt';
+// common/helpers
 import { EError } from '../../../common/enums/error.enum';
 import { generateRandomCodeNumber } from '../../../common/helpers/auth.helper';
 import {
   makeSure,
   serverError
 } from '../../../common/helpers/server-error.helper';
-import { isNil } from 'lodash';
-import { hash } from 'bcrypt';
+
 import { EDriverStatus } from '../../driver/enums/driver.enum';
 import { isValidEmail } from '../../../common/helpers/auth.helper';
 import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
-import { DriverRepository } from '../../../modules/driver/driver.repository';
+// dto
+import { SignUpDriverDto } from '../dto/signup-driver.dto';
+// model.repository
+import { DriverModelRepository } from '../../../modules/driver/driver.model.repository';
+// schema
+import { DriverDocument } from '../../../database/mongo-db/driver.schema';
 
 @Injectable()
 export class SignUpUseCase {
-  constructor(private readonly driverRepository: DriverRepository) {}
+  constructor(private readonly driverModelRepository: DriverModelRepository) {}
 
   /**
    * Đăng ký tài khoản cho driver
@@ -29,7 +34,7 @@ export class SignUpUseCase {
    * @throws EError nếu có lỗi trong quá trình validation và đăng ký.
    */
 
-  async signUpAccount(driver: SignUpDriverDto): Promise<DriverEntity> {
+  async signUpAccount(driver: SignUpDriverDto): Promise<DriverDocument> {
     await this.validateDriverDto(driver);
     try {
       const driverRegistered = await this.saveDriver(driver);
@@ -86,10 +91,10 @@ export class SignUpUseCase {
   /**
    * Tìm kiếm driver có email hoặc phone number trùng với tham số
    * @param driver Tham số chứa email hoặc phone number
-   * @returns DriverEntity nếu tìm thấy, ngược lại trả về null
+   * @returns DriverDocument nếu tìm thấy, ngược lại trả về null
    */
-  async findDriver(driver: SignUpDriverDto): Promise<DriverEntity> {
-    return await this.driverRepository.findDriversByEmailOrPhoneNumber({
+  async findDriver(driver: SignUpDriverDto): Promise<DriverDocument> {
+    return await this.driverModelRepository.findDriversByEmailOrPhoneNumber({
       email: driver.email,
       phoneNumber: driver.phoneNumber
     });
@@ -99,10 +104,10 @@ export class SignUpUseCase {
    * Lưu thông tin đăng ký của driver với status = INACTIVE
    *
    * @param driver - SignUpDriverDto chứa thông tin của driver
-   * @returns DriverEntity đã lưu
+   * @returns DriverDocument đã lưu
    */
 
-  async saveDriver(driver: SignUpDriverDto): Promise<DriverEntity> {
+  async saveDriver(driver: SignUpDriverDto): Promise<DriverDocument> {
     const passwordHash = await hash(driver.password, 8);
     const dataCreateDriver = {
       ...driver,
@@ -110,6 +115,6 @@ export class SignUpUseCase {
       status: EDriverStatus.INACTIVE,
       balance: 0
     };
-    return await this.driverRepository.saveDriver(dataCreateDriver);
+    return await this.driverModelRepository.saveDriver(dataCreateDriver);
   }
 }

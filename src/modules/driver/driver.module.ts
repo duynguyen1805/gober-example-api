@@ -1,22 +1,36 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 // modules
 import { FileModule } from '../file/file.module';
 // controller
 import { DriverController } from './driver.controller';
 // service
 import { DriverService } from './driver.service';
-// entity
-import { DriverEntity } from '../../database/entities/driver.entity';
-// repository
-import { DriverRepository } from './driver.repository';
+// model.repository
+import { DriverModelRepository } from './driver.model.repository';
 // use-case
 import { UpdateDriverInfomationUseCase } from './use-case/update-driver-infomation.use-case';
+// schema
+import { Driver, DriverSchema } from '../../database/mongo-db/driver.schema';
+import {
+  DriverRequest,
+  DriverRequestSchema
+} from '../../database/mongo-db/driver-request.schema';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DriverEntity]), FileModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Driver.name, schema: DriverSchema },
+      { name: DriverRequest.name, schema: DriverRequestSchema }
+    ]),
+    FileModule
+  ],
   controllers: [DriverController],
-  providers: [DriverService, DriverRepository, UpdateDriverInfomationUseCase],
+  providers: [
+    DriverService,
+    DriverModelRepository,
+    UpdateDriverInfomationUseCase
+  ],
   exports: [DriverService]
 })
 export class DriverModule {}

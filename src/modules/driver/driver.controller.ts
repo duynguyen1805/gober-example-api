@@ -13,10 +13,10 @@ import { User } from '../../common/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 //dto
 import { UpdateDriverDto } from './dto/update-driver.dto';
-// entity
-import { DriverEntity } from '../../database/entities/driver.entity';
 // service
 import { DriverService } from './driver.service';
+// schema
+import { DriverDocument } from '../../database/mongo-db/driver.schema';
 
 @ApiTags('drivers')
 @Controller('drivers')
@@ -90,8 +90,8 @@ export class DriverController {
     }
   })
   async findDriverById(
-    @User('driverId') driverId: number
-  ): Promise<DriverEntity | null> {
+    @User('driverId') driverId: string
+  ): Promise<DriverDocument | null> {
     return this.driverService.findDriverById(driverId);
   }
 
@@ -160,9 +160,9 @@ export class DriverController {
   })
   @ApiBody({ type: UpdateDriverDto })
   async updateDriverInformation(
-    @User('driverId') driverId: number,
+    @User('driverId') driverId: string,
     @Body() body: UpdateDriverDto
-  ): Promise<DriverEntity> {
+  ): Promise<DriverDocument> {
     return this.driverService.updateDriverInformation(driverId, body);
   }
 }

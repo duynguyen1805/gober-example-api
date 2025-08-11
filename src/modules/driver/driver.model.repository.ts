@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-// entity
-import { DriverEntity } from '../../database/entities/driver.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
+// schema
+import {
+  Driver,
+  DriverDocumentWithCustomId
+} from '../../database/mongo-db/driver.schema';
 // dto
 import { SignUpDriverDto } from '../auth/dto/signup-driver.dto';
 import { QueryDriverDto } from './dto/query-driver.dto';
@@ -10,23 +13,23 @@ import { QueryDriverDto } from './dto/query-driver.dto';
 import { PagedDriverResult } from './interfaces/driver.interface';
 
 @Injectable()
-export class DriverRepository {
+export class DriverModelRepository {
   constructor(
-    @InjectRepository(DriverEntity)
-    private readonly driverRepository: Repository<DriverEntity>
+    @InjectModel(Driver.name)
+    private readonly driverModelRepository: Model<DriverDocumentWithCustomId>
   ) {}
 
   /**
    * Tìm kiếm driver có email hoặc phone number trùng với tham số
    * @param string email: Tham số chứa email
    * @param string phoneNumber: Tham số chúa phone number
-   * @returns DriverEntity nếu tìm thấy, ngược lại trả về null
+   * @returns DriverDocument nếu tìm thấy, ngược lại trả về null
    */
   async findDriversByEmailOrPhoneNumber(input: {
     email?: string;
     phoneNumber?: string;
     identifier?: string;
-  }): Promise<DriverEntity> {
+  }): Promise<DriverDocumentWithCustomId> {
     const where: Object[] = [];
     if (input?.identifier) {
       where.push({ email: input.identifier });
@@ -40,7 +43,7 @@ export class DriverRepository {
       }
     }
     if (where.length === 0) return null;
-    return await this.driverRepository.findOne({ where });
+    return await this.driverModelRepository.findOne({ where });
   }
 
   /**
@@ -57,31 +60,35 @@ export class DriverRepository {
    */
   async getListDrivers(
     query: QueryDriverDto
-  ): Promise<PagedDriverResult<DriverEntity>> {
+  ): Promise<PagedDriverResult<DriverDocumentWithCustomId>> {
     const { page = 1, pageSize = 20, keyword, status, activeAreaId } = query;
-    const queryDB = this.driverRepository.createQueryBuilder('driver');
-
+    // Tạo điều kiện filter, sử dụng FilterQuery
+    const filter: FilterQuery<DriverDocumentWithCustomId> = {};
     if (keyword) {
-      queryDB.andWhere(
-        '(driver.full_name ILIKE :kw OR driver.phone_number ILIKE :kw OR driver.email ILIKE :kw)',
-        { kw: `%${keyword}%` }
-      );
+      filter.$or = [
+        { full_name: { $regex: keyword, $options: 'i' } },
+        { phone_number: { $regex: keyword, $options: 'i' } },
+        { email: { $regex: keyword, $options: 'i' } }
+      ];
     }
+
     if (status) {
-      queryDB.andWhere('driver.status = :status', { status });
+      filter.status = status;
     }
     if (activeAreaId) {
-      queryDB.andWhere('driver.active_area_id = :activeAreaId', {
-        activeAreaId
-      });
+      filter.activeAreaId = activeAreaId;
     }
 
-    queryDB
-      .orderBy('driver.created_at', 'DESC')
-      .skip((page - 1) * pageSize)
-      .take(pageSize);
+    const [items, total] = await Promise.all([
+      this.driverModelRepository
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .exec(),
+      this.driverModelRepository.countDocuments(filter).exec()
+    ]);
 
-    const [items, total] = await queryDB.getManyAndCount();
     return { items, total, page, pageSize };
   }
 
@@ -90,8 +97,10 @@ export class DriverRepository {
    * @param driverId - driverId
    * @returns thông tin driver hoặc null
    */
-  async findDriverById(driverId: number): Promise<DriverEntity | null> {
-    return this.driverRepository.findOne({ where: { driverId } });
+  async findDriverById(
+    driverId: string
+  ): Promise<DriverDocumentWithCustomId | null> {
+    return this.driverModelRepository.findById(driverId).exec();
   }
 
   /**
@@ -100,24 +109,27 @@ export class DriverRepository {
    * @returns thông tin driver và các file hoặc null
    */
   async findDriverByIdWithFiles(
-    driverId: number
-  ): Promise<DriverEntity | null> {
-    return this.driverRepository.findOne({
-      where: { driverId },
-      relations: ['identityCardFront', 'identityCardBack', 'avatarFile']
-    });
+    driverId: string
+  ): Promise<DriverDocumentWithCustomId | null> {
+    return this.driverModelRepository
+      .findOne({ driverId })
+      .populate('identityCardFront') // truy vấn ref
+      .populate('identityCardBack')
+      .populate('avatarFile')
+      .exec();
   }
 
   /**
-   * Lưu thống tin driver vào database
+   * Lưu thông tin driver vào database
    *
-   * @param driver - DriverEntity hoặc SignUpDriverDto cần lưu.
-   * @returns DriverEntity: thông tin driver sau khi được lưu
+   * @param driver - DriverDocument hoặc SignUpDriverDto cần lưu.
+   * @returns driverDocument: thông tin driver sau khi được lưu
    */
 
   async saveDriver(
-    driver: DriverEntity | SignUpDriverDto
-  ): Promise<DriverEntity> {
-    return await this.driverRepository.save(driver);
+    driver: DriverDocumentWithCustomId | SignUpDriverDto
+  ): Promise<DriverDocumentWithCustomId> {
+    const driverDocument = new this.driverModelRepository(driver);
+    return await driverDocument.save();
   }
 }

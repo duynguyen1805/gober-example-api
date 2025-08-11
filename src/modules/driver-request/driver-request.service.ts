@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 // entity
 import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
 // dto
@@ -12,12 +10,15 @@ import { PagedDriverRequestResult } from './interfaces/driver-request.interface'
 // use-case
 import { UpdateDriverRequestInfomationUseCase } from './use-case/update-driver-request-infomation.use-case';
 import { CreateDriverInfomationUseCase } from './use-case/create-driver-request-infomation.use-case';
+// schema
+import { DriverRequestDocumentWithCustomId } from 'src/database/mongo-db/driver-request.schema';
+// model.repository
+import { DriverRequestModelRepository } from './driver-request.model.repository';
 
 @Injectable()
 export class DriverRequestService {
   constructor(
-    @InjectRepository(DriverRequestEntity)
-    private driverRequestRepository: Repository<DriverRequestEntity>,
+    private readonly driverRequestRepository: DriverRequestModelRepository,
     private readonly createDriverUseCase: CreateDriverInfomationUseCase,
     private readonly updateDriverUseCase: UpdateDriverRequestInfomationUseCase
   ) {}
@@ -29,9 +30,9 @@ export class DriverRequestService {
    * @returns thông tin driver request sau khi tạo thành công
    */
   async createDriverRequestInformation(
-    driverId: number,
+    driverId: string,
     input: CreateDriverRequestDto
-  ): Promise<DriverRequestEntity> {
+  ): Promise<DriverRequestDocumentWithCustomId> {
     return await this.createDriverUseCase.execute(driverId, input);
   }
 
@@ -45,52 +46,28 @@ export class DriverRequestService {
    *   - `page`: Trang số
    *   - `pageSize`: Số lượng item trong 1 trang
    *
-   * @returns Trả về mảng drivers, tống số drivers của mảng, trang hiện tại, số lượng item trong 1 trang.
+   * @returns Trả về mảng drivers request, tống số drivers request của mảng, trang hiện tại, số lượng item trong 1 trang.
    */
 
   async getListDriverRequest(
-    query: QueryDriverRequestDto
-  ): Promise<PagedDriverRequestResult<DriverRequestEntity>> {
-    const { page = 1, pageSize = 20, keyword, status, typeId } = query;
-    const queryDB =
-      this.driverRequestRepository.createQueryBuilder('driver_requests');
-
-    if (keyword) {
-      queryDB.andWhere(
-        '(driver_requests.description ILIKE :kw OR driver_requests.reason ILIKE :kw)',
-        { kw: `%${keyword}%` }
-      );
-    }
-    if (status) {
-      queryDB.andWhere('driver.status = :status', { status });
-    }
-    if (typeId) {
-      queryDB.andWhere('driver.type_id = :typeId', {
-        typeId
-      });
-    }
-
-    queryDB
-      .orderBy('driver_requests.created_at', 'DESC')
-      .skip((page - 1) * pageSize)
-      .take(pageSize);
-
-    const [items, total] = await queryDB.getManyAndCount();
-    return { items, total, page, pageSize };
+    query: Partial<QueryDriverRequestDto>
+  ): Promise<PagedDriverRequestResult<DriverRequestDocumentWithCustomId>> {
+    return this.driverRequestRepository.getListDriverRequests(query);
   }
 
   /**
    * Tìm driver request bằng driverRequestId
+   * @param driverId - driverId
    * @param driverRequestId - driverRequestId
    * @returns thông tin mảng driver request hoặc null
    */
   async findDriverRequestById(
-    driverId: number,
-    driverRequestId: number
-  ): Promise<DriverRequestEntity[] | null> {
-    return this.driverRequestRepository.find({
-      where: { driverId, driverRequestId },
-      relations: ['files']
+    driverId: string,
+    driverRequestId: string
+  ): Promise<DriverRequestDocumentWithCustomId | null> {
+    return this.driverRequestRepository.findDriverRequestByFilter({
+      driverId,
+      driverRequestId
     });
   }
 
@@ -101,9 +78,9 @@ export class DriverRequestService {
    * @returns thông tin driver request sau khi cập nhật
    */
   async updateDriverRequestInformation(
-    driverId: number,
+    driverId: string,
     input: UpdateDriverRequestDto
-  ): Promise<DriverRequestEntity> {
+  ): Promise<DriverRequestDocumentWithCustomId> {
     return await this.updateDriverUseCase.execute(driverId, input);
   }
 }

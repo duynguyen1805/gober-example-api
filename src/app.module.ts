@@ -5,14 +5,11 @@ import {
   Module,
   RequestMethod
 } from '@nestjs/common';
-// typeORM configuration module
-import { TypeOrmModule } from '@nestjs/typeorm';
+// mongoose configuration module
+import { MongooseModule } from '@nestjs/mongoose';
 // redis config types và store adapter cho cache manager
 import type { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
-// serve static files
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 // interceptor
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor } from './common/interceptors/cache.interceptor';
@@ -23,11 +20,9 @@ import { JwtStrategy } from './modules/auth/jwt.strategy';
 // config
 import { ConfigModule } from '@nestjs/config';
 import { configService } from './config/config.service';
-import settings from '../ormconfig.json';
 // middleware
 import { BlacklistMiddleware } from './common/middleware/blacklist-token.middleware';
 // modules
-import { MulterModule } from '@nestjs/platform-express';
 import { CustomeCacheModule } from './modules/cache/cache.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { FileModule } from './modules/file/file.module';
@@ -44,13 +39,7 @@ const configRedis = configService.getRedisConfig();
 @Module({
   imports: compact([
     ConfigModule.forRoot({ isGlobal: true }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'files')
-    }),
-    TypeOrmModule.forRoot(settings),
-    MulterModule.register({
-      dest: '../files'
-    }),
+    MongooseModule.forRoot(configService.getMongoConfig().uri),
     CacheModule.register<RedisClientOptions>({
       isGlobal: true,
       store: redisStore,

@@ -1,9 +1,9 @@
-import { DriverEntity } from '../../../database/entities/driver.entity';
+import { DriverDocumentWithCustomId } from '../../../database/mongo-db/driver.schema';
 
 export interface ISignInDriverResponse {
   token: string;
   refreshToken: string;
-  driver: DriverEntity;
+  driver: DriverDocumentWithCustomId;
 }
 
 export interface IRefreshTokenResponse {
@@ -15,6 +15,6 @@ export interface IJWTPayload {
   data: {
     email: string;
     phoneNumber: string;
-    driverId: number;
+    driverId: string;
   };
 }

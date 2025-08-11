@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+// helpers
 import { ERedisKey } from '../../../common/enums/redis.enum';
-import { CacheService } from '../../../modules/cache/cache.service';
-import { DriverRefreshTokenEntity } from '../../../database/entities/driver-refresh-token.entity';
 import { makeSure } from '../../../common/helpers/server-error.helper';
 import { EError } from '../../../common/enums/error.enum';
-import { DriverRefreshTokenRepository } from '../../../modules/driver-request/driver-refresh-token.repository';
+// service
+import { CacheService } from '../../../modules/cache/cache.service';
+// model.repository
+import { DriverRefreshTokenModelRepository } from '../../../modules/driver-request/driver-refresh-token.model.repository';
 
 @Injectable()
 export class LogOutUseCase {
   constructor(
     private readonly cacheService: CacheService,
-    private readonly driverRefreshTokenRepository: DriverRefreshTokenRepository
+    private readonly driverRefreshTokenRepository: DriverRefreshTokenModelRepository
   ) {}
 
   /**
@@ -22,7 +24,7 @@ export class LogOutUseCase {
    */
 
   async addTokenToBlackList(
-    driverId: number,
+    driverId: string,
     token: string,
     refreshToken: string
   ): Promise<boolean> {
@@ -45,7 +47,7 @@ export class LogOutUseCase {
    */
 
   async revokeDriverRefreshToken(
-    driverId: number,
+    driverId: string,
     refreshToken: string
   ): Promise<void> {
     const isUpdateDriverRefreshTokenSuccess =

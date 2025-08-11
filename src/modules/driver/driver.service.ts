@@ -4,16 +4,19 @@ import { QueryDriverDto } from './dto/query-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
 // interface
 import { PagedDriverResult } from './interfaces/driver.interface';
-// entity
-import { DriverEntity } from '../../database/entities/driver.entity';
+// schema
+import {
+  DriverDocument,
+  DriverDocumentWithCustomId
+} from '../../database/mongo-db/driver.schema';
 // use-case
 import { UpdateDriverInfomationUseCase } from './use-case/update-driver-infomation.use-case';
-import { DriverRepository } from './driver.repository';
+import { DriverModelRepository } from './driver.model.repository';
 
 @Injectable()
 export class DriverService {
   constructor(
-    private readonly driverRepository: DriverRepository,
+    private readonly driverModelRepository: DriverModelRepository,
     private readonly updateDriverUseCase: UpdateDriverInfomationUseCase
   ) {}
 
@@ -31,9 +34,9 @@ export class DriverService {
    */
   async getListDriver(
     query: QueryDriverDto
-  ): Promise<PagedDriverResult<DriverEntity>> {
+  ): Promise<PagedDriverResult<DriverDocument>> {
     // Cần thêm validate query
-    return await this.driverRepository.getListDrivers(query);
+    return await this.driverModelRepository.getListDrivers(query);
   }
 
   /**
@@ -41,8 +44,8 @@ export class DriverService {
    * @param driverId - driverId
    * @returns thông tin driver hoặc null
    */
-  async findDriverById(driverId: number): Promise<DriverEntity | null> {
-    return this.driverRepository.findDriverById(driverId);
+  async findDriverById(driverId: string): Promise<DriverDocument | null> {
+    return this.driverModelRepository.findDriverById(driverId);
   }
 
   /**
@@ -51,9 +54,9 @@ export class DriverService {
    * @returns thông tin driver và các file hoặc null
    */
   async findDriverByIdWithFiles(
-    driverId: number
-  ): Promise<DriverEntity | null> {
-    return this.driverRepository.findDriverByIdWithFiles(driverId);
+    driverId: string
+  ): Promise<DriverDocument | null> {
+    return this.driverModelRepository.findDriverByIdWithFiles(driverId);
   }
 
   /**
@@ -63,9 +66,9 @@ export class DriverService {
    * @returns thông tin driver sau khi cập nhật
    */
   async updateDriverInformation(
-    driverId: number,
+    driverId: string,
     input: UpdateDriverDto
-  ): Promise<DriverEntity> {
+  ): Promise<DriverDocument> {
     return await this.updateDriverUseCase.execute(driverId, input);
   }
 }

@@ -8,6 +8,5 @@ export class UpdateDriverRequestDto extends CreateDriverRequestDto {
     example: 1
   })
   @IsNotEmpty()
-  @IsNumber()
-  driverRequestId?: number;
+  driverRequestId?: string;
 }
