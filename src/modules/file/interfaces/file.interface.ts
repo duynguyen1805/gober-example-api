@@ -1,4 +1,7 @@
-import { FileDocument } from 'src/database/mongo-db/file.schema';
+import {
+  FileDocument,
+  FileDocumentWithCustomId
+} from '../../../database/mongo-db/file.schema';
 
 export interface IFileUploadInput {
   fieldname: string;

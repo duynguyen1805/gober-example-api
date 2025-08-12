@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { EDriverStatus } from '../enums/driver.enum';
+import { Type } from 'class-transformer';
 
 export class QueryDriverDto {
   @ApiPropertyOptional({
@@ -32,9 +33,13 @@ export class QueryDriverDto {
     default: 1
   })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt()
   page?: number = 1;
 
   @ApiPropertyOptional({ description: 'Page size', example: 20, default: 20 })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt()
   pageSize?: number = 20;
 }

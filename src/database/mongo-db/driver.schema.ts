@@ -107,10 +107,10 @@ export class Driver extends BaseSchema {
   @Prop({ required: true })
   fullName: string;
 
-  @Prop({ required: true, unique: true, index: true })
+  @Prop({ required: true, unique: true })
   phoneNumber: string;
 
-  @Prop({ index: true, sparse: true }) //sparse: chỉ đánh index khi tồn tại
+  @Prop({ required: false })
   email?: string;
 
   @Prop() password?: string;
@@ -199,4 +199,17 @@ export const DriverSchema = SchemaFactory.createForClass(Driver);
 // ảo hoá cho driverId
 DriverSchema.virtual('driverId').get(function (this: Driver & Document) {
   return this._id.toString();
+});
+
+DriverSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+    return ret;
+  }
+});
+
+DriverSchema.set('toObject', {
+  virtuals: true
 });

@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// entity
-import { DriverRequestEntity } from '../../database/entities/driver-request.entity';
 // dto
 import { QueryDriverRequestDto } from './dto/query-driver-request.dto';
 import { UpdateDriverRequestDto } from './dto/update-driver-request.dto';

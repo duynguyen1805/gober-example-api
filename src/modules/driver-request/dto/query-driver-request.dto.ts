@@ -9,6 +9,7 @@ import {
   Min
 } from 'class-validator';
 import { ERequestStatus } from '../../../common/enums';
+import { Type } from 'class-transformer';
 
 export class QueryDriverRequestDto {
   @ApiPropertyOptional({
@@ -16,7 +17,6 @@ export class QueryDriverRequestDto {
     example: 'Yeu cau'
   })
   @IsOptional()
-  @IsString()
   keyword?: string;
 
   @ApiPropertyOptional({
@@ -29,9 +29,7 @@ export class QueryDriverRequestDto {
 
   @ApiPropertyOptional({ description: 'Filter by request type id', example: 1 })
   @IsOptional()
-  @IsInt()
-  @IsPositive()
-  typeId?: number;
+  typeId?: string;
 
   @ApiPropertyOptional({
     description: 'Page number (1-based)',
@@ -39,14 +37,13 @@ export class QueryDriverRequestDto {
     default: 1
   })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
-  @Min(1)
   page?: number = 1;
 
   @ApiPropertyOptional({ description: 'Page size', example: 20, default: 20 })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
-  @Min(1)
-  @Max(100)
   pageSize?: number = 20;
 }

@@ -30,20 +30,23 @@ export class DriverModelRepository {
     phoneNumber?: string;
     identifier?: string;
   }): Promise<DriverDocumentWithCustomId> {
-    const where: Object[] = [];
+    const orConditions: Object[] = [];
     if (input?.identifier) {
-      where.push({ email: input.identifier });
-      where.push({ phoneNumber: input.identifier });
+      orConditions.push({ email: input.identifier });
+      orConditions.push({ phoneNumber: input.identifier });
     } else {
       if (input?.email) {
-        where.push({ email: input.email });
+        orConditions.push({ email: input.email });
       }
       if (input?.phoneNumber) {
-        where.push({ phoneNumber: input.phoneNumber });
+        orConditions.push({ phoneNumber: input.phoneNumber });
       }
     }
-    if (where.length === 0) return null;
-    return await this.driverModelRepository.findOne({ where });
+    if (orConditions.length === 0) return null;
+    const result = await this.driverModelRepository.findOne({
+      $or: orConditions
+    });
+    return result;
   }
 
   /**

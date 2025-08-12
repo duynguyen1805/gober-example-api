@@ -24,3 +24,16 @@ export const AdminSchema = SchemaFactory.createForClass(Admin);
 AdminSchema.virtual('adminId').get(function (this: Admin) {
   return this._id.toString();
 });
+
+AdminSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+    return ret;
+  }
+});
+
+AdminSchema.set('toObject', {
+  virtuals: true
+});

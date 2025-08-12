@@ -22,3 +22,16 @@ export const ServiceTypeSchema = SchemaFactory.createForClass(ServiceType);
 ServiceTypeSchema.virtual('serviceTypeId').get(function (this: ServiceType) {
   return this._id.toString();
 });
+
+ServiceTypeSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+    return ret;
+  }
+});
+
+ServiceTypeSchema.set('toObject', {
+  virtuals: true
+});

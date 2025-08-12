@@ -74,9 +74,10 @@ export class SignInUseCase {
       // Kiểm tra phone number
       makeSure(isValidPhoneNumber(driver.identifier), EError.INVALID_INDETITY);
     }
-
+    console.log('driver ::: ', driver);
     // Kiểm tra driver đã tồn tại
     const currentDriver = await this.findDriver(driver);
+    console.log('currentDriver ::: ', currentDriver);
     makeSure(!isNil(currentDriver), EError.DRIVER_NOT_FOUND);
 
     // Kiểm tra password (có thể các rule khác)

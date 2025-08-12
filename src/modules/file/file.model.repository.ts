@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 // schema
-import { File, FileDocument } from '../../database/mongo-db/file.schema';
+import {
+  File,
+  FileDocument,
+  FileDocumentWithCustomId
+} from '../../database/mongo-db/file.schema';
 // dto
 import { QueryFileDto } from './dto/query-file.dto';
 import { CreateFileDto } from './dto/create-file.dto';
@@ -13,7 +17,7 @@ import { PagedFileResult } from './interfaces/file.interface';
 export class FileModelRepository {
   constructor(
     @InjectModel(File.name)
-    private readonly fileModelRepository: Model<FileDocument>
+    private readonly fileModelRepository: Model<FileDocumentWithCustomId>
   ) {}
 
   /**

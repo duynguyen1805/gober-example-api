@@ -1,12 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsOptional,
-  IsString,
-  IsNumber,
-  IsInt,
-  Min,
-  Max
-} from 'class-validator';
+import { IsOptional, IsInt } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class QueryFileDto {
   @ApiPropertyOptional({
@@ -14,7 +8,6 @@ export class QueryFileDto {
     example: 'meo_bay_lac'
   })
   @IsOptional()
-  @IsString()
   keyword?: string;
 
   @ApiPropertyOptional({
@@ -22,16 +15,7 @@ export class QueryFileDto {
     example: 'image/png'
   })
   @IsOptional()
-  @IsString()
   mimeType?: string;
-
-  @ApiPropertyOptional({
-    description: 'Lọc theo id của driver',
-    example: 1
-  })
-  @IsOptional()
-  @IsNumber()
-  uploadedById?: number;
 
   @ApiPropertyOptional({
     description: 'Phân trang, thứ tự trang',
@@ -39,8 +23,8 @@ export class QueryFileDto {
     default: 1
   })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
-  @Min(1)
   page?: number = 1;
 
   @ApiPropertyOptional({
@@ -49,8 +33,7 @@ export class QueryFileDto {
     default: 20
   })
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
-  @Min(1)
-  @Max(100)
   pageSize?: number = 20;
 }

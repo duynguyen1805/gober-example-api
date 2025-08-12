@@ -12,7 +12,7 @@ import { DriverRefreshTokenModelRepository } from '../../../modules/driver-reque
 export class LogOutUseCase {
   constructor(
     private readonly cacheService: CacheService,
-    private readonly driverRefreshTokenRepository: DriverRefreshTokenModelRepository
+    private readonly driverRefreshModelTokenRepository: DriverRefreshTokenModelRepository
   ) {}
 
   /**
@@ -51,7 +51,7 @@ export class LogOutUseCase {
     refreshToken: string
   ): Promise<void> {
     const isUpdateDriverRefreshTokenSuccess =
-      await this.driverRefreshTokenRepository.updateDriverRefreshToken(
+      await this.driverRefreshModelTokenRepository.updateDriverRefreshToken(
         {
           driverId,
           token: refreshToken

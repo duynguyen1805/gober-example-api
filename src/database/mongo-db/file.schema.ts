@@ -38,3 +38,16 @@ export const FileSchema = SchemaFactory.createForClass(File);
 FileSchema.virtual('fileId').get(function (this: File) {
   return this._id.toString();
 });
+
+FileSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (_, ret) => {
+    delete ret._id;
+    return ret;
+  }
+});
+
+FileSchema.set('toObject', {
+  virtuals: true
+});

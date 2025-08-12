@@ -54,30 +54,31 @@ export class AuthController {
         driver: {
           type: 'object',
           example: {
-            isActive: true,
-            createdAt: '2025-08-08T22:28:44.808Z',
-            updatedAt: '2025-08-08T22:28:44.808Z',
-            deletedAt: null,
-            driverId: 3,
             fullName: 'Người dùng 01',
             phoneNumber: '0900000001',
             email: 'driver01@gmail.com',
-            deviceToken: null,
-            lastLogin: null,
-            emailVerifiedAt: null,
-            avatar: 1,
+            password:
+              '$2b$08$8T/k.8XusTusA9RaOVZkT.BC4p2a9SpFAmw/iTr.xsawmZiqe2fzO',
             activeAreaId: 1,
             temporaryAddress: 'Phong Dien, Can Tho',
             identityCardFrontId: 1,
             identityCardBackId: 1,
             status: 'inactive',
-            submittedAt: null,
             approvalStatus: 'draft',
-            approvedAt: null,
-            approvedById: null,
-            approvedNote: null,
-            createdById: null,
-            balance: 0
+            balance: 0,
+            pin: '123456',
+            isActive: true,
+            serviceTypeIds: [],
+            banks: [],
+            emergencyContacts: [],
+            vehicles: [],
+            signatures: [],
+            uniforms: [],
+            availabilities: [],
+            createdAt: '2025-08-11T23:36:30.990Z',
+            updatedAt: '2025-08-11T23:36:30.990Z',
+            driverId: '689a7e7e568b7b237866dfb3',
+            id: '689a7e7e568b7b237866dfb3'
           }
         }
       }
@@ -117,35 +118,39 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        accessToken: { type: 'eyJhbGciOiJIUzI1NiIsInR5cC' },
-        refreshToken: { type: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' },
+        accessToken: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIsInR5cC' },
+        refreshToken: {
+          type: 'string',
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'
+        },
         driver: {
           type: 'object',
           example: {
-            isActive: true,
-            createdAt: '2025-08-10T02:59:53.352Z',
-            updatedAt: '2025-08-10T02:59:53.352Z',
-            deletedAt: null,
-            driverId: 4,
             fullName: 'Người dùng 01',
             phoneNumber: '0900000001',
             email: 'driver01@gmail.com',
-            deviceToken: null,
-            lastLogin: null,
-            emailVerifiedAt: null,
-            avatar: 1,
+            password:
+              '$2b$08$8T/k.8XusTusA9RaOVZkT.BC4p2a9SpFAmw/iTr.xsawmZiqe2fzO',
             activeAreaId: 1,
             temporaryAddress: 'Phong Dien, Can Tho',
             identityCardFrontId: 1,
             identityCardBackId: 1,
             status: 'inactive',
-            submittedAt: null,
             approvalStatus: 'draft',
-            approvedAt: null,
-            approvedById: null,
-            approvedNote: null,
-            createdById: null,
-            balance: 0
+            balance: 0,
+            pin: '123456',
+            isActive: true,
+            serviceTypeIds: [],
+            banks: [],
+            emergencyContacts: [],
+            vehicles: [],
+            signatures: [],
+            uniforms: [],
+            availabilities: [],
+            createdAt: '2025-08-11T23:36:30.990Z',
+            updatedAt: '2025-08-11T23:36:30.990Z',
+            driverId: '689a7e7e568b7b237866dfb3',
+            id: '689a7e7e568b7b237866dfb3'
           }
         }
       }

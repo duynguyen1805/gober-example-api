@@ -19,3 +19,16 @@ export const ProvinceSchema = SchemaFactory.createForClass(Province);
 ProvinceSchema.virtual('provinceId').get(function (this: Province) {
   return this._id.toString();
 });
+
+ProvinceSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+    return ret;
+  }
+});
+
+ProvinceSchema.set('toObject', {
+  virtuals: true
+});

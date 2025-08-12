@@ -55,3 +55,16 @@ DriverRequestSchema.virtual('driverRequestId').get(function (
 ) {
   return this._id.toString();
 });
+
+DriverRequestSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+    return ret;
+  }
+});
+
+DriverRequestSchema.set('toObject', {
+  virtuals: true
+});

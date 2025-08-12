@@ -6,7 +6,8 @@ import {
   Get,
   Param,
   Query,
-  Patch
+  Patch,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -22,6 +23,8 @@ import {
 } from '@nestjs/swagger';
 // decorators
 import { User } from '../../common/decorators/user.decorator';
+// guards
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 // schema
 import { File } from '../../database/mongo-db/file.schema';
 // dto
@@ -36,6 +39,7 @@ import { FileService } from './file.service';
 @ApiTags('files')
 @Controller('files')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
@@ -57,17 +61,17 @@ export class FileController {
         data: {
           type: 'object',
           example: {
-            filename: 'meo_bay_lac.png',
-            url: '/gober/meo_bay_lac.png',
+            deletedAt: null,
+            filename: 'image.png',
+            path: '/gober/meo_bay_lac.png',
             mimeType: 'image/png',
             fileExtension: 'png',
             size: 455431,
-            deletedAt: null,
-            uploadedById: null,
-            isActive: true,
-            createdAt: '2025-08-09T04:56:24.998Z',
-            updatedAt: '2025-08-09T04:56:24.998Z',
-            fileId: 6
+            _id: '689a856b772acdb811f86e4f',
+            __v: 0,
+            fileId: '689a856b772acdb811f86e4f',
+            id: '689a856b772acdb811f86e4f',
+            url: 'localhost/gober/meo_bay_lac.png'
           }
         }
       }
@@ -92,14 +96,15 @@ export class FileController {
       example: {
         items: [
           {
-            fileId: 1,
+            deletedAt: null,
             filename: 'meo_bay_lac.png',
             path: '/gober/meo_bay_lac.png',
-            url: 'https://localhost:9000/gober/meo_bay_lac.png',
             mimeType: 'image/png',
             fileExtension: 'png',
             size: 1024000,
-            uploadedById: 1
+            uploadedById: '689a7e7e568b7b237866dfb3',
+            fileId: '689a8a9655f410d124d91483',
+            id: '689a8a9655f410d124d91483'
           }
         ],
         total: 1,
@@ -129,18 +134,18 @@ export class FileController {
         data: {
           type: 'object',
           example: {
-            isActive: true,
-            createdAt: '2025-08-08T01:53:06.753Z',
-            updatedAt: '2025-08-08T01:53:06.753Z',
+            _id: '689a8a9655f410d124d91483',
             deletedAt: null,
-            fileId: 1,
             filename: 'meo_bay_lac.png',
             path: '/gober/meo_bay_lac.png',
-            url: 'https://localhost:9000/gober/meo_bay_lac.png',
             mimeType: 'image/png',
             fileExtension: 'png',
-            size: 204800,
-            uploadedById: 1
+            size: 1024000,
+            uploadedById: '689a7e7e568b7b237866dfb3',
+            __v: 0,
+            fileId: '689a8a9655f410d124d91483',
+            id: '689a8a9655f410d124d91483',
+            url: 'localhost/gober/meo_bay_lac.png'
           }
         }
       }

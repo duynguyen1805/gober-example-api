@@ -7,6 +7,7 @@ import { QueryFileDto } from './dto/query-file.dto';
 import { IFileOutput, PagedFileResult } from './interfaces/file.interface';
 // model.repository
 import { FileModelRepository } from './file.model.repository';
+import { makeSure } from '../../common/helpers/server-error.helper';
 
 @Injectable()
 export class FileService {
