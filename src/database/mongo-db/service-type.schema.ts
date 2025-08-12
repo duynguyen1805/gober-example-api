@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseSchema } from './base.schema';
 import { Document } from 'mongoose';
 
-@Schema({ collection: 'service_types' })
+@Schema({ collection: 'service_types', timestamps: true })
 export class ServiceType extends BaseSchema {
   @Prop({ required: true })
   name: string;

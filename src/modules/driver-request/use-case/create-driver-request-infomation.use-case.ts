@@ -43,23 +43,13 @@ export class CreateDriverInfomationUseCase {
     // validate input
     await this.validateCreateDriverRequestInformationDto(input);
 
-    // load các FileEntity
-    let files = [];
-    if (input.fileIds && input.fileIds.length > 0) {
-      files = await Promise.all(
-        input.fileIds.map(async (id: string) => {
-          return this.fileService.findFileById(id);
-        })
-      );
-    }
-
     // tạo driver request
     const driverRequestDocument =
       await this.driverRequestModelRepository.createDriverRequest({
         ...input,
         driverId: driverId,
         status: ERequestStatus.Pending,
-        fileIds: files
+        fileIds: input.fileIds
       });
     return await this.driverRequestModelRepository.saveDriverRequest(
       driverRequestDocument
@@ -91,7 +81,7 @@ export class CreateDriverInfomationUseCase {
     // Kiểm tra fileId
     if (input?.fileIds && input.fileIds.length > 0) {
       for (const fileId of input.fileIds) {
-        makeSure(!isNaN(Number(fileId)), EError.INVALID_FILE_ID);
+        makeSure(fileId.length > 0, EError.INVALID_FILE_ID);
         const file = await this.fileService.findFileById(fileId);
         makeSure(!isNil(file), EError.INVALID_FILE_ID);
       }
@@ -99,7 +89,7 @@ export class CreateDriverInfomationUseCase {
 
     // Kiểm tra typeId
     if (input?.typeId) {
-      makeSure(!isNaN(Number(input?.typeId)), EError.INVALID_REQUEST_TYPE_ID);
+      makeSure(input?.typeId.length > 0, EError.INVALID_REQUEST_TYPE_ID);
       // Kiểm tra thêm typeId có tồn tại trong bảng RequestType
       const requestTypeResult =
         await this.requestTypeModelRepository.findRequestTypeById(input.typeId);

@@ -39,20 +39,17 @@ export class UpdateDriverRequestInfomationUseCase {
 
   async execute(
     driverId: string,
+    driverRequestId: string,
     input: UpdateDriverRequestDto
   ): Promise<DriverRequestDocumentWithCustomId> {
     // validate input
-    await this.validateUpdateDriverInformationDto(driverId, input);
+    await this.validateUpdateDriverInformationDto(
+      driverId,
+      driverRequestId,
+      input
+    );
 
-    // load file document
-    if (input.fileIds && input.fileIds.length > 0) {
-      const files = await Promise.all(
-        input.fileIds.map(async (id) => {
-          return this.fileService.findFileById(id);
-        })
-      );
-      this.driverRequestExists.toObject().fileIds = files;
-    }
+    this.driverRequestExists.toObject().fileIds = input.fileIds;
 
     Object.assign(this.driverRequestExists, {
       ...input,
@@ -71,20 +68,19 @@ export class UpdateDriverRequestInfomationUseCase {
    */
   async validateUpdateDriverInformationDto(
     driverId: string,
+    driverRequestId: string,
     input: UpdateDriverRequestDto
   ): Promise<void> {
     // Kiểm tra driverRequestId
-    if (input?.driverRequestId) {
-      makeSure(
-        !isNaN(Number(input?.driverRequestId)),
-        EError.INVALID_DRIVER_REQUEST_ID
-      );
+    if (driverRequestId) {
+      makeSure(driverRequestId.length > 0, EError.INVALID_DRIVER_REQUEST_ID);
     }
 
     // Kiểm tra driver đã tồn tại, và còn ở trạng thái Pending
     this.driverRequestExists =
       await this.driverRequestModelRepository.findDriverRequestByFilter({
-        where: { driverId: driverId, driverRequestId: input.driverRequestId }
+        driverId: driverId,
+        driverRequestId: driverRequestId
       });
     mustExist(this.driverRequestExists, EError.DRIVER_NOT_FOUND);
     makeSure(
@@ -108,7 +104,7 @@ export class UpdateDriverRequestInfomationUseCase {
     // Kiểm tra fileId
     if (input?.fileIds && input.fileIds.length > 0) {
       for (const fileId of input.fileIds) {
-        makeSure(!isNaN(Number(fileId)), EError.INVALID_FILE_ID);
+        makeSure(fileId.length > 0, EError.INVALID_FILE_ID);
         const file = await this.fileService.findFileById(fileId);
         makeSure(!isNil(file), EError.INVALID_FILE_ID);
       }
@@ -116,7 +112,7 @@ export class UpdateDriverRequestInfomationUseCase {
 
     // Kiểm tra typeId
     if (input?.typeId) {
-      makeSure(!isNaN(Number(input?.typeId)), EError.INVALID_REQUEST_TYPE_ID);
+      makeSure(input?.typeId.length > 0, EError.INVALID_REQUEST_TYPE_ID);
       // Kiểm tra thêm typeId có tồn tại trong bảng RequestType
       const requestTypeResult =
         await this.requestTypeModelRepository.findRequestTypeById(input.typeId);

@@ -60,13 +60,9 @@ export class DriverRequestService {
    * @returns thông tin mảng driver request hoặc null
    */
   async findDriverRequestById(
-    driverId: string,
     driverRequestId: string
   ): Promise<DriverRequestDocumentWithCustomId | null> {
-    return this.driverRequestRepository.findDriverRequestByFilter({
-      driverId,
-      driverRequestId
-    });
+    return this.driverRequestRepository.findDriverRequestById(driverRequestId);
   }
 
   /**
@@ -77,8 +73,13 @@ export class DriverRequestService {
    */
   async updateDriverRequestInformation(
     driverId: string,
+    driverRequestId: string,
     input: UpdateDriverRequestDto
   ): Promise<DriverRequestDocumentWithCustomId> {
-    return await this.updateDriverUseCase.execute(driverId, input);
+    return await this.updateDriverUseCase.execute(
+      driverId,
+      driverRequestId,
+      input
+    );
   }
 }

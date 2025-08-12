@@ -26,15 +26,14 @@ export class CreateDriverRequestDto {
 
   @ApiPropertyOptional({
     description: 'requestTypeId lấy từ bảng request_type',
-    example: 'typeId1'
+    example: '689a915c4ce57ddcc6800c3d'
   })
   @IsNotEmpty()
-  @IsNumber()
   typeId?: string;
 
   @ApiPropertyOptional({
     description: 'fileId sau khi upload file lên Minio',
-    example: ['fileId1', 'fileId2']
+    example: ['689a8a9655f410d124d91483']
   })
   @IsOptional()
   fileIds?: [string];

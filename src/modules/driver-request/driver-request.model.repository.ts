@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 // module.repository
 import {
   DriverRequest,
@@ -25,7 +25,10 @@ export class DriverRequestModelRepository {
   async findDriverRequestById(
     driverRequestId: string
   ): Promise<DriverRequestDocumentWithCustomId | null> {
-    return this.driveRequestModelRepository.findById(driverRequestId).exec();
+    return await this.driveRequestModelRepository
+      .findById(driverRequestId)
+      .populate('fileIds')
+      .exec();
   }
 
   /**
@@ -34,9 +37,20 @@ export class DriverRequestModelRepository {
    * @returns DriverRequestDocumentWithCustomId | null: thông tin driver request nếu tìm thấy, ngược lại trả về null
    */
   async findDriverRequestByFilter(
-    filter: FilterQuery<QueryDriverRequestDto>
+    filter:
+      | FilterQuery<QueryDriverRequestDto>
+      | FilterQuery<DriverRequestDocumentWithCustomId>
   ): Promise<DriverRequestDocumentWithCustomId | null> {
-    return this.driveRequestModelRepository.findOne(filter).exec();
+    const fixedFilter = { ...filter };
+    // query Driver schema nên chuyển đổi driverRequestId -> _id
+    if (
+      fixedFilter.driverRequestId &&
+      Types.ObjectId.isValid(fixedFilter.driverRequestId)
+    ) {
+      fixedFilter._id = new Types.ObjectId(fixedFilter.driverRequestId);
+      delete fixedFilter.driverRequestId; // vì đây là virtual
+    }
+    return this.driveRequestModelRepository.findOne(fixedFilter).exec();
   }
 
   /**

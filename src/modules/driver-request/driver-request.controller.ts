@@ -52,35 +52,17 @@ export class DriverRequestController {
         data: {
           type: 'object',
           example: {
+            deletedAt: null,
             code: '123123',
             description: 'Nội dung muốn yêu cầu',
-            typeId: 3,
+            typeId: '689a915c4ce57ddcc6800c3d',
             status: 'pending',
-            driverId: 1,
-            files: [
-              {
-                isActive: true,
-                createdAt: '2025-08-08T01:53:06.753Z',
-                updatedAt: '2025-08-08T01:53:06.753Z',
-                deletedAt: null,
-                fileId: 1,
-                filename: 'avatar-can-update.png',
-                path: '/uploads/avatar-can-update.png',
-                url: 'https://backend-server/gober/avatar-can-update.png',
-                mimeType: 'image/png',
-                fileExtension: 'png',
-                size: 204800,
-                uploadedById: 1
-              }
-            ],
-            deletedAt: null,
-            approvedById: null,
-            approvedAt: null,
-            reason: null,
-            isActive: true,
-            createdAt: '2025-08-09T04:36:38.717Z',
-            updatedAt: '2025-08-09T04:36:38.717Z',
-            driverRequestId: 7
+            driverId: '689a8e4049df769dd9e3bd69',
+            fileIds: ['689a8a9655f410d124d91483'],
+            createdAt: '2025-08-12T01:07:38.857Z',
+            updatedAt: '2025-08-12T01:07:38.857Z',
+            driverRequestId: '689a93daeca946ea27a41367',
+            id: '689a93daeca946ea27a41367'
           }
         }
       }
@@ -131,35 +113,29 @@ export class DriverRequestController {
         data: {
           type: 'object',
           example: {
-            isActive: true,
-            createdAt: '2025-08-08T01:53:06.753Z',
-            updatedAt: '2025-08-08T01:53:06.753Z',
             deletedAt: null,
-            driverRequestId: 1,
-            code: 'REQ-0001',
-            description: 'Cập nhật thông tin tài xế',
-            typeId: 1,
+            code: '123123',
+            description: 'Nội dung muốn yêu cầu',
+            typeId: '689a915c4ce57ddcc6800c3d',
             status: 'pending',
-            approvedById: null,
-            approvedAt: null,
-            reason: null,
-            driverId: 1,
-            files: [
+            driverId: '689a8e4049df769dd9e3bd69',
+            fileIds: [
               {
-                isActive: true,
-                createdAt: '2025-08-08T01:53:06.753Z',
-                updatedAt: '2025-08-08T01:53:06.753Z',
                 deletedAt: null,
-                fileId: 2,
-                filename: 'avatar-can-update.png',
-                path: '/uploads/avatar-can-update.png',
-                url: 'https://backend-server/gober/avatar-can-update.png',
+                filename: 'meo_bay_lac.png',
+                path: '/gober/meo_bay_lac.png',
                 mimeType: 'image/png',
                 fileExtension: 'png',
-                size: 102400,
-                uploadedById: 1
+                size: 1024000,
+                uploadedById: '689a7e7e568b7b237866dfb3',
+                fileId: '689a8a9655f410d124d91483',
+                id: '689a8a9655f410d124d91483'
               }
-            ]
+            ],
+            createdAt: '2025-08-12T01:07:38.857Z',
+            updatedAt: '2025-08-12T01:07:38.857Z',
+            driverRequestId: '689a93daeca946ea27a41367',
+            id: '689a93daeca946ea27a41367'
           }
         }
       }
@@ -182,16 +158,12 @@ export class DriverRequestController {
     }
   })
   async findDriverRequestById(
-    @User('driverId') driverId: string,
     @Param('driverRequestId') driverRequestId: string
   ): Promise<DriverRequestDocumentWithCustomId | null> {
-    return this.driverRequestService.findDriverRequestById(
-      driverId,
-      driverRequestId
-    );
+    return this.driverRequestService.findDriverRequestById(driverRequestId);
   }
 
-  @Patch('update')
+  @Patch('update/:driverRequestId')
   @ApiOperation({
     summary: 'Cập nhật thông tin driver request bằng driverRequestId',
     description: 'Cập nhật thông tin driver request bằng driverRequestId'
@@ -209,35 +181,17 @@ export class DriverRequestController {
         data: {
           type: 'object',
           example: {
-            isActive: true,
-            createdAt: '2025-08-08T01:53:06.753Z',
-            updatedAt: '2025-08-08T01:53:06.753Z',
             deletedAt: null,
-            driverRequestId: 1,
-            code: 'REQ-0001',
-            description: 'Cập nhật thông tin tài xế',
-            typeId: 1,
+            code: '123123',
+            description: 'Update nội dung yêu cầu mới',
+            typeId: '689a915c4ce57ddcc6800c3d',
             status: 'pending',
-            approvedById: null,
-            approvedAt: null,
-            reason: null,
-            driverId: 1,
-            files: [
-              {
-                isActive: true,
-                createdAt: '2025-08-08T01:53:06.753Z',
-                updatedAt: '2025-08-08T01:53:06.753Z',
-                deletedAt: null,
-                fileId: 2,
-                filename: 'avatar-can-update-02.png',
-                path: '/uploads/avatar-can-update-02.png',
-                url: 'https://backend-server/gober/avatar-can-update-02.png',
-                mimeType: 'image/png',
-                fileExtension: 'png',
-                size: 102400,
-                uploadedById: 1
-              }
-            ]
+            driverId: '689a8e4049df769dd9e3bd69',
+            fileIds: ['689a8a9655f410d124d91483'],
+            createdAt: '2025-08-12T01:07:38.857Z',
+            updatedAt: '2025-08-12T01:07:38.857Z',
+            driverRequestId: '689a93daeca946ea27a41367',
+            id: '689a93daeca946ea27a41367'
           }
         }
       }
@@ -262,10 +216,12 @@ export class DriverRequestController {
   @ApiBody({ type: UpdateDriverRequestDto })
   async updateDriverRequestInformation(
     @User('driverId') driverId: string,
+    @Param('driverRequestId') driverRequestId: string,
     @Body() body: UpdateDriverRequestDto
   ): Promise<DriverRequestDocumentWithCustomId> {
     return this.driverRequestService.updateDriverRequestInformation(
       driverId,
+      driverRequestId,
       body
     );
   }

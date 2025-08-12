@@ -27,7 +27,10 @@ export class QueryDriverRequestDto {
   @IsEnum(ERequestStatus)
   status?: ERequestStatus;
 
-  @ApiPropertyOptional({ description: 'Filter by request type id', example: 1 })
+  @ApiPropertyOptional({
+    description: 'Filter by request type id',
+    example: '689a915c4ce57ddcc6800c3d'
+  })
   @IsOptional()
   typeId?: string;
 

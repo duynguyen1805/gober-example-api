@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseSchema } from './base.schema';
 import { Driver } from './driver.schema';
 
-@Schema({ collection: 'driver_refresh_tokens' })
+@Schema({ collection: 'driver_refresh_tokens', timestamps: true })
 export class DriverRefreshToken extends BaseSchema {
   @Prop({ required: true })
   token: string;

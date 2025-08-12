@@ -3,7 +3,7 @@ import { BaseSchema } from './base.schema';
 import { Document } from 'mongoose';
 import { Driver } from './driver.schema';
 
-@Schema({ collection: 'files' })
+@Schema({ collection: 'files', timestamps: true })
 export class File extends BaseSchema {
   @Prop({ required: true })
   filename: string;
