@@ -7,8 +7,6 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
 import { ServerErrorFilter } from './common/exceptions/server-error-exception.filter';
 
-declare const module: any;
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -40,10 +38,5 @@ async function bootstrap() {
   await app.startAllMicroservices();
   await app.listen(port);
   Logger.log(`Listening on http://localhost:${port}`);
-
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
 }
 bootstrap();
