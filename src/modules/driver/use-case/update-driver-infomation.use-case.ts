@@ -76,15 +76,15 @@ export class UpdateDriverInfomationUseCase {
       );
     }
     // Kiểm tra avatar
-    if (input?.avatar) {
-      makeSure(!isNaN(Number(input?.avatar)), EError.INVALID_AVATAR);
+    if (input?.avatarFileId) {
+      makeSure(input?.avatarFileId.length > 0, EError.INVALID_AVATAR);
       // Kiểm tra thêm có trong bảng File chưa
-      const file = await this.fileService.findFileById(input?.avatar);
+      const file = await this.fileService.findFileById(input?.avatarFileId);
       makeSure(!isNil(file), EError.INVALID_AVATAR);
     }
     // Kiểm tra activeAreaId
     if (input?.activeAreaId) {
-      makeSure(!isNaN(Number(input?.activeAreaId)), EError.INVALID_ACTIVE_AREA);
+      makeSure(input?.activeAreaId.length > 0, EError.INVALID_ACTIVE_AREA);
       // Kiểm tra thêm có trong bảng Province chưa (CHƯA THỰC HIỆN)
     }
     // Kiểm tra temporaryAddress

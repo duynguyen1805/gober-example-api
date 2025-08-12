@@ -76,16 +76,20 @@ export class SignUpUseCase {
     // Kiểm tra password (có thể các rule khác)
     makeSure(driver.password.length >= 6, EError.INVALID_PASSWORD);
     // Kiểm tra avatar (có thể thêm tìm trong bảng Files)
-    if (driver.avatar) makeSure(!isNaN(driver.avatar), EError.INVALID_AVATAR);
+    if (driver?.avatarFileId)
+      makeSure(driver.avatarFileId.length > 0, EError.INVALID_AVATAR);
     // Kiểm tra avatar (có thể thêm tìm trong bảng Files)
-    if (driver.identityCardFrontId)
+    if (driver?.identityCardFrontId)
       makeSure(
-        !isNaN(driver.identityCardFrontId),
+        driver.identityCardFrontId.length > 0,
         EError.INVALID_IDENTITY_CARD
       );
     // Kiểm tra avatar (có thể thêm tìm trong bảng Files)
     if (driver.identityCardBackId)
-      makeSure(!isNaN(driver.identityCardBackId), EError.INVALID_IDENTITY_CARD);
+      makeSure(
+        driver.identityCardBackId.length > 0,
+        EError.INVALID_IDENTITY_CARD
+      );
   }
 
   /**

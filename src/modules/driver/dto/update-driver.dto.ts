@@ -26,14 +26,14 @@ export class UpdateDriverDto {
   @ApiPropertyOptional({
     description:
       'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database',
-    example: '101'
+    example: '689a8a9655f410d124d91483'
   })
   @IsOptional()
-  avatar?: string;
+  avatarFileId?: string;
 
   @ApiPropertyOptional({
     description: 'provinceId nhận từ API lấy danh sách khu vực hoạt động',
-    example: '1'
+    example: '689a8a9655f410d124d91412'
   })
   @IsOptional()
   activeAreaId?: string;

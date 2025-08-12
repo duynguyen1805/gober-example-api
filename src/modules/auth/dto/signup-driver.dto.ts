@@ -20,21 +20,21 @@ export class SignUpDriverDto {
   phoneNumber: string;
 
   @ApiProperty({
-    example: 1,
+    example: '689a8a9655f410d124d91483',
     required: false,
     description:
       'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database'
   })
   @IsOptional()
-  avatar: number;
+  avatarFileId: string;
 
   @ApiProperty({
-    example: 1,
+    example: '689a8a9655f410d124d91412',
     required: false,
     description: 'provinceId nhận từ API lấy danh sách khu vực hoạt động'
   })
   @IsOptional()
-  activeAreaId: number;
+  activeAreaId: string;
 
   @ApiProperty({
     example: 'Phong Dien, Can Tho',
@@ -45,22 +45,22 @@ export class SignUpDriverDto {
   temporaryAddress: string;
 
   @ApiProperty({
-    example: 1,
+    example: '689a8a9655f410d124d91483',
     required: false,
     description:
       'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database'
   })
   @IsOptional()
-  identityCardFrontId: number;
+  identityCardFrontId: string;
 
   @ApiProperty({
-    example: 1,
+    example: '689a8a9655f410d124d91483',
     required: false,
     description:
       'nhập fileId nhận từ API upload hình ảnh lên MinIO và tạo record file trong Database'
   })
   @IsOptional()
-  identityCardBackId: number;
+  identityCardBackId: string;
 
   @ApiProperty({
     example: '123456',

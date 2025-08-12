@@ -103,7 +103,13 @@ export class DriverModelRepository {
   async findDriverById(
     driverId: string
   ): Promise<DriverDocumentWithCustomId | null> {
-    return this.driverModelRepository.findById(driverId).exec();
+    return this.driverModelRepository
+      .findById(driverId)
+      .select('-password')
+      .populate('identityCardFrontId') // truy vấn ref
+      .populate('identityCardBackId')
+      .populate('avatarFileId')
+      .exec();
   }
 
   /**
@@ -116,9 +122,9 @@ export class DriverModelRepository {
   ): Promise<DriverDocumentWithCustomId | null> {
     return this.driverModelRepository
       .findOne({ driverId })
-      .populate('identityCardFront') // truy vấn ref
-      .populate('identityCardBack')
-      .populate('avatarFile')
+      .populate('identityCardFrontId') // truy vấn ref
+      .populate('identityCardBackId')
+      .populate('avatarFileId')
       .exec();
   }
 
