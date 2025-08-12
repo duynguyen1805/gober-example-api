@@ -5,6 +5,7 @@ import { EError } from '../enums/error.enum';
 import { Settings } from '../../common/constants/constants';
 import { makeSure } from './server-error.helper';
 import { IUploadedFileToMinIOOutput } from '../../modules/upload-minio/interfaces/upload.interface';
+import { allowedExtension } from '../middleware/upload/upload-singer.middleware';
 
 const configMinIO = configService.getMinIOConfig();
 
@@ -28,7 +29,7 @@ const FILE_TYPE_MAPPING: Record<string, EAllowedFileType> = {
 
 // File extensions cho phép
 const ALLOWED_EXTENSIONS: Record<EAllowedFileType, string[]> = {
-  [EAllowedFileType.IMAGE]: ['jpg', 'jpeg', 'png']
+  [EAllowedFileType.IMAGE]: allowedExtension
 };
 
 /**
