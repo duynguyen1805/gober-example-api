@@ -48,15 +48,10 @@ export function validateFile(file: Express.Multer.File): void {
     makeSure(false, EError.INVALID_FILE_SIZE);
   }
 
-  // Kiểm tra loại file từ MIME type
-  const fileType = getFileTypeByMimeType(file.mimetype);
-  if (!fileType || fileType !== EFileType.IMAGE) {
-    makeSure(false, EError.INVALID_FILE_TYPE);
-  }
-
   // Check file extension
   // Kiểm tra extension có hợp lệ với loại file
-  if (!FileTypeConfig[fileType].extensions.includes(extension)) {
+  // TẠM SET CỨNG IMAGE (extension của image) => TÌM SOLUTION HANDLE CHECK THEO MINE TYPE
+  if (!FileTypeConfig[EFileType.IMAGE].extensions.includes(extension)) {
     makeSure(false, EError.INVALID_FILE_EXTENSION);
   }
 }
