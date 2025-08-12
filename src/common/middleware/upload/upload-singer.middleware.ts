@@ -1,41 +1,30 @@
 import multer from 'multer';
 import { RequestHandler } from 'express';
 import path from 'path';
-import { fileTypeFromFile } from 'file-type';
 import { Settings } from '../../../common/constants/constants';
-import { makeSure } from '../../../common/helpers/server-error.helper';
-import { EError } from '../../../common/enums';
-
-// Danh sách extension cho phép
-export const allowedExtension = ['.jpg', '.jpeg', '.png'];
-// Danh sách extension bị cấm
-export const blockedExtention = ['.exe', '.bat', '.sh', '.msi'];
+import {
+  allowedExtensions,
+  allowedMimeTypes,
+  blockedExtensions
+} from '../../../common/enums/file.enum';
+import { BadRequestException } from '@nestjs/common';
 
 const multerOptions = {
   storage: multer.memoryStorage(),
-  limits: { fileSize: Settings.UPLOADING_FILE_SIZE },
-  fileFilter: async (req, file, cb) => {
-    try {
-      const ext = path.extname(file.originalname).toLowerCase();
-      if (!allowedExtension.includes(ext)) {
-        makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      }
-      if (blockedExtention.includes(ext)) {
-        makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      }
+  limits: { fileSize: Settings.UPLOADING_FILE_SIZE }
+  // fileFilter: async (req, file, cb) => {
+  //   const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
 
-      // check loại file thực tế
-      const type = await fileTypeFromFile(file.buffer);
-      if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
-        makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      }
+  //   if (blockedExtensions.includes(ext)) {
+  //     return cb(new Error(`Extension không đưuọc phép: .${ext}`));
+  //   }
+  //   console.log('ext ::: ', ext);
+  //   if (!allowedExtensions.includes(ext)) {
+  //     return cb(new Error(`Extension .${ext} không được phép.`));
+  //   }
 
-      cb(null, true);
-    } catch (err) {
-      makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      cb(err);
-    }
-  }
+  //   cb(null, true);
+  // }
 };
 
 export const uploadMiddleware = multer(multerOptions).single(

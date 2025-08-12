@@ -1,11 +1,11 @@
 import * as Minio from 'minio';
+import path from 'path';
 import { configService } from '../../config/config.service';
-import { EAllowedFileType } from '../enums/file.enum';
+import { EFileType, FileTypeConfig } from '../enums/file.enum';
 import { EError } from '../enums/error.enum';
 import { Settings } from '../../common/constants/constants';
 import { makeSure } from './server-error.helper';
 import { IUploadedFileToMinIOOutput } from '../../modules/upload-minio/interfaces/upload.interface';
-import { allowedExtension } from '../middleware/upload/upload-singer.middleware';
 
 const configMinIO = configService.getMinIOConfig();
 
@@ -20,17 +20,14 @@ const minioClient = new Minio.Client({
 
 const defaultBucketName = configMinIO.MINIO_UPLOAD_BUCKET_NAME;
 
-// Mapping file type
-const FILE_TYPE_MAPPING: Record<string, EAllowedFileType> = {
-  'image/jpeg': EAllowedFileType.IMAGE,
-  'image/jpg': EAllowedFileType.IMAGE,
-  'image/png': EAllowedFileType.IMAGE
-};
-
-// File extensions cho phép
-const ALLOWED_EXTENSIONS: Record<EAllowedFileType, string[]> = {
-  [EAllowedFileType.IMAGE]: allowedExtension
-};
+/**
+ * Xác định loại file theo MIME type
+ */
+function getFileTypeByMimeType(mimeType: string): EFileType | undefined {
+  return Object.entries(FileTypeConfig).find(([_, config]) =>
+    config.mimeTypes.includes(mimeType)
+  )?.[0] as EFileType | undefined;
+}
 
 /**
  * Validate file trước khi upload.
@@ -42,38 +39,25 @@ const ALLOWED_EXTENSIONS: Record<EAllowedFileType, string[]> = {
 export function validateFile(file: Express.Multer.File): void {
   // Check file size
   const maxFileSize = Settings.UPLOADING_FILE_SIZE;
+  const extension = path
+    .extname(file.originalname)
+    .toLowerCase()
+    .replace('.', '');
+
   if (file.size > maxFileSize) {
-    makeSure(
-      false,
-      EError.INVALID_FILE_SIZE,
-      `File size ${file.size} bytes exceeds maximum allowed size ${maxFileSize} bytes`
-    );
+    makeSure(false, EError.INVALID_FILE_SIZE);
   }
 
-  // Check file type
-  const fileType = FILE_TYPE_MAPPING[file.mimetype];
-  if (!Object.values(EAllowedFileType).includes(fileType)) {
-    makeSure(
-      false,
-      EError.INVALID_FILE_TYPE,
-      `File type ${fileType} is not allowed. Allowed types: ${Object.values(
-        EAllowedFileType
-      ).join(', ')}`
-    );
+  // Kiểm tra loại file từ MIME type
+  const fileType = getFileTypeByMimeType(file.mimetype);
+  if (!fileType || fileType !== EFileType.IMAGE) {
+    makeSure(false, EError.INVALID_FILE_TYPE);
   }
 
   // Check file extension
-  const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
-  if (
-    fileExtension &&
-    ALLOWED_EXTENSIONS[fileType] &&
-    !ALLOWED_EXTENSIONS[fileType].includes(fileExtension)
-  ) {
-    makeSure(
-      false,
-      EError.INVALID_FILE_EXTENSION,
-      `File extension .${fileExtension} is not commonly used for ${fileType} files`
-    );
+  // Kiểm tra extension có hợp lệ với loại file
+  if (!FileTypeConfig[fileType].extensions.includes(extension)) {
+    makeSure(false, EError.INVALID_FILE_EXTENSION);
   }
 }
 
@@ -126,8 +110,7 @@ export async function uploadFileToMinIO(
     const url = `https://${configMinIO.STORAGE_LOCAL_ENDPOINT}:${configMinIO.MINIO_UPLOAD_PORT}/${defaultBucketName}/${file.originalname}`;
     const path = `/${defaultBucketName}/${file.originalname}`;
 
-    // Xác định file type và extension
-    const fileType = FILE_TYPE_MAPPING[file.mimetype];
+    // Xác định file extension
     const fileExtension =
       file.originalname.split('.').pop()?.toLowerCase() || '';
 
@@ -139,7 +122,6 @@ export async function uploadFileToMinIO(
       size: file.size,
       mimeType: file.mimetype,
       fileExtension,
-      fileType,
       uploadedAt: new Date(),
       bucketName: defaultBucketName
     };
@@ -174,6 +156,6 @@ export async function deleteFileFromMinIO(
     await minioClient.removeObject(bucketName, filename);
     return true;
   } catch (error) {
-    makeSure(false, EError.DELETE_FAILED, `Delete failed: ${error.message}`);
+    makeSure(false, EError.DELETE_FAILED);
   }
 }

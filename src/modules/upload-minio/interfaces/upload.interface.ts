@@ -1,5 +1,3 @@
-import { EAllowedFileType } from '../../../common/enums/file.enum';
-
 export interface IUploadedFileToMinIOOutput {
   originalName: string;
   filename: string;
@@ -8,7 +6,6 @@ export interface IUploadedFileToMinIOOutput {
   size: number;
   mimeType: string;
   fileExtension: string;
-  fileType: EAllowedFileType;
   uploadedAt: Date;
   bucketName: string;
 }

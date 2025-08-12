@@ -2,36 +2,37 @@ import multer from 'multer';
 import { RequestHandler } from 'express';
 import { Settings } from '../../../common/constants/constants';
 import path from 'path';
-import { fileTypeFromFile } from 'file-type';
-import { makeSure } from '../../../common/helpers/server-error.helper';
-import { EError } from '../../../common/enums';
-import { allowedExtension, blockedExtention } from './upload-singer.middleware';
+import {
+  allowedExtensions,
+  allowedMimeTypes,
+  blockedExtensions
+} from '../../../common/enums/file.enum';
 
 const multerOptions = {
   storage: multer.memoryStorage(),
-  limits: { fileSize: Settings.UPLOADING_FILE_SIZE },
-  fileFilter: async (req, file, cb) => {
-    try {
-      const ext = path.extname(file.originalname).toLowerCase();
-      if (!allowedExtension.includes(ext)) {
-        makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      }
-      if (blockedExtention.includes(ext)) {
-        makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      }
+  limits: { fileSize: Settings.UPLOADING_FILE_SIZE }
+  // fileFilter: async (req, file, cb) => {
+  //   const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
 
-      // check loại file thực tế
-      const type = await fileTypeFromFile(file.buffer);
-      if (!type || !['image/jpeg', 'image/png'].includes(type.mime)) {
-        makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      }
+  //   if (blockedExtensions.includes(ext)) {
+  //     return cb(new Error(`Extension không đưuọc phép: .${ext}`));
+  //   }
 
-      cb(null, true);
-    } catch (err) {
-      makeSure(false, EError.INVALID_FILE_TYPE, null, 400);
-      cb(err);
-    }
-  }
+  //   if (!allowedExtensions.includes(ext)) {
+  //     return cb(new Error(`Extension .${ext} không được phép.`));
+  //   }
+
+  //   // Import động file-type để tránh lỗi
+  //   const { fileTypeFromBuffer } = await import('file-type');
+  //   const type = await fileTypeFromBuffer(file.buffer);
+  //   if (!type || !allowedMimeTypes.includes(type.mime)) {
+  //     return cb(
+  //       new Error(`Mime type ${type?.mime || 'unknown'} không được phép.`)
+  //     );
+  //   }
+
+  //   cb(null, true);
+  // }
 };
 
 export const multiUploadMiddleware = multer(multerOptions).array(
