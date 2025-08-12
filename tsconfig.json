@@ -19,6 +19,10 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"] // deploy Render require
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "paths": {
+      "@app/common/*": ["libs/common/src/*"],
+      "@app/database/*": ["libs/database/src/*"]
+    }
   }
 }
