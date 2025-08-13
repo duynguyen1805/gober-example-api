@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileProxyService } from './file-proxy.service';
 import { FileProxyController } from './file-proxy.controller';
+import { configService } from '@app/common/config';
 
 @Module({
   imports: [
@@ -11,9 +12,9 @@ import { FileProxyController } from './file-proxy.controller';
         name: 'FILE_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://localhost:5672'],
+          urls: [configService.getEnv('RABBITMQ_URI')],
           queue: 'file_queue',
-          queueOptions: { durable: false }
+          queueOptions: { durable: true }
         }
       }
     ])

@@ -25,8 +25,6 @@ import {
 import { User } from '@app/common/decorators/user.decorator';
 // guards
 // import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-// schema
-import { File } from '@app/database/schemas/file.schema';
 // dto
 import { CreateFileDto } from '@app/common/dto/file/create-file.dto';
 import { UpdateFileDto } from '@app/common/dto/file/update-file.dto';
@@ -79,7 +77,7 @@ export class FileProxyController {
   //   @Body() body: CreateFileDto,
   //   @User('driverId') driverId: string
   // ): Promise<IFileOutput> {
-  //   return this.fileService.create(driverId, body);
+  //   return await this.fileService.create(driverId, body);
   // }
 
   // @Get()
@@ -112,7 +110,7 @@ export class FileProxyController {
   //   }
   // })
   // async list(@Query() query: QueryFileDto, @User('driverId') driverId: string) {
-  //   return this.fileService.getListFiles(driverId, query);
+  //   return await this.fileService.getListFiles(driverId, query);
   // }
 
   @Get(':id')
@@ -122,7 +120,6 @@ export class FileProxyController {
   })
   @ApiResponse({
     description: 'Lấy thông tin file thành công',
-    type: File,
     schema: {
       properties: {
         success: {
@@ -151,6 +148,6 @@ export class FileProxyController {
   })
   @ApiParam({ name: 'id', required: true, example: '689a8a9655f410d124d91483' })
   async getFileById(@Param('id') id: string) {
-    return this.fileProxyService.getFileById(id);
+    return await this.fileProxyService.getFileById(id);
   }
 }

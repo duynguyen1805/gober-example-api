@@ -7,6 +7,10 @@ export class FileProxyService {
   constructor(@Inject('FILE_SERVICE') private client: ClientProxy) {}
 
   async getFileById(id: string) {
-    return this.client.send({ cmd: 'get_file_by_id' }, { id });
+    const result = await firstValueFrom(
+      this.client.send({ cmd: 'get_file_by_id' }, { id })
+    );
+    console.log('getFileById', result);
+    return result;
   }
 }

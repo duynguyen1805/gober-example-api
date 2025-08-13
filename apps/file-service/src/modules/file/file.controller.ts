@@ -1,3 +1,4 @@
+import { Controller } from '@nestjs/common';
 // decorators
 import { User } from '@app/common/decorators/user.decorator';
 // guards
@@ -14,6 +15,7 @@ import { IFileOutput } from './interfaces/file.interface';
 import { FileService } from './file.service';
 import { MessagePattern } from '@nestjs/microservices';
 
+@Controller()
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 

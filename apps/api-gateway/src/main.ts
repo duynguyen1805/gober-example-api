@@ -41,9 +41,9 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const port = process.env.PORT || 4000;
-
+  app.startAllMicroservices();
   await app.listen(port);
-  Logger.log(`API Gateway is running on: http://localhost:${port}`);
+  Logger.log(`API GATEWAY is running on: http://localhost:${port}`);
 }
 
 bootstrap();
