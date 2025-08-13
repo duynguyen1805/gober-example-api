@@ -103,7 +103,8 @@ const configService = new ConfigService(process.env).ensureValues([
   'REDIS_URL',
   'REDIS_HOST',
   'REDIS_PORT',
-  'JWT_SECRET'
+  'JWT_SECRET',
+  'RABBITMQ_URI'
 ]);
 
 export { configService };

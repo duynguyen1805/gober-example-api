@@ -11,9 +11,9 @@
     "build:api-gateway": "nest build api-gateway",
     "build:auth-service": "nest build auth-service",
     "build:file-service": "nest build file-service",
-    "start:dev:api-gateway": "NODE_ENV=development npm run prebuild && nest start api-gateway --watch",
-    "start:dev:auth-service": "NODE_ENV=development npm run prebuild && nest start auth-service --watch",
-    "start:dev:file-service": "NODE_ENV=development npm run prebuild && nest start file-service --watch",
+    "start:dev:api-gateway": "NODE_ENV=development npm run prebuild && nest start api-gateway --watch --exec \"ts-node -r tsconfig-paths/register\"",
+    "start:dev:auth-service": "NODE_ENV=development npm run prebuild && nest start auth-service --watch --exec \"ts-node -r tsconfig-paths/register\"",
+    "start:dev:file-service": "NODE_ENV=development npm run prebuild && nest start file-service --watch --exec \"ts-node -r tsconfig-paths/register\"",
     "start:prod:api-gateway": "NODE_ENV=production node dist/apps/api-gateway/main",
     "start:prod:auth-service": "NODE_ENV=production node dist/apps/auth-service/main",
     "start:prod:file-service": "NODE_ENV=production node dist/apps/file-service/main",
@@ -80,7 +80,6 @@
     "speakeasy": "^2.0.0",
     "swagger-ui-express": "^4.4.0",
     "ts-node": "^10.0.0",
-    "tsconfig-paths": "4.0.0",
     "typeorm": "^0.2.45",
     "typeorm-seeding": "^1.6.1",
     "typescript": "^5.0.0",
@@ -111,6 +110,7 @@
     "jest": "28.0.3",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
-    "ts-loader": "^9.2.3"
+    "ts-loader": "^9.2.3",
+    "tsconfig-paths": "^4.2.0"
   }
 }
