@@ -19,6 +19,7 @@ import { MessagePattern } from '@nestjs/microservices';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
+  @MessagePattern({ cmd: 'createFile' })
   async createFile(
     body: CreateFileDto,
     @User('driverId') driverId: string
@@ -26,16 +27,13 @@ export class FileController {
     return this.fileService.createFile(driverId, body);
   }
 
+  @MessagePattern({ cmd: 'getListFiles' })
   async getListFiles(query: QueryFileDto, @User('driverId') driverId: string) {
     return this.fileService.getListFiles(driverId, query);
   }
 
-  @MessagePattern({ cmd: 'get_file_by_id' })
-  async getfindFileByIdById({
-    id
-  }: {
-    id: string;
-  }): Promise<IFileOutput | null> {
+  @MessagePattern({ cmd: 'findFileByIdById' })
+  async findFileByIdById({ id }: { id: string }): Promise<IFileOutput | null> {
     return this.fileService.findFileById(id);
   }
 }

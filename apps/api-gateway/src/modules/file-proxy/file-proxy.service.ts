@@ -8,9 +8,8 @@ export class FileProxyService {
 
   async getFileById(id: string) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'get_file_by_id' }, { id })
+      this.client.send({ cmd: 'findFileByIdById' }, { id })
     );
-    console.log('getFileById', result);
     return result;
   }
 }

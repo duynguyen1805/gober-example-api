@@ -40,6 +40,11 @@
       "type": "library",
       "root": "libs/database",
       "sourceRoot": "libs/database/src"
+    },
+    "proxy": {
+      "type": "library",
+      "root": "libs/proxy",
+      "sourceRoot": "libs/proxy/src"
     }
   }
 }

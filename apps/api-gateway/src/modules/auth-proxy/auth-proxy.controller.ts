@@ -16,10 +16,10 @@ import { User } from '@app/common/decorators';
 // import { ApiKeyGuard } from './guards/api-key.guard';
 // import { JwtAuthGuard } from './guards/jwt-auth.guard';
 // dto
-import { SignInDriverDto } from './dto/signin-driver.dto';
-import { SignUpDriverDto } from './dto/signup-driver.dto';
-import { RefreshTokenDriverDto } from './dto/refresh-token-driver.dto';
-import { LogoutDriverDto } from './dto/logout-driver.dto';
+import { SignInDriverDto } from '../../../../../libs/common/src/dto/auth/signin-driver.dto';
+import { SignUpDriverDto } from '../../../../../libs/common/src/dto/auth/signup-driver.dto';
+import { RefreshTokenDriverDto } from '../../../../../libs/common/src/dto/auth/refresh-token-driver.dto';
+import { LogoutDriverDto } from '../../../../../libs/common/src/dto/auth/logout-driver.dto';
 // interface
 import {
   IRefreshTokenResponse,

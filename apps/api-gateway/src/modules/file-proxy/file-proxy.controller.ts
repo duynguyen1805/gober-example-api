@@ -147,7 +147,11 @@ export class FileProxyController {
     }
   })
   @ApiParam({ name: 'id', required: true, example: '689a8a9655f410d124d91483' })
-  async getFileById(@Param('id') id: string) {
+  async getFileById(
+    @Param('id') id: string
+    // @User('driverId') driverId: string
+  ) {
+    // console.log('driverId', driverId);
     return await this.fileProxyService.getFileById(id);
   }
 }

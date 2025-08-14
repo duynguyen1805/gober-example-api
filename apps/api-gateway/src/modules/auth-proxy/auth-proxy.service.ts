@@ -2,8 +2,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 // dto
-import { SignInDriverDto } from './dto/signin-driver.dto';
-import { SignUpDriverDto } from './dto/signup-driver.dto';
+import { SignInDriverDto } from '../../../../../libs/common/src/dto/auth/signin-driver.dto';
+import { SignUpDriverDto } from '../../../../../libs/common/src/dto/auth/signup-driver.dto';
 // interface
 import {
   IRefreshTokenResponse,
@@ -28,7 +28,7 @@ export class AuthProxyService {
     //   refreshToken: signInResult.refreshToken,
     //   driver: signInResult.driver
     // };
-    return this.client.send('sign-in', driver);
+    return this.client.send({ cmd: 'signIn' }, driver);
   }
 
   /**
@@ -45,7 +45,7 @@ export class AuthProxyService {
     //   password: user.password
     // });
 
-    return this.client.send('sign-up', user);
+    return this.client.send({ cmd: 'signUp' }, user);
   }
 
   /**
@@ -56,7 +56,7 @@ export class AuthProxyService {
   async refreshToken(oldRefreshToken: string) {
     // return await this.refreshTokenUseCase.getRefreshToken(oldRefreshToken);
 
-    return this.client.send('refresh-token', oldRefreshToken);
+    return this.client.send({ cmd: 'refreshToken' }, oldRefreshToken);
   }
 
   /**
@@ -73,10 +73,13 @@ export class AuthProxyService {
     //   refreshToken
     // );
 
-    return this.client.send('log-out', {
-      driverId,
-      token,
-      refreshToken
-    });
+    return this.client.send(
+      { cmd: 'logOut' },
+      {
+        driverId,
+        token,
+        refreshToken
+      }
+    );
   }
 }
