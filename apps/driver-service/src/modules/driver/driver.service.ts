@@ -9,15 +9,21 @@ import {
   DriverDocument,
   DriverDocumentWithCustomId
 } from '@app/database/schemas/driver.schema';
+import {
+  DriverRefreshTokenDocument,
+  DriverRefreshTokenDocumentWithCustomId
+} from '@app/database/schemas/driver-refresh-token.schema';
 // use-case
 import { UpdateDriverInfomationUseCase } from './use-cases/update-driver-infomation.use-case';
+// repository
 import { DriverModelRepository } from './driver.model.repository';
-import { DriverRefreshTokenDocumentWithCustomId } from '@app/database/schemas/driver-refresh-token.schema';
+import { DriverRefreshTokenModelRepository } from './driver-refresh-token.model.repository';
 
 @Injectable()
 export class DriverService {
   constructor(
     private readonly driverModelRepository: DriverModelRepository,
+    private readonly driverRefreshTokenModelRepository: DriverRefreshTokenModelRepository,
     private readonly updateDriverUseCase: UpdateDriverInfomationUseCase
   ) {}
 
@@ -94,5 +100,21 @@ export class DriverService {
     dataUpdate: Partial<DriverRefreshTokenDocumentWithCustomId>;
   }): Promise<boolean> {
     return await this.driverModelRepository.updateDriverRefreshToken(input);
+  }
+
+  async createDriverRefreshToken(
+    input: Partial<DriverRefreshTokenDocumentWithCustomId>
+  ): Promise<DriverRefreshTokenDocument> {
+    return await this.driverRefreshTokenModelRepository.createDriverRefreshToken(
+      input
+    );
+  }
+
+  async saveDriverRefreshToken(
+    driverRefreshToken: DriverRefreshTokenDocumentWithCustomId
+  ): Promise<DriverRefreshTokenDocument> {
+    return await this.driverRefreshTokenModelRepository.saveDriverRefreshToken(
+      driverRefreshToken
+    );
   }
 }

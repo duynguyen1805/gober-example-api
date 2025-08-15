@@ -19,6 +19,6 @@ import { configService } from '@app/common/config';
     ])
   ],
   providers: [DriverProxyService],
-  exports: [DriverProxyService]
+  exports: [DriverProxyService, ClientsModule]
 })
 export class DriverProxyModule {}

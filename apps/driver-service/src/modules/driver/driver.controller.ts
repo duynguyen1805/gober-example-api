@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 // decorators
 import { User } from '@app/common/decorators/user.decorator';
 //dto
@@ -8,42 +8,58 @@ import { DriverService } from './driver.service';
 // schema
 import { DriverDocument } from '@app/database/schemas/driver.schema';
 import { MessagePattern } from '@nestjs/microservices';
-import { DriverRefreshTokenDocumentWithCustomId } from '@app/database/schemas/driver-refresh-token.schema';
+import {
+  DriverRefreshTokenDocument,
+  DriverRefreshTokenDocumentWithCustomId
+} from '@app/database/schemas/driver-refresh-token.schema';
 
 @Controller()
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
-  @MessagePattern('findDriverById')
+  @MessagePattern({ cmd: 'findDriverById' })
   async findDriverById(
     @User('driverId') driverId: string
   ): Promise<DriverDocument | null> {
     return this.driverService.findDriverById(driverId);
   }
 
-  @MessagePattern('findDriversByEmailOrPhoneNumber')
-  async findDriversByEmailOrPhoneNumber(
-    @Body() input: { email?: string; phoneNumber?: string; identifier?: string }
-  ): Promise<DriverDocument | null> {
+  @MessagePattern({ cmd: 'findDriversByEmailOrPhoneNumber' })
+  async findDriversByEmailOrPhoneNumber(input: {
+    email?: string;
+    phoneNumber?: string;
+    identifier?: string;
+  }): Promise<DriverDocument | null> {
     return this.driverService.findDriversByEmailOrPhoneNumber(input);
   }
 
-  @MessagePattern('updateDriverInformation')
+  @MessagePattern({ cmd: 'updateDriverInformation' })
   async updateDriverInformation(
     @User('driverId') driverId: string,
-    @Body() body: UpdateDriverDto
+    body: UpdateDriverDto
   ): Promise<DriverDocument> {
     return this.driverService.updateDriverInformation(driverId, body);
   }
 
-  @MessagePattern('updateDriverRefreshToken')
-  async updateDriverRefreshToken(
-    @Body()
-    input: {
-      criteria: Partial<DriverRefreshTokenDocumentWithCustomId>;
-      dataUpdate: Partial<DriverRefreshTokenDocumentWithCustomId>;
-    }
-  ): Promise<boolean> {
+  @MessagePattern({ cmd: 'updateDriverRefreshToken' })
+  async updateDriverRefreshToken(input: {
+    criteria: Partial<DriverRefreshTokenDocumentWithCustomId>;
+    dataUpdate: Partial<DriverRefreshTokenDocumentWithCustomId>;
+  }): Promise<boolean> {
     return this.driverService.updateDriverRefreshToken(input);
+  }
+
+  @MessagePattern({ cmd: 'createDriverRefreshToken' })
+  async createDriverRefreshToken(
+    input: Partial<DriverRefreshTokenDocumentWithCustomId>
+  ): Promise<DriverRefreshTokenDocument> {
+    return this.driverService.createDriverRefreshToken(input);
+  }
+
+  @MessagePattern({ cmd: 'saveDriverRefreshToken' })
+  async saveDriverRefreshToken(
+    input: DriverRefreshTokenDocumentWithCustomId
+  ): Promise<DriverRefreshTokenDocument> {
+    return this.driverService.saveDriverRefreshToken(input);
   }
 }

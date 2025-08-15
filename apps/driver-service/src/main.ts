@@ -15,6 +15,6 @@ async function bootstrap() {
     }
   });
   await app.startAllMicroservices();
-  Logger.log('DRIVER SERVICE is listening (RMQ queue: file_queue)');
+  Logger.log('DRIVER SERVICE is listening (RMQ queue: driver_queue)');
 }
 bootstrap();

@@ -1,5 +1,6 @@
 // apps/api-gateway/src/modules/auth-proxy/auth-proxy.service.ts
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { firstValueFrom, Observable } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 // dto
 import { SignInDriverDto } from '../../../../../libs/common/src/dto/auth/signin-driver.dto';
@@ -11,8 +12,14 @@ import {
 } from '@app/common/interfaces/auth.interface';
 
 @Injectable()
-export class AuthProxyService {
+export class AuthProxyService implements OnModuleInit {
   constructor(@Inject('AUTH_SERVICE') private client: ClientProxy) {}
+
+  async onModuleInit() {
+    // Chờ connect xong trước khi dùng send()
+    await this.client.connect();
+    Logger.log('[AuthProxyService] Connected to AUTH_SERVICE queue');
+  }
 
   /**
    * Đăng nhập tài khoảnh Driver
@@ -20,7 +27,9 @@ export class AuthProxyService {
    * @returns token, refreshToken, thông tin driver
    * @throws EError nếu có giá trị không hợp lệ
    */
-  async signIn(driver: SignInDriverDto) {
+  async signIn(
+    driver: SignInDriverDto
+  ): Promise<Observable<ISignInDriverResponse>> {
     // const signInResult = await this.signInUseCase.signIn(driver);
 
     // return {
@@ -28,7 +37,10 @@ export class AuthProxyService {
     //   refreshToken: signInResult.refreshToken,
     //   driver: signInResult.driver
     // };
-    return this.client.send({ cmd: 'signIn' }, driver);
+    const result = await firstValueFrom(
+      this.client.send({ cmd: 'signIn' }, driver)
+    );
+    return result;
   }
 
   /**
@@ -37,15 +49,22 @@ export class AuthProxyService {
    * @returns Sau khi đăng ký thành công, thực hiện đăng nhập trả về token, refreshToken, thông tin driver
    * @throws EError nếu có giá trị không hợp lệ
    */
-  async signUp(user: SignUpDriverDto) {
-    // const userRegistered = await this.signUpUseCase.signUpAccount(user);
-
-    // return this.signIn({
-    //   identifier: userRegistered.email,
-    //   password: user.password
-    // });
-
-    return this.client.send({ cmd: 'signUp' }, user);
+  async signUp(
+    user: SignUpDriverDto
+  ): Promise<Observable<ISignInDriverResponse>> {
+    const userRegistered = await firstValueFrom(
+      this.client.send({ cmd: 'signUp' }, user)
+    );
+    const userSignedIn = await firstValueFrom(
+      this.client.send(
+        { cmd: 'signIn' },
+        {
+          identifier: userRegistered.email,
+          password: user.password
+        }
+      )
+    );
+    return userSignedIn;
   }
 
   /**
@@ -53,10 +72,13 @@ export class AuthProxyService {
    * @param oldRefreshToken refresh token cũ
    * @returns access token mới, refreshToken mới
    */
-  async refreshToken(oldRefreshToken: string) {
-    // return await this.refreshTokenUseCase.getRefreshToken(oldRefreshToken);
-
-    return this.client.send({ cmd: 'refreshToken' }, oldRefreshToken);
+  async refreshToken(
+    oldRefreshToken: string
+  ): Promise<Observable<IRefreshTokenResponse>> {
+    const result = await firstValueFrom(
+      this.client.send({ cmd: 'refreshToken' }, oldRefreshToken)
+    );
+    return result;
   }
 
   /**
@@ -66,20 +88,14 @@ export class AuthProxyService {
    * @param refreshToken refresh token
    * @returns true nếu thu hồi thành công
    */
-  async logOut(driverId: string, token: string, refreshToken: string) {
-    // return this.logoutUseCase.addTokenToBlackList(
-    //   driverId,
-    //   token,
-    //   refreshToken
-    // );
-
-    return this.client.send(
-      { cmd: 'logOut' },
-      {
-        driverId,
-        token,
-        refreshToken
-      }
+  async logOut(
+    driverId: string,
+    token: string,
+    refreshToken: string
+  ): Promise<Observable<boolean>> {
+    const result = await firstValueFrom(
+      this.client.send({ cmd: 'logOut' }, { driverId, token, refreshToken })
     );
+    return result;
   }
 }

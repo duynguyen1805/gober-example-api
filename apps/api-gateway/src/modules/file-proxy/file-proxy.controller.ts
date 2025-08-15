@@ -32,7 +32,7 @@ import { QueryFileDto } from '@app/common/dto/file/query-file.dto';
 // interface
 
 // service
-import { FileProxyService } from './file-proxy.service';
+import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
 
 @ApiTags('files')
 @Controller('files')

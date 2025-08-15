@@ -6,7 +6,10 @@ import {
   Driver,
   DriverDocumentWithCustomId
 } from '@app/database/schemas/driver.schema';
-import { DriverRefreshTokenDocumentWithCustomId } from '@app/database/schemas/driver-refresh-token.schema';
+import {
+  DriverRefreshToken,
+  DriverRefreshTokenDocumentWithCustomId
+} from '@app/database/schemas/driver-refresh-token.schema';
 // dto
 import { SignUpDriverDto } from '@app/common/dto/auth/signup-driver.dto';
 import { QueryDriverDto } from '@app/common/dto/driver/query-driver.dto';
@@ -18,6 +21,7 @@ export class DriverModelRepository {
   constructor(
     @InjectModel(Driver.name)
     private readonly driverModelRepository: Model<DriverDocumentWithCustomId>,
+    @InjectModel(DriverRefreshToken.name)
     private readonly driveRefreshTokenModelRepository: Model<DriverRefreshTokenDocumentWithCustomId>
   ) {}
 

@@ -15,6 +15,6 @@ async function bootstrap() {
     }
   });
   await app.startAllMicroservices();
-  Logger.log('AUTH SERVICE is listening (RMQ queue: file_queue)');
+  Logger.log('AUTH SERVICE is listening (RMQ queue: auth_queue)');
 }
 bootstrap();

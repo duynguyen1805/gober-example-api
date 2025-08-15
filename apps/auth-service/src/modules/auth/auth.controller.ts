@@ -28,24 +28,24 @@ export class AuthController {
     @Inject(REQUEST) private request: Request
   ) {}
 
-  @MessagePattern('signUp')
-  signUp(@Body() dto: SignUpDriverDto): Promise<ISignInDriverResponse> {
+  @MessagePattern({ cmd: 'signUp' })
+  signUp(dto: SignUpDriverDto): Promise<ISignInDriverResponse> {
     return this.authService.signUp(dto);
   }
 
-  @MessagePattern('signIn')
-  signIn(@Body() dto: SignInDriverDto): Promise<ISignInDriverResponse> {
+  @MessagePattern({ cmd: 'signIn' })
+  signIn(dto: SignInDriverDto): Promise<ISignInDriverResponse> {
     return this.authService.signIn(dto);
   }
 
-  @MessagePattern('refreshToken')
+  @MessagePattern({ cmd: 'refreshToken' })
   async refreshToken(
     @Body() dto: RefreshTokenDriverDto
   ): Promise<IRefreshTokenResponse> {
     return this.authService.refreshToken(dto.refreshToken);
   }
 
-  @MessagePattern('logOut')
+  @MessagePattern({ cmd: 'logOut' })
   logOut(
     @Body() dto: LogoutDriverDto,
     @User('driverId') driverId: string

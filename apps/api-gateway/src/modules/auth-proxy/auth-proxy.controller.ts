@@ -27,13 +27,15 @@ import {
 } from '../../../../../libs/common/src/interfaces/auth.interface';
 // service
 import { AuthProxyService } from './auth-proxy.service';
+import { Observable } from 'rxjs';
 
 @ApiTags('auth')
 @Controller('auth')
 // @UseGuards(ApiKeyGuard)
 export class AuthProxyController {
   constructor(
-    private readonly authProxyService: AuthProxyService // @Inject(REQUEST) private request: Request
+    @Inject(REQUEST) private request: Request,
+    private readonly authProxyService: AuthProxyService
   ) {}
 
   @Post('/signup-account')
@@ -212,47 +214,47 @@ export class AuthProxyController {
     return this.authProxyService.refreshToken(dto.refreshToken);
   }
 
-  // @Post('/logout')
-  // // @ApiBearerAuth()
-  // // @UseGuards(JwtAuthGuard)
-  // @ApiOperation({
-  //   summary: 'Đăng xuất tài khoản',
-  //   description:
-  //     'Thêm access token và refresh token vào blacklist, trả về true.'
-  // })
-  // @ApiOkResponse({
-  //   status: 200,
-  //   description: 'Đăng xuất thành công.',
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       data: { type: 'boolean', example: true },
-  //       success: { type: 'boolean', example: true }
-  //     }
-  //   }
-  // })
-  // @ApiBadRequestResponse({
-  //   description: 'Bad request - Token đã thêm vào blacklist trước đó.',
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       messageCode: { type: 'string', example: 'INVALID_REFRESH_TOKEN' },
-  //       message: { type: 'string', example: 'Refresh token không hợp lệ' },
-  //       statusCode: { type: 'number', example: 401 },
-  //       timestamp: { type: 'string', format: '2025-08-08T22:28:44.808Z' },
-  //       success: { type: 'boolean', example: false },
-  //       path: { type: 'string', example: '/auth/logout' },
-  //       method: { type: 'string', example: 'POST' },
-  //       errorName: { type: 'string', example: 'UnauthorizedException' }
-  //     }
-  //   }
-  // })
-  // logOut(
-  //   @Body() dto: LogoutDriverDto,
-  //   @User('driverId') driverId: string
-  // ): Promise<boolean> {
-  //   const authHeader = this.request.headers['authorization'] || '';
-  //   const token = authHeader.replace('Bearer ', '');
-  //   return this.authService.logOut(driverId, token, dto.refreshToken);
-  // }
+  @Post('/logout')
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Đăng xuất tài khoản',
+    description:
+      'Thêm access token và refresh token vào blacklist, trả về true.'
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Đăng xuất thành công.',
+    schema: {
+      type: 'object',
+      properties: {
+        data: { type: 'boolean', example: true },
+        success: { type: 'boolean', example: true }
+      }
+    }
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request - Token đã thêm vào blacklist trước đó.',
+    schema: {
+      type: 'object',
+      properties: {
+        messageCode: { type: 'string', example: 'INVALID_REFRESH_TOKEN' },
+        message: { type: 'string', example: 'Refresh token không hợp lệ' },
+        statusCode: { type: 'number', example: 401 },
+        timestamp: { type: 'string', format: '2025-08-08T22:28:44.808Z' },
+        success: { type: 'boolean', example: false },
+        path: { type: 'string', example: '/auth/logout' },
+        method: { type: 'string', example: 'POST' },
+        errorName: { type: 'string', example: 'UnauthorizedException' }
+      }
+    }
+  })
+  logOut(
+    @Body() dto: LogoutDriverDto,
+    @User('driverId') driverId: string
+  ): Promise<Observable<boolean>> {
+    const authHeader = this.request.headers['authorization'] || '';
+    const token = authHeader.replace('Bearer ', '');
+    return this.authProxyService.logOut(driverId, token, dto.refreshToken);
+  }
 }

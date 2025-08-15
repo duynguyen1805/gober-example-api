@@ -30,7 +30,6 @@ export class AuthService {
    */
   async signIn(driver: SignInDriverDto): Promise<ISignInDriverResponse> {
     const signInResult = await this.signInUseCase.signIn(driver);
-
     return {
       token: signInResult.token,
       refreshToken: signInResult.refreshToken,

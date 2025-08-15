@@ -2,7 +2,6 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileProxyService } from './file-proxy.service';
-import { FileProxyController } from './file-proxy.controller';
 import { configService } from '@app/common/config';
 
 @Module({
@@ -19,8 +18,7 @@ import { configService } from '@app/common/config';
       }
     ])
   ],
-  controllers: [FileProxyController],
   providers: [FileProxyService],
-  exports: [FileProxyService]
+  exports: [FileProxyService, ClientsModule]
 })
 export class FileProxyModule {}

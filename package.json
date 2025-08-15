@@ -14,10 +14,11 @@
     "start:dev:api-gateway": "NODE_ENV=development npm run prebuild && nest start api-gateway --watch --exec \"ts-node -r tsconfig-paths/register\"",
     "start:dev:auth-service": "NODE_ENV=development npm run prebuild && nest start auth-service --watch --exec \"ts-node -r tsconfig-paths/register\"",
     "start:dev:file-service": "NODE_ENV=development npm run prebuild && nest start file-service --watch --exec \"ts-node -r tsconfig-paths/register\"",
+    "start:dev:driver-service": "NODE_ENV=development npm run prebuild && nest start driver-service --watch --exec \"ts-node -r tsconfig-paths/register\"",
     "start:prod:api-gateway": "NODE_ENV=production node dist/apps/api-gateway/main",
     "start:prod:auth-service": "NODE_ENV=production node dist/apps/auth-service/main",
     "start:prod:file-service": "NODE_ENV=production node dist/apps/file-service/main",
-    "start:dev:all": "concurrently NODE_ENV=development \"npm run start:dev:api-gateway\" \"npm run start:dev:file-service\"",
+    "start:dev:all": "concurrently NODE_ENV=development \"npm run start:dev:api-gateway\" \"npm run start:dev:auth-service\" \"npm run start:dev:driver-service\" \"npm run start:dev:file-service\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },

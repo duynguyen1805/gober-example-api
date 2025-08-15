@@ -2,13 +2,19 @@ import { SignUpDriverDto } from '@app/common/dto/auth/signup-driver.dto';
 import { UpdateDriverDto } from '@app/common/dto/driver/update-driver.dto';
 import { DriverRefreshTokenDocumentWithCustomId } from '@app/database/schemas/driver-refresh-token.schema';
 import { DriverDocumentWithCustomId } from '@app/database/schemas/driver.schema';
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class DriverProxyService {
+export class DriverProxyService implements OnModuleInit {
   constructor(@Inject('DRIVER_SERVICE') private client: ClientProxy) {}
+
+  async onModuleInit() {
+    // Chờ connect xong trước khi dùng send()
+    await this.client.connect();
+    Logger.log('[DriverProxyService] Connected to DRIVER_SERVICE queue');
+  }
 
   async findDriverById(id: string) {
     const result = await firstValueFrom(
@@ -46,14 +52,14 @@ export class DriverProxyService {
     input: Partial<DriverRefreshTokenDocumentWithCustomId>
   ) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'create-driver-refresh-token' }, { input })
+      this.client.send({ cmd: 'createDriverRefreshToken' }, { input })
     );
     return result;
   }
 
   async saveDriverRefreshToken(input: DriverRefreshTokenDocumentWithCustomId) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'save-driver-refresh-token' }, { input })
+      this.client.send({ cmd: 'saveDriverRefreshToken' }, { input })
     );
     return result;
   }

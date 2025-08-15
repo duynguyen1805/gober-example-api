@@ -13,9 +13,15 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor } from '@app/common/interceptors/cache.interceptor';
 // module
 import { AuthProxyModule } from './modules/auth-proxy/auth-proxy.module';
-import { FileProxyModule } from './modules/file-proxy/file-proxy.module';
+import { FileProxyModule } from '../../../libs/proxy/src/file-proxy/file-proxy.module';
 import { DriverProxyModule } from '@app/proxy/driver-proxy/driver-proxy.module';
 import { CustomeCacheModule } from '@app/common/cache/cache.module';
+// controller proxy
+import { DriverProxyController } from './modules/driver-proxy/driver-proxy.controller';
+import { FileProxyController } from './modules/file-proxy/file-proxy.controller';
+// service proxy
+import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
+import { DriverProxyService } from '@app/proxy/driver-proxy/driver-proxy.service';
 
 const configRedis = configService.getRedisConfig();
 
@@ -35,13 +41,15 @@ const configRedis = configService.getRedisConfig();
     DriverProxyModule,
     FileProxyModule
   ],
-  controllers: [],
+  controllers: [DriverProxyController, FileProxyController],
   providers: [
     JwtStrategy,
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor
-    }
+    },
+    DriverProxyService,
+    FileProxyService
   ]
 })
 export class AppModule {}

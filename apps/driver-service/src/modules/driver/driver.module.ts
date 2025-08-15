@@ -6,6 +6,7 @@ import { DriverController } from './driver.controller';
 import { DriverService } from './driver.service';
 // model.repository
 import { DriverModelRepository } from './driver.model.repository';
+import { DriverRefreshTokenModelRepository } from './driver-refresh-token.model.repository';
 // use-case
 import { UpdateDriverInfomationUseCase } from './use-cases/update-driver-infomation.use-case';
 // schema
@@ -18,6 +19,8 @@ import {
   DriverRequest,
   DriverRequestSchema
 } from '@app/database/schemas/driver-request.schema';
+// module
+import { FileProxyModule } from '@app/proxy/file-proxy/file-proxy.module';
 
 @Module({
   imports: [
@@ -25,12 +28,14 @@ import {
       { name: Driver.name, schema: DriverSchema },
       { name: DriverRefreshToken.name, schema: DriverRefreshTokenSchema },
       { name: DriverRequest.name, schema: DriverRequestSchema }
-    ])
+    ]),
+    FileProxyModule
   ],
   controllers: [DriverController],
   providers: [
     DriverService,
     DriverModelRepository,
+    DriverRefreshTokenModelRepository,
     UpdateDriverInfomationUseCase
   ],
   exports: [DriverService]
