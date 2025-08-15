@@ -1,28 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { isNil } from 'lodash';
 // constants/helpers
 import {
   makeSure,
-  mustExist
-} from '../../../common/helpers/server-error.helper';
-import { EError } from '../../../common/enums/error.enum';
-import { isValidEmail } from '../../../common/helpers/auth.helper';
-import { isValidPhoneNumber } from '../../../common/helpers/auth.helper';
+  mustExist,
+  isValidEmail,
+  isValidPhoneNumber
+} from '@app/common/helpers/index';
+import { EError } from '@app/common/enums/error.enum';
 // dto
-import { UpdateDriverDto } from '../dto/update-driver.dto';
-// service
-import { FileService } from '../../../modules/file/file.service';
-// model.repository
-import { DriverModelRepository } from '../driver.model.repository';
+import { UpdateDriverDto } from '@app/common/dto/driver/update-driver.dto';
 // schema
-import { DriverDocumentWithCustomId } from '../../../database/mongo-db/driver.schema';
+import { DriverDocumentWithCustomId } from '@app/database/schemas/driver.schema';
+// repository
+import { DriverModelRepository } from '../driver.model.repository';
 
 @Injectable()
 export class UpdateDriverInfomationUseCase {
   private driverExists: DriverDocumentWithCustomId;
   constructor(
-    private readonly driverModelRepository: DriverModelRepository,
-    private readonly fileService: FileService
+    @Inject('FILE_SERVICE') private fileServiceClient: ClientProxy,
+    private readonly driverModelRepository: DriverModelRepository
   ) {}
 
   /**
@@ -79,7 +78,10 @@ export class UpdateDriverInfomationUseCase {
     if (input?.avatarFileId) {
       makeSure(input?.avatarFileId.length > 0, EError.INVALID_AVATAR);
       // Kiểm tra thêm có trong bảng File chưa
-      const file = await this.fileService.findFileById(input?.avatarFileId);
+      const file = await this.fileServiceClient.send(
+        'findFileByIdById',
+        input.avatarFileId
+      );
       makeSure(!isNil(file), EError.INVALID_AVATAR);
     }
     // Kiểm tra activeAreaId

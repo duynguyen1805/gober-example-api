@@ -4,7 +4,7 @@ import { Settings } from '../../constants/constants';
 
 const multerOptions = {
   storage: multer.memoryStorage(),
-  limits: { fileSize: Settings.UPLOADING_FILE_SIZE }
+  limits: { fileSize: Number(Settings?.UPLOADING_FILE_SIZE) }
 };
 
 export const multiUploadMiddleware = multer(multerOptions).array(

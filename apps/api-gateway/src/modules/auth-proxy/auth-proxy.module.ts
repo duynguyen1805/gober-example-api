@@ -1,5 +1,6 @@
 // apps/api-gateway/src/modules/auth/auth-proxy.module.ts
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthProxyService } from './auth-proxy.service';
 import { AuthProxyController } from './auth-proxy.controller';

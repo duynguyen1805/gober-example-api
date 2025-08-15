@@ -6,8 +6,8 @@ import { Cache } from 'cache-manager';
 import { ERedisKey } from '@app/common/enums/redis.enum';
 import { makeSure, mustExist } from '@app/common/helpers/server-error.helper';
 import { EError } from '@app/common/enums/error.enum';
-import { IJWTPayload } from '../../../../../libs/common/src/interfaces/auth.interface';
-import { DriverProxyService } from '../../../../../libs/proxy/src/driver-proxy/driver-proxy.service';
+import { IJWTPayload } from '@app/common/interfaces/auth.interface';
+import { DriverProxyService } from '@app/proxy/driver-proxy/driver-proxy.service';
 import { CacheService } from '@app/common/cache/cache.service';
 
 @Injectable()

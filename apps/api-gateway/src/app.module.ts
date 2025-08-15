@@ -11,10 +11,11 @@ import { JwtStrategy } from './modules/auth-proxy/jwt.strategy';
 // interceptor
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor } from '@app/common/interceptors/cache.interceptor';
-
+// module
 import { AuthProxyModule } from './modules/auth-proxy/auth-proxy.module';
 import { FileProxyModule } from './modules/file-proxy/file-proxy.module';
 import { DriverProxyModule } from '@app/proxy/driver-proxy/driver-proxy.module';
+import { CustomeCacheModule } from '@app/common/cache/cache.module';
 
 const configRedis = configService.getRedisConfig();
 
@@ -29,6 +30,7 @@ const configRedis = configService.getRedisConfig();
         `redis://${configRedis?.host}:${configRedis?.port}`,
       ttl: 0
     }),
+    CustomeCacheModule,
     AuthProxyModule,
     DriverProxyModule,
     FileProxyModule
