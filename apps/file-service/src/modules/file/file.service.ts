@@ -4,7 +4,10 @@ import { CreateFileDto } from '@app/common/dto/file/create-file.dto';
 import { UpdateFileDto } from '@app/common/dto/file/update-file.dto';
 import { QueryFileDto } from '@app/common/dto/file/query-file.dto';
 // interface
-import { IFileOutput, PagedFileResult } from './interfaces/file.interface';
+import {
+  IFileOutput,
+  PagedFileResult
+} from '../../../../../libs/common/src/interfaces/file.interface';
 // model.repository
 import { FileModelRepository } from './file.model.repository';
 
@@ -18,20 +21,20 @@ export class FileService {
    * @param input - CreateFileDto chứa thông tin file cần tạo
    * @returns IFileOutput - thông tin file sau khi được tạo và url đầy đủ để truy cập file
    */
-  async createFile(
-    driverId: string,
-    input: CreateFileDto
-  ): Promise<IFileOutput> {
+  async createFile(input: {
+    driverId: string;
+    body: CreateFileDto;
+  }): Promise<IFileOutput> {
     const dataFileDocument = await this.fileModelRepository.createFile({
-      filename: input.filename,
-      path: input.path,
-      mimeType: input.mimeType,
-      fileExtension: input.fileExtension,
-      size: input.size,
-      uploadedById: driverId
+      filename: input.body.filename,
+      path: input.body.path,
+      mimeType: input.body.mimeType,
+      fileExtension: input.body.fileExtension,
+      size: input.body.size,
+      uploadedById: input.driverId
     });
     const savedFile = await this.fileModelRepository.saveFile(dataFileDocument);
-    const url = `${process.env.STORAGE_ENDPOINT}${input.path}`;
+    const url = `${process.env.STORAGE_ENDPOINT}${input.body.path}`;
 
     return {
       ...savedFile.toObject(),
@@ -45,11 +48,14 @@ export class FileService {
    * @param query - QueryFileDto
    * @returns PagedFileResult - danh sách file đã được phân trang, tổng số file tìm thấy
    */
-  async getListFiles(
-    driverId: string,
-    query: QueryFileDto
-  ): Promise<PagedFileResult> {
-    return await this.fileModelRepository.getListFiles(driverId, query);
+  async getListFiles(input: {
+    driverId: string;
+    query: QueryFileDto;
+  }): Promise<PagedFileResult> {
+    return await this.fileModelRepository.getListFiles(
+      input.driverId,
+      input.query
+    );
   }
 
   /**

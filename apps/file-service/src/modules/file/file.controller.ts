@@ -1,4 +1,5 @@
 import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 // decorators
 import { User } from '@app/common/decorators/user.decorator';
 // guards
@@ -10,26 +11,25 @@ import { CreateFileDto } from '../../../../../libs/common/src/dto/file/create-fi
 import { UpdateFileDto } from '../../../../../libs/common/src/dto/file/update-file.dto';
 import { QueryFileDto } from '../../../../../libs/common/src/dto/file/query-file.dto';
 // interface
-import { IFileOutput } from './interfaces/file.interface';
+import { IFileOutput } from '../../../../../libs/common/src/interfaces/file.interface';
 // service
 import { FileService } from './file.service';
-import { MessagePattern } from '@nestjs/microservices';
 
 @Controller()
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @MessagePattern({ cmd: 'createFile' })
-  async createFile(
-    body: CreateFileDto,
-    @User('driverId') driverId: string
-  ): Promise<IFileOutput> {
-    return this.fileService.createFile(driverId, body);
+  async createFile(input: {
+    driverId: string;
+    body: CreateFileDto;
+  }): Promise<IFileOutput> {
+    return this.fileService.createFile(input);
   }
 
   @MessagePattern({ cmd: 'getListFiles' })
-  async getListFiles(query: QueryFileDto, @User('driverId') driverId: string) {
-    return this.fileService.getListFiles(driverId, query);
+  async getListFiles(input: { driverId: string; query: QueryFileDto }) {
+    return this.fileService.getListFiles(input);
   }
 
   @MessagePattern({ cmd: 'findFileByIdById' })

@@ -11,7 +11,7 @@ import {
 import { QueryFileDto } from '../../../../../libs/common/src/dto/file/query-file.dto';
 import { CreateFileDto } from '../../../../../libs/common/src/dto/file/create-file.dto';
 // interface
-import { PagedFileResult } from './interfaces/file.interface';
+import { PagedFileResult } from '../../../../../libs/common/src/interfaces/file.interface';
 
 @Injectable()
 export class FileModelRepository {
