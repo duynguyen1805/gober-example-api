@@ -20,8 +20,8 @@ import { DriverDocument } from '@app/database/schemas/driver.schema';
 
 @ApiTags('drivers')
 @Controller('drivers')
-// @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class DriverProxyController {
   constructor(private readonly driverProxyService: DriverProxyService) {}
 
@@ -122,6 +122,7 @@ export class DriverProxyController {
   async findDriverById(
     @User('driverId') driverId: string
   ): Promise<DriverDocument | null> {
+    console.log('driverId', driverId);
     return this.driverProxyService.findDriverById(driverId);
   }
 

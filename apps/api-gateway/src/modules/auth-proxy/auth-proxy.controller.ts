@@ -10,11 +10,12 @@ import {
 } from '@nestjs/swagger';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import { Observable } from 'rxjs';
 // decorators
 import { User } from '@app/common/decorators';
 // guards
 // import { ApiKeyGuard } from './guards/api-key.guard';
-// import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guard';
 // dto
 import { SignInDriverDto } from '../../../../../libs/common/src/dto/auth/signin-driver.dto';
 import { SignUpDriverDto } from '../../../../../libs/common/src/dto/auth/signup-driver.dto';
@@ -27,7 +28,6 @@ import {
 } from '../../../../../libs/common/src/interfaces/auth.interface';
 // service
 import { AuthProxyService } from './auth-proxy.service';
-import { Observable } from 'rxjs';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -215,8 +215,8 @@ export class AuthProxyController {
   }
 
   @Post('/logout')
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Đăng xuất tài khoản',
     description:

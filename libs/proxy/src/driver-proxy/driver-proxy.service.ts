@@ -18,7 +18,7 @@ export class DriverProxyService implements OnModuleInit {
 
   async findDriverById(id: string) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'findDriverById' }, { id })
+      this.client.send({ cmd: 'findDriverById' }, id)
     );
     return result;
   }

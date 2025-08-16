@@ -56,9 +56,22 @@ export class FileProxyService implements OnModuleInit {
    * @param fileId - id của file
    * @returns IFileOutput thông tin file trên database và url đầy đủ để truy cập file
    */
-  async getFileById(id: string) {
+  async findFileById(id: string) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'findFileByIdById' }, { id })
+      this.client.send({ cmd: 'findFileById' }, { id })
+    );
+    return result;
+  }
+
+  /**
+   * Tìm kiếm file theo fileId
+   * @param driverId - id của driver
+   * @param fileId - id của file
+   * @returns IFileOutput thông tin file trên database và url đầy đủ để truy cập file
+   */
+  async findFileByIdAndUploadedById(driverId: string, id: string) {
+    const result = await firstValueFrom(
+      this.client.send({ cmd: 'findFileByIdAndUploadedById' }, { driverId, id })
     );
     return result;
   }

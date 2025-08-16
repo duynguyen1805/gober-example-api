@@ -1,9 +1,5 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-// decorators
-import { User } from '@app/common/decorators/user.decorator';
-// guards
-// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 // schema
 import { File } from '@app/database/schemas/file.schema';
 // dto
@@ -32,8 +28,16 @@ export class FileController {
     return this.fileService.getListFiles(input);
   }
 
-  @MessagePattern({ cmd: 'findFileByIdById' })
-  async findFileByIdById({ id }: { id: string }): Promise<IFileOutput | null> {
+  @MessagePattern({ cmd: 'findFileById' })
+  async findFileById({ id }: { id: string }): Promise<IFileOutput | null> {
     return this.fileService.findFileById(id);
+  }
+
+  @MessagePattern({ cmd: 'findFileByIdAndUploadedById' })
+  async findFileByIdAndUploadedById(input: {
+    driverId: string;
+    id: string;
+  }): Promise<IFileOutput | null> {
+    return this.fileService.findFileByIdAndUploadedById(input);
   }
 }

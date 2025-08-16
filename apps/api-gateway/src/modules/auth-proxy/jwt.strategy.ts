@@ -1,6 +1,12 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  Get,
+  Inject,
+  Injectable,
+  UseGuards
+} from '@nestjs/common';
 import { jwtConstants } from '@app/common/constants';
 import { Cache } from 'cache-manager';
 import { ERedisKey } from '@app/common/enums/redis.enum';
@@ -55,9 +61,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // Kiểm tra driver tồn tại
     const driverId = payload.data.driverId;
-    mustExist(driverId, EError.DRIVER_NOT_FOUND);
+    mustExist(driverId, 'Unauthorized', null, 401);
     const driver = await this.driverProxyService.findDriverById(driverId);
-    mustExist(driver, EError.DRIVER_NOT_FOUND);
+    mustExist(driver, 'Unauthorized', null, 401);
 
     return { ...payload.data };
   }

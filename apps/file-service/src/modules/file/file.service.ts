@@ -10,6 +10,7 @@ import {
 } from '../../../../../libs/common/src/interfaces/file.interface';
 // model.repository
 import { FileModelRepository } from './file.model.repository';
+import { mustExist } from '@app/common/helpers';
 
 @Injectable()
 export class FileService {
@@ -67,6 +68,28 @@ export class FileService {
     const dataFileDocument = await this.fileModelRepository.findFileById(
       fileId
     );
+    mustExist(dataFileDocument, 'FILE_NOT_FOUND', null, 404);
+    // Gắn domain từ env với path file
+    const url = `${process.env.STORAGE_ENDPOINT}${dataFileDocument.path}`;
+    return { ...dataFileDocument.toObject(), url };
+  }
+
+  /**
+   * Tìm kiếm file theo fileId
+   * @param fileId - id của file
+   * @returns IFileOutput thông tin file trên database và url đầy đủ để truy cập file
+   */
+  async findFileByIdAndUploadedById(input: {
+    driverId: string;
+    id: string;
+  }): Promise<IFileOutput | null> {
+    const dataFileDocument =
+      await this.fileModelRepository.findFileByIdAndUploadedById(
+        input.id,
+        input.driverId
+      );
+    mustExist(dataFileDocument, 'FILE_NOT_FOUND', null, 404);
+
     // Gắn domain từ env với path file
     const url = `${process.env.STORAGE_ENDPOINT}${dataFileDocument.path}`;
     return { ...dataFileDocument.toObject(), url };

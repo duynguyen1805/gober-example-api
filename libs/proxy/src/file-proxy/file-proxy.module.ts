@@ -3,6 +3,9 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileProxyService } from './file-proxy.service';
 import { configService } from '@app/common/config';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from '@app/common/constants';
 
 @Module({
   imports: [
@@ -16,7 +19,12 @@ import { configService } from '@app/common/config';
           queueOptions: { durable: true }
         }
       }
-    ])
+    ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '24h' }
+    })
   ],
   providers: [FileProxyService],
   exports: [FileProxyService, ClientsModule]

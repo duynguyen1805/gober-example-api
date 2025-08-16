@@ -18,9 +18,7 @@ export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
   @MessagePattern({ cmd: 'findDriverById' })
-  async findDriverById(
-    @User('driverId') driverId: string
-  ): Promise<DriverDocument | null> {
+  async findDriverById(driverId: string): Promise<DriverDocument | null> {
     return this.driverService.findDriverById(driverId);
   }
 

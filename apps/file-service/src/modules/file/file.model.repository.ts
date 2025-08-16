@@ -49,6 +49,17 @@ export class FileModelRepository {
     return this.fileModelRepository.findById(fileId).exec();
   }
 
+  async findFileByIdAndUploadedById(
+    fileId: string,
+    uploadedById: string
+  ): Promise<FileDocument | null> {
+    console.log('fileId, uploadedById', fileId, uploadedById);
+    return this.fileModelRepository
+      .findOne({ fileId: fileId, uploadedById: uploadedById })
+      .exec();
+    // return this.fileModelRepository.findById(fileId).exec();
+  }
+
   /**
    * Lấy danh sách các file đã được upload
    * @param driverId - id của driver, nếu không có thì tìm kiếm tất cả file

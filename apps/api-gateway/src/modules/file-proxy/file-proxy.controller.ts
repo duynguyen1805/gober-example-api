@@ -24,7 +24,7 @@ import {
 // decorators
 import { User } from '@app/common/decorators/user.decorator';
 // guards
-// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guard';
 // dto
 import { CreateFileDto } from '@app/common/dto/file/create-file.dto';
 import { UpdateFileDto } from '@app/common/dto/file/update-file.dto';
@@ -36,6 +36,8 @@ import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
 
 @ApiTags('files')
 @Controller('files')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class FileProxyController {
   constructor(private readonly fileProxyService: FileProxyService) {}
 
@@ -113,6 +115,44 @@ export class FileProxyController {
     return await this.fileProxyService.getListFiles(driverId, query);
   }
 
+  // @Get(':id')
+  // @ApiOperation({
+  //   summary: 'Lấy thông tin 1 file cụ thể',
+  //   description: 'Lấy thông tin file bằng fileId'
+  // })
+  // @ApiResponse({
+  //   description: 'Lấy thông tin file thành công',
+  //   schema: {
+  //     properties: {
+  //       success: {
+  //         type: 'boolean',
+  //         example: true
+  //       },
+  //       data: {
+  //         type: 'object',
+  //         example: {
+  //           _id: '689a8a9655f410d124d91483',
+  //           deletedAt: null,
+  //           filename: 'meo_bay_lac.png',
+  //           path: '/gober/meo_bay_lac.png',
+  //           mimeType: 'image/png',
+  //           fileExtension: 'png',
+  //           size: 1024000,
+  //           uploadedById: '689a7e7e568b7b237866dfb3',
+  //           __v: 0,
+  //           fileId: '689a8a9655f410d124d91483',
+  //           id: '689a8a9655f410d124d91483',
+  //           url: 'localhost/gober/meo_bay_lac.png'
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
+  // @ApiParam({ name: 'id', required: true, example: '689a8a9655f410d124d91483' })
+  // async getFileById(@Param('id') id: string) {
+  //   return await this.fileProxyService.findFileById(id);
+  // }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Lấy thông tin 1 file cụ thể',
@@ -147,11 +187,13 @@ export class FileProxyController {
     }
   })
   @ApiParam({ name: 'id', required: true, example: '689a8a9655f410d124d91483' })
-  async getFileById(
-    @Param('id') id: string
-    // @User('driverId') driverId: string
+  async getFileByIdAndUploadedById(
+    @Param('id') id: string,
+    @User('driverId') driverId: string
   ) {
-    // console.log('driverId', driverId);
-    return await this.fileProxyService.getFileById(id);
+    return await this.fileProxyService.findFileByIdAndUploadedById(
+      driverId,
+      id
+    );
   }
 }

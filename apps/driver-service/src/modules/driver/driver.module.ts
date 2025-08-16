@@ -13,7 +13,8 @@ import { UpdateDriverInfomationUseCase } from './use-cases/update-driver-infomat
 import { Driver, DriverSchema } from '@app/database/schemas/driver.schema';
 import {
   DriverRefreshToken,
-  DriverRefreshTokenSchema
+  DriverRefreshTokenSchema,
+  FileSchema
 } from '@app/database/schemas';
 import {
   DriverRequest,
@@ -27,7 +28,8 @@ import { FileProxyModule } from '@app/proxy/file-proxy/file-proxy.module';
     MongooseModule.forFeature([
       { name: Driver.name, schema: DriverSchema },
       { name: DriverRefreshToken.name, schema: DriverRefreshTokenSchema },
-      { name: DriverRequest.name, schema: DriverRequestSchema }
+      { name: DriverRequest.name, schema: DriverRequestSchema },
+      { name: File.name, schema: FileSchema }
     ]),
     FileProxyModule
   ],
