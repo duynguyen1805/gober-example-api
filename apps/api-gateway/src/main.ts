@@ -3,12 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { LoggingInterceptor } from '@app/common/interceptors/logging.interceptor';
-import { TransformInterceptor } from '@app/common/interceptors/transform.interceptor';
-import {
-  AllExceptionsFilter,
-  ServerErrorFilter
-} from '@app/common/exceptions/index';
+import { setupGlobal } from '@app/common/bootstrap';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,12 +18,7 @@ async function bootstrap() {
     credentials: true
   });
 
-  app.useGlobalInterceptors(
-    new LoggingInterceptor(),
-    new TransformInterceptor()
-  );
-  app.useGlobalFilters(new AllExceptionsFilter(), new ServerErrorFilter());
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  setupGlobal(app);
 
   // Swagger setup
   const config = new DocumentBuilder()
