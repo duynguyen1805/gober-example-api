@@ -16,7 +16,7 @@ async function bootstrap() {
     }
   });
 
-  setupGlobal(app);
+  setupGlobal(app, false);
 
   await app.startAllMicroservices();
   Logger.log('DRIVER SERVICE is listening (RMQ queue: driver_queue)');

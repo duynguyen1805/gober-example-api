@@ -1,4 +1,5 @@
-import { ServerError } from '../exceptions/server-error.exception';
+// import { ServerError } from '../exceptions/server-error.exception';
+import { RpcError } from '@app/common/exceptions/rpc-error.exception';
 
 export function mustAuthenticateTwoFa(
   expression: boolean,
@@ -7,7 +8,8 @@ export function mustAuthenticateTwoFa(
   statusCode = 400
 ) {
   if (expression) return;
-  throw new ServerError(message, statusCode, messageText);
+  throw new RpcError(message, statusCode, messageText ? messageText : message);
+  // throw new ServerError(message, statusCode, messageText);
 }
 
 export function mustTwoFa(
@@ -17,7 +19,8 @@ export function mustTwoFa(
   statusCode = 400
 ) {
   if (!expression) return;
-  throw new ServerError(message, statusCode, messageText);
+  throw new RpcError(message, statusCode, messageText ? messageText : message);
+  // throw new ServerError(message, statusCode, messageText);
 }
 
 export function makeSure(
@@ -27,7 +30,8 @@ export function makeSure(
   statusCode = 400
 ) {
   if (expression) return;
-  throw new ServerError(message, statusCode, messageText);
+  throw new RpcError(message, statusCode, messageText ? messageText : message);
+  // throw new ServerError(message, statusCode, messageText);
 }
 
 export function mustExist(
@@ -37,7 +41,8 @@ export function mustExist(
   statusCode = 400
 ) {
   if (value) return;
-  throw new ServerError(message, statusCode, messageText);
+  throw new RpcError(message, statusCode, messageText ? messageText : message);
+  // throw new ServerError(message, statusCode, messageText);
 }
 
 export function mustMatchReg(
@@ -48,7 +53,8 @@ export function mustMatchReg(
   statusCode = 400
 ) {
   if (typeof value === 'string' && value.match(reg)) return;
-  throw new ServerError(message, statusCode, messageText);
+  throw new RpcError(message, statusCode, messageText ? messageText : message);
+  // throw new ServerError(message, statusCode, messageText);
 }
 
 export function serverError(
@@ -56,5 +62,6 @@ export function serverError(
   messageText?: string,
   statusCode = 500
 ) {
-  throw new ServerError(message, statusCode, messageText);
+  throw new RpcError(message, statusCode, messageText ? messageText : message);
+  // throw new ServerError(message, statusCode, messageText);
 }

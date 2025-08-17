@@ -16,7 +16,19 @@ async function bootstrap() {
     }
   });
 
-  setupGlobal(app);
+  // const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+  //   FileAppModule,
+  //   {
+  //     transport: Transport.RMQ,
+  //     options: {
+  //       urls: [configService.getEnv('RABBITMQ_URI')],
+  //       queue: 'file_queue',
+  //       queueOptions: { durable: true }
+  //     }
+  //   }
+  // );
+
+  setupGlobal(app, false);
 
   await app.startAllMicroservices();
   Logger.log('FILE SERVICE is listening (RMQ queue: file_queue)');

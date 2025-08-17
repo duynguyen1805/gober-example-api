@@ -16,7 +16,7 @@ async function bootstrap() {
     }
   });
 
-  setupGlobal(app);
+  setupGlobal(app, false);
 
   await app.startAllMicroservices();
   Logger.log('AUTH SERVICE is listening (RMQ queue: auth_queue)');

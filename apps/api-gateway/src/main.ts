@@ -18,7 +18,7 @@ async function bootstrap() {
     credentials: true
   });
 
-  setupGlobal(app);
+  setupGlobal(app, true);
 
   // Swagger setup
   const config = new DocumentBuilder()
