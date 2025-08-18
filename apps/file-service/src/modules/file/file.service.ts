@@ -88,7 +88,6 @@ export class FileService {
         input.id,
         input.driverId
       );
-    mustExist(false, 'FILE_NOT_FOUND', null, 404);
 
     // Gắn domain từ env với path file
     const url = `${process.env.STORAGE_ENDPOINT}${dataFileDocument.path}`;

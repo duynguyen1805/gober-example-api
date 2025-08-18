@@ -6,7 +6,7 @@ import { RpcError } from '../exceptions/rpc-error.exception';
 export class RpcErrorExceptionFilter implements RpcExceptionFilter<RpcError> {
   catch(exception: RpcError, host: ArgumentsHost): Observable<any> {
     return throwError(() => ({
-      code: exception.statusCode,
+      statusCode: exception.statusCode,
       message: exception.message,
       messageCode: exception.messageCode || null
     }));

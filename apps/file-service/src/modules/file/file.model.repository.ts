@@ -53,7 +53,6 @@ export class FileModelRepository {
     fileId: string,
     uploadedById: string
   ): Promise<FileDocument | null> {
-    console.log('fileId, uploadedById', fileId, uploadedById);
     return this.fileModelRepository
       .findOne({ fileId: fileId, uploadedById: uploadedById })
       .exec();

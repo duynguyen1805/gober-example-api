@@ -61,9 +61,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // Kiểm tra driver tồn tại
     const driverId = payload.data.driverId;
-    mustExist(driverId, 'Unauthorized', null, 401);
+    mustExist(driverId, 'UNAUTHORIZED', null, 401);
     const driver = await this.driverProxyService.findDriverById(driverId);
-    mustExist(driver, 'Unauthorized', null, 401);
+    mustExist(driver, 'UNAUTHORIZED', null, 401);
 
     return { ...payload.data };
   }

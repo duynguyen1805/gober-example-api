@@ -23,8 +23,9 @@ export class GatewayAllExceptionFilter implements ExceptionFilter {
 
     // Trường hợp lỗi từ microservice trả về (RpcErrorFilter đã xử lý)
     if (exception?.statusCode && exception?.messageCode) {
-      statusCode = exception.code;
-      messageCode = exception.message; // coi như mã lỗi
+      statusCode = exception.statusCode;
+      messageCode = exception.messageCode; // coi như mã lỗi
+      messageText = exception.message;
     }
     // Trường hợp là HttpException nội bộ Gateway
     else if (exception instanceof HttpException) {

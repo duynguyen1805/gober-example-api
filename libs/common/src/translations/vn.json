@@ -6,6 +6,7 @@
   "INVALID_IDENTITY_CARD": "CMND/CCCD không hợp lệ",
   "DRIVER_EXIST": "Tài xế đã tồn tại",
   "CANNOT_FIND_USER": "Không tìm thấy người dùng",
+  "UNAUTHORIZED": "Không có quyền truy cập, vui lòng đăng nhập",
   "INVALID_USER_STATUS": "Trạng thái người dùng không hợp lệ",
   "SIGN_UP_ERROR": "Lỗi đăng ký",
   "INVALID_INDETITY": "Thông tin định danh không hợp lệ",

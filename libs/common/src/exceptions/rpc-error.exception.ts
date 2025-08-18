@@ -1,10 +1,16 @@
+import { RpcException } from '@nestjs/microservices';
+
 // common/exceptions/rpc-error.exception.ts
-export class RpcError extends Error {
+export class RpcError extends RpcException {
   constructor(
     public messageCode: string,
     public statusCode: number, // http-like code
-    public message: string
+    public messageText?: string
   ) {
-    super(message);
+    super({
+      messageCode,
+      message: messageText || messageCode,
+      statusCode
+    });
   }
 }

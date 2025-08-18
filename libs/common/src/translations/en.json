@@ -6,6 +6,7 @@
   "INVALID_IDENTITY_CARD": "Invalid identity card",
   "DRIVER_EXIST": "Driver already exists",
   "CANNOT_FIND_USER": "Cannot find user",
+  "UNAUTHORIZED": "Unauthorized",
   "INVALID_USER_STATUS": "Invalid user status",
   "SIGN_UP_ERROR": "Sign up error",
   "INVALID_INDETITY": "Invalid identity",
