@@ -19,9 +19,13 @@ import { CustomeCacheModule } from '@app/common/cache/cache.module';
 // controller proxy
 import { DriverProxyController } from './modules/driver-proxy/driver-proxy.controller';
 import { FileProxyController } from './modules/file-proxy/file-proxy.controller';
+import { UploadMinioController } from './modules/upload-proxy/upload-minio-proxy.controller';
+
 // service proxy
 import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
 import { DriverProxyService } from '@app/proxy/driver-proxy/driver-proxy.service';
+import { UploadMinioProxyService } from '@app/proxy/upload-proxy/upload-minio-proxy.service';
+import { UploadMinIOModule } from '@app/proxy/upload-proxy/upload-minio-proxy.module';
 
 const configRedis = configService.getRedisConfig();
 
@@ -39,9 +43,14 @@ const configRedis = configService.getRedisConfig();
     CustomeCacheModule,
     AuthProxyModule,
     DriverProxyModule,
-    FileProxyModule
+    FileProxyModule,
+    UploadMinIOModule
   ],
-  controllers: [DriverProxyController, FileProxyController],
+  controllers: [
+    DriverProxyController,
+    FileProxyController,
+    UploadMinioController
+  ],
   providers: [
     JwtStrategy,
     {
@@ -49,7 +58,8 @@ const configRedis = configService.getRedisConfig();
       useClass: CacheInterceptor
     },
     DriverProxyService,
-    FileProxyService
+    FileProxyService,
+    UploadMinioProxyService
   ]
 })
 export class AppModule {}

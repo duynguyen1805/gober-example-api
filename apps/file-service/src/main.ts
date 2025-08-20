@@ -1,12 +1,21 @@
 import { NestFactory } from '@nestjs/core';
-import { FileAppModule } from './app.module';
+import { UploadAppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { configService } from '@app/common/config/config.service';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { setupGlobal } from '@app/common/bootstrap';
 
 async function bootstrap() {
-  const app = await NestFactory.create(FileAppModule);
+  const app = await NestFactory.create(UploadAppModule);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [configService.getEnv('RABBITMQ_URI')],
+      queue: 'upload_minio_queue',
+      queueOptions: { durable: true }
+    }
+  });
+
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
@@ -31,6 +40,8 @@ async function bootstrap() {
   setupGlobal(app, false);
 
   await app.startAllMicroservices();
-  Logger.log('FILE SERVICE is listening (RMQ queue: file_queue)');
+  Logger.log(
+    'UPLOAD SERVICE is listening (RMQ queue: upload_minio_queue, file_queue)'
+  );
 }
 bootstrap();

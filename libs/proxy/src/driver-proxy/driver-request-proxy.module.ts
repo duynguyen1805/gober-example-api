@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { configService } from '@app/common/config';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from '@app/common/constants';
 // service
 import { DriverRequestProxyService } from './driver-request-proxy.service';
 
@@ -16,7 +19,12 @@ import { DriverRequestProxyService } from './driver-request-proxy.service';
           queueOptions: { durable: true }
         }
       }
-    ])
+    ]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '24h' }
+    })
   ],
   providers: [DriverRequestProxyService],
   exports: [DriverRequestProxyService]
