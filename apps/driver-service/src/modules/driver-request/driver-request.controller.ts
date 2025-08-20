@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 // dto
 import { UpdateDriverRequestDto } from '@app/common/dto/driver-request/update-driver-request.dto';
 import { CreateDriverRequestDto } from '@app/common/dto/driver-request/create-driver-request.dto';
@@ -13,8 +13,8 @@ export class DriverRequestController {
 
   @MessagePattern({ cmd: 'createDriverRequestInformation' })
   async createDriverRequestInformation(
-    driverId: string,
-    body: CreateDriverRequestDto
+    @Payload() driverId: string,
+    @Payload() body: CreateDriverRequestDto
   ): Promise<DriverRequestDocumentWithCustomId> {
     return this.driverRequestService.createDriverRequestInformation(
       driverId,
@@ -24,16 +24,16 @@ export class DriverRequestController {
 
   @MessagePattern({ cmd: 'findDriverRequestById' })
   async findDriverRequestById(
-    driverRequestId: string
+    @Payload() driverRequestId: string
   ): Promise<DriverRequestDocumentWithCustomId | null> {
     return this.driverRequestService.findDriverRequestById(driverRequestId);
   }
 
   @MessagePattern({ cmd: 'updateDriverRequestInformation' })
   async updateDriverRequestInformation(
-    driverId: string,
-    driverRequestId: string,
-    body: UpdateDriverRequestDto
+    @Payload() driverId: string,
+    @Payload() driverRequestId: string,
+    @Payload() body: UpdateDriverRequestDto
   ): Promise<DriverRequestDocumentWithCustomId> {
     return this.driverRequestService.updateDriverRequestInformation(
       driverId,

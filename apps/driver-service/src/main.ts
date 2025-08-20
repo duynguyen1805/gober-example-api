@@ -16,6 +16,15 @@ async function bootstrap() {
     }
   });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [configService.getEnv('RABBITMQ_URI')],
+      queue: 'driver_request_queue',
+      queueOptions: { durable: true }
+    }
+  });
+
   setupGlobal(app, false);
 
   await app.startAllMicroservices();

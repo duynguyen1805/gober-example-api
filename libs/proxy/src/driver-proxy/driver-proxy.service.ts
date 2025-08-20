@@ -36,14 +36,17 @@ export class DriverProxyService implements OnModuleInit {
 
   async createDriver(body: DriverDocumentWithCustomId | SignUpDriverDto) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'createDriver' }, { body })
+      this.client.send({ cmd: 'createDriver' }, body)
     );
     return result;
   }
 
   async updateDriverInformation(id: string, body: UpdateDriverDto) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'updateDriverInformation' }, { id, body })
+      this.client.send(
+        { cmd: 'updateDriverInformation' },
+        { driverId: id, body }
+      )
     );
     return result;
   }
@@ -52,14 +55,14 @@ export class DriverProxyService implements OnModuleInit {
     input: Partial<DriverRefreshTokenDocumentWithCustomId>
   ) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'createDriverRefreshToken' }, { input })
+      this.client.send({ cmd: 'createDriverRefreshToken' }, input)
     );
     return result;
   }
 
   async saveDriverRefreshToken(input: DriverRefreshTokenDocumentWithCustomId) {
     const result = await firstValueFrom(
-      this.client.send({ cmd: 'saveDriverRefreshToken' }, { input })
+      this.client.send({ cmd: 'saveDriverRefreshToken' }, input)
     );
     return result;
   }

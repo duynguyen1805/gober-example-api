@@ -1,13 +1,13 @@
 import { Controller, UseGuards } from '@nestjs/common';
 // decorators
-import { User } from '@app/common/decorators/user.decorator';
+// import { User } from '@app/common/decorators/user.decorator';
 //dto
 import { UpdateDriverDto } from '@app/common/dto/driver/update-driver.dto';
 // service
 import { DriverService } from './driver.service';
 // schema
 import { DriverDocument } from '@app/database/schemas/driver.schema';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import {
   DriverRefreshTokenDocument,
   DriverRefreshTokenDocumentWithCustomId
@@ -33,8 +33,8 @@ export class DriverController {
 
   @MessagePattern({ cmd: 'updateDriverInformation' })
   async updateDriverInformation(
-    @User('driverId') driverId: string,
-    body: UpdateDriverDto
+    @Payload() driverId: string,
+    @Payload() body: UpdateDriverDto
   ): Promise<DriverDocument> {
     return this.driverService.updateDriverInformation(driverId, body);
   }
@@ -49,14 +49,14 @@ export class DriverController {
 
   @MessagePattern({ cmd: 'createDriverRefreshToken' })
   async createDriverRefreshToken(
-    input: Partial<DriverRefreshTokenDocumentWithCustomId>
+    @Payload() input: Partial<DriverRefreshTokenDocumentWithCustomId>
   ): Promise<DriverRefreshTokenDocument> {
     return this.driverService.createDriverRefreshToken(input);
   }
 
   @MessagePattern({ cmd: 'saveDriverRefreshToken' })
   async saveDriverRefreshToken(
-    input: DriverRefreshTokenDocumentWithCustomId
+    @Payload() input: DriverRefreshTokenDocumentWithCustomId
   ): Promise<DriverRefreshTokenDocument> {
     return this.driverService.saveDriverRefreshToken(input);
   }
