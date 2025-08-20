@@ -27,6 +27,6 @@ import { DriverRequestProxyService } from './driver-request-proxy.service';
     })
   ],
   providers: [DriverRequestProxyService],
-  exports: [DriverRequestProxyService]
+  exports: [DriverRequestProxyService, ClientsModule]
 })
 export class DriverRequestProxyModule {}

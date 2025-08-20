@@ -15,9 +15,12 @@ import { CacheInterceptor } from '@app/common/interceptors/cache.interceptor';
 import { AuthProxyModule } from './modules/auth-proxy/auth-proxy.module';
 import { FileProxyModule } from '../../../libs/proxy/src/file-proxy/file-proxy.module';
 import { DriverProxyModule } from '@app/proxy/driver-proxy/driver-proxy.module';
+import { DriverRequestProxyModule } from '@app/proxy/driver-proxy/driver-request-proxy.module';
+import { UploadMinIOModule } from '@app/proxy/upload-proxy/upload-minio-proxy.module';
 import { CustomeCacheModule } from '@app/common/cache/cache.module';
 // controller proxy
 import { DriverProxyController } from './modules/driver-proxy/driver-proxy.controller';
+import { DriverRequestController } from './modules/driver-proxy/driver-request-proxy.controller';
 import { FileProxyController } from './modules/file-proxy/file-proxy.controller';
 import { UploadMinioController } from './modules/upload-proxy/upload-minio-proxy.controller';
 
@@ -25,7 +28,7 @@ import { UploadMinioController } from './modules/upload-proxy/upload-minio-proxy
 import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
 import { DriverProxyService } from '@app/proxy/driver-proxy/driver-proxy.service';
 import { UploadMinioProxyService } from '@app/proxy/upload-proxy/upload-minio-proxy.service';
-import { UploadMinIOModule } from '@app/proxy/upload-proxy/upload-minio-proxy.module';
+import { DriverRequestProxyService } from '@app/proxy/driver-proxy/driver-request-proxy.service';
 
 const configRedis = configService.getRedisConfig();
 
@@ -43,11 +46,13 @@ const configRedis = configService.getRedisConfig();
     CustomeCacheModule,
     AuthProxyModule,
     DriverProxyModule,
+    DriverRequestProxyModule,
     FileProxyModule,
     UploadMinIOModule
   ],
   controllers: [
     DriverProxyController,
+    DriverRequestController,
     FileProxyController,
     UploadMinioController
   ],
@@ -58,6 +63,7 @@ const configRedis = configService.getRedisConfig();
       useClass: CacheInterceptor
     },
     DriverProxyService,
+    DriverRequestProxyService,
     FileProxyService,
     UploadMinioProxyService
   ]
