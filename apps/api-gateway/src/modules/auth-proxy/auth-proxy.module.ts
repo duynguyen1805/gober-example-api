@@ -4,11 +4,9 @@ import { HttpModule } from '@nestjs/axios';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthProxyService } from './auth-proxy.service';
 import { AuthProxyController } from './auth-proxy.controller';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from '@app/common/constants';
 import { CustomeCacheModule } from '@app/common/cache/cache.module';
 import { configService } from '@app/common/config';
+import { JwtAuthModule } from '@app/common/auth/jwt-auth.module';
 
 @Module({
   imports: [
@@ -23,16 +21,11 @@ import { configService } from '@app/common/config';
         }
       }
     ]),
-    // PassportModule.register({ defaultStrategy: 'jwt' }),
-    // JwtModule.register({
-    //   secret: jwtConstants.secret,
-    //   signOptions: { expiresIn: '24h' }
-    // }),
+    JwtAuthModule,
     CustomeCacheModule,
     HttpModule
   ],
   controllers: [AuthProxyController],
-  providers: [AuthProxyService],
-  exports: [AuthProxyService]
+  providers: [AuthProxyService]
 })
 export class AuthProxyModule {}

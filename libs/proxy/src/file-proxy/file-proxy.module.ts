@@ -3,9 +3,6 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { FileProxyService } from './file-proxy.service';
 import { configService } from '@app/common/config';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from '@app/common/constants';
 
 @Module({
   imports: [

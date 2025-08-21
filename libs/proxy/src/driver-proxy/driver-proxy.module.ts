@@ -3,11 +3,8 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { DriverProxyService } from '@app/proxy/driver-proxy/driver-proxy.service';
 import { configService } from '@app/common/config';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from '@app/common/constants';
-import { JwtStrategy } from 'apps/api-gateway/src/modules/auth-proxy/jwt.strategy';
-import { AuthProxyModule } from '../../../../apps/api-gateway/src/modules/auth-proxy/auth-proxy.module';
+// service
+import { DriverRequestProxyService } from './driver-request-proxy.service';
 
 @Module({
   imports: [
@@ -21,9 +18,20 @@ import { AuthProxyModule } from '../../../../apps/api-gateway/src/modules/auth-p
           queueOptions: { durable: true }
         }
       }
+    ]),
+    ClientsModule.register([
+      {
+        name: 'DRIVER_REQUEST_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [configService.getEnv('RABBITMQ_URI')],
+          queue: 'driver_request_queue',
+          queueOptions: { durable: true }
+        }
+      }
     ])
   ],
-  providers: [DriverProxyService],
-  exports: [DriverProxyService, ClientsModule]
+  providers: [DriverProxyService, DriverRequestProxyService],
+  exports: [ClientsModule, DriverProxyService, DriverRequestProxyService]
 })
 export class DriverProxyModule {}

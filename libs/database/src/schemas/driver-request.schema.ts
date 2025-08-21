@@ -3,6 +3,7 @@ import { BaseSchema } from './base.schema';
 import { Admin } from './admin.schema';
 import { Driver } from './driver.schema';
 import { RequestType } from './request-type.schema';
+import { File } from './file.schema';
 
 @Schema({ collection: 'driver_requests' })
 export class DriverRequest extends BaseSchema {

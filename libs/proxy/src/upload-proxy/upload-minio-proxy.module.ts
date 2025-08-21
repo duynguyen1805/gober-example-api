@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { configService, jwtConstants } from '@app/common/index';
+import { configService } from '@app/common/index';
 // service
 import { UploadMinioProxyService } from './upload-minio-proxy.service';
 

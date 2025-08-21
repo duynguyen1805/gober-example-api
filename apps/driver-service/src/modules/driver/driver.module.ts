@@ -14,6 +14,7 @@ import { Driver, DriverSchema } from '@app/database/schemas/driver.schema';
 import {
   DriverRefreshToken,
   DriverRefreshTokenSchema,
+  File,
   FileSchema
 } from '@app/database/schemas';
 import {

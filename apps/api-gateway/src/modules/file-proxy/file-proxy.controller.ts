@@ -49,7 +49,7 @@ export class FileProxyController {
   @ApiBody({ type: CreateFileDto })
   @ApiCreatedResponse({
     description: 'Tạo record file thành công',
-    type: File,
+    // type: File,
     schema: {
       properties: {
         success: {
