@@ -19,11 +19,6 @@ import { UploadMinioProxyService } from './upload-minio-proxy.service';
         }
       }
     ])
-    // PassportModule.register({ defaultStrategy: 'jwt' }),
-    // JwtModule.register({
-    //   secret: jwtConstants.secret,
-    //   signOptions: { expiresIn: '24h' }
-    // })
   ],
   providers: [UploadMinioProxyService],
   exports: [UploadMinioProxyService, ClientsModule]

@@ -19,12 +19,7 @@ import { DriverRequestProxyService } from './driver-request-proxy.service';
           queueOptions: { durable: true }
         }
       }
-    ]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '24h' }
-    })
+    ])
   ],
   providers: [DriverRequestProxyService],
   exports: [DriverRequestProxyService, ClientsModule]

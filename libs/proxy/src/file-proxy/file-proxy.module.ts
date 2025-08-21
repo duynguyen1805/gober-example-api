@@ -19,12 +19,7 @@ import { jwtConstants } from '@app/common/constants';
           queueOptions: { durable: true }
         }
       }
-    ]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '24h' }
-    })
+    ])
   ],
   providers: [FileProxyService],
   exports: [FileProxyService, ClientsModule]

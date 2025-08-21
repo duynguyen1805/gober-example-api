@@ -2,11 +2,14 @@
 import { CacheModule, Module } from '@nestjs/common';
 // config
 import { ConfigModule } from '@nestjs/config';
+import { jwtConstants } from '@app/common/index';
 // redis config types và store adapter cho cache manager
 import type { RedisClientOptions } from 'redis';
 import * as redisStore from 'cache-manager-redis-store';
 import { configService } from '@app/common/config';
 // auth
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './modules/auth-proxy/jwt.strategy';
 // interceptor
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -42,6 +45,11 @@ const configRedis = configService.getRedisConfig();
         configRedis?.redisURL ||
         `redis://${configRedis?.host}:${configRedis?.port}`,
       ttl: 0
+    }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '24h' }
     }),
     CustomeCacheModule,
     AuthProxyModule,

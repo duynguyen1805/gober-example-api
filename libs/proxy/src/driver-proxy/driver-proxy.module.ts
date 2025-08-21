@@ -21,12 +21,7 @@ import { AuthProxyModule } from '../../../../apps/api-gateway/src/modules/auth-p
           queueOptions: { durable: true }
         }
       }
-    ]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '24h' }
-    })
+    ])
   ],
   providers: [DriverProxyService],
   exports: [DriverProxyService, ClientsModule]
