@@ -5,7 +5,6 @@ import { ValidationError } from 'class-validator';
 export class CustomValidationException extends BadRequestException {
   constructor(errors: ValidationError[]) {
     const formattedErrors = CustomValidationException.formatErrors(errors);
-    console.log('formattedErrors: ', formattedErrors);
     super({
       statusCode: 400,
       messageCode: 'VALIDATION_ERROR',
