@@ -1,6 +1,6 @@
 import { Catch, ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ServerError } from './server-error.exception';
+import { ServerError } from '../exceptions/server-error.exception';
 import { TranslateMessageCodeService } from '@app/common/services/translate-msg-code.service';
 
 @Catch(ServerError)

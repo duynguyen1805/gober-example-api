@@ -29,6 +29,7 @@ import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guard';
 import { CreateFileDto } from '@app/common/dto/file/create-file.dto';
 import { UpdateFileDto } from '@app/common/dto/file/update-file.dto';
 import { QueryFileDto } from '@app/common/dto/file/query-file.dto';
+import { GetFileByIdParamDto } from '@app/common/dto/file/get-file-by-id-param.dto';
 // interface
 import { IFileOutput } from '@app/common/interfaces/file.interface';
 // service
@@ -36,8 +37,8 @@ import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
 
 @ApiTags('files')
 @Controller('files')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+// @ApiBearerAuth()
+// @UseGuards(JwtAuthGuard)
 export class FileProxyController {
   constructor(private readonly fileProxyService: FileProxyService) {}
 
@@ -188,12 +189,13 @@ export class FileProxyController {
   })
   @ApiParam({ name: 'id', required: true, example: '689a8a9655f410d124d91483' })
   async getFileByIdAndUploadedById(
-    @Param('id') id: string,
+    // @Param('id') id: string,
+    @Param() params: GetFileByIdParamDto,
     @User('driverId') driverId: string
   ) {
     return await this.fileProxyService.findFileByIdAndUploadedById(
       driverId,
-      id
+      params.id
     );
   }
 }

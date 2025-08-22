@@ -89,6 +89,10 @@ export class FileService {
         input.driverId
       );
 
+    if (!dataFileDocument) {
+      return null;
+    }
+
     // Gắn domain từ env với path file
     const url = `${process.env.STORAGE_ENDPOINT}${dataFileDocument.path}`;
     return { ...dataFileDocument.toObject(), url };

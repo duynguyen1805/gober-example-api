@@ -1,10 +1,17 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  INestApplication,
+  ValidationPipe
+} from '@nestjs/common';
+// exception
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
-import { AllExceptionsFilter } from './exceptions/all-exception.filter';
-import { ServerErrorFilter } from './exceptions/server-error.exception.filter';
-import { GatewayAllExceptionFilter } from './exceptions/gateway-all-exception.filter';
-import { RpcErrorExceptionFilter } from './exceptions/rpc-error.exception.filter';
+import { CustomValidationException } from './exceptions/custom-validation.exception';
+// filter
+// import { AllExceptionsFilter } from './filters/all-exception.filter';
+// import { ServerErrorFilter } from './filters/server-error-exception.filter';
+import { GatewayAllExceptionFilter } from './filters/gateway-all-exception.filter';
+import { RpcErrorExceptionFilter } from './filters/rpc-error-exception.filter';
 
 export function setupGlobal(app: INestApplication, isGateway = true) {
   if (isGateway) {
@@ -17,7 +24,14 @@ export function setupGlobal(app: INestApplication, isGateway = true) {
       // new AllExceptionsFilter(),
       // new ServerErrorFilter()
     );
-    app.useGlobalPipes(new ValidationPipe({ transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: false,
+        transform: true,
+        exceptionFactory: (errors) => new CustomValidationException(errors)
+      })
+    );
   } else {
     app.useGlobalFilters(new RpcErrorExceptionFilter());
   }
