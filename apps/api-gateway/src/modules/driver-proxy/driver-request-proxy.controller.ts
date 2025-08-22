@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '@app/common/guards/jwt-auth.guard';
 // decorators
 import { User } from '@app/common/decorators/user.decorator';
 // dto
+import { GetDriverRequestByIdParamDto } from '@app/common/dto/driver-request/get-driver-request-by-id-param.dto';
 import { UpdateDriverRequestDto } from '@app/common/dto/driver-request/update-driver-request.dto';
 import { CreateDriverRequestDto } from '@app/common/dto/driver-request/create-driver-request.dto';
 // service
@@ -160,10 +161,11 @@ export class DriverRequestController {
     }
   })
   async findDriverRequestById(
-    @Param('driverRequestId') driverRequestId: string
+    // @Param('driverRequestId') driverRequestId: string
+    @Param() params: GetDriverRequestByIdParamDto
   ): Promise<DriverRequestDocumentWithCustomId | null> {
     return this.driverRequestProxyService.findDriverRequestById(
-      driverRequestId
+      params.driverRequestId
     );
   }
 

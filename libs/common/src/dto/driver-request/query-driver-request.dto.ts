@@ -41,12 +41,12 @@ export class QueryDriverRequestDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({ message: 'validation.page.isInt' })
   page?: number = 1;
 
   @ApiPropertyOptional({ description: 'Page size', example: 20, default: 20 })
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({ message: 'validation.pageSize.isInt' })
   pageSize?: number = 20;
 }

@@ -1,5 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsMongoId,
+  IsOptional,
+  Length,
+  Matches,
+  MaxLength,
+  MinLength
+} from 'class-validator';
 
 export class UpdateDriverDto {
   @ApiPropertyOptional({
@@ -7,6 +15,8 @@ export class UpdateDriverDto {
     example: 'Người dùng 01 sau cập nhật'
   })
   @IsOptional()
+  @MinLength(2, { message: 'validation.driver.fullName.minLength' })
+  @MaxLength(255, { message: 'validation.driver.fullName.maxLength' })
   fullName?: string;
 
   @ApiPropertyOptional({
@@ -14,6 +24,9 @@ export class UpdateDriverDto {
     example: '0900000022'
   })
   @IsOptional()
+  @Matches(/^(0[3|5|7|8|9])[0-9]{8}$/, {
+    message: 'validation.driver.phoneNumber.invalid'
+  })
   phoneNumber: string;
 
   @ApiPropertyOptional({
@@ -21,6 +34,7 @@ export class UpdateDriverDto {
     example: 'driver01update@example.com'
   })
   @IsOptional()
+  @IsEmail({ message: 'validation.driver.email.invalid' })
   email?: string;
 
   @ApiPropertyOptional({
@@ -29,6 +43,7 @@ export class UpdateDriverDto {
     example: '689a8a9655f410d124d91483'
   })
   @IsOptional()
+  @IsMongoId({ message: 'validation.driver.avatarFileId.isMongoId' })
   avatarFileId?: string;
 
   @ApiPropertyOptional({
@@ -36,6 +51,7 @@ export class UpdateDriverDto {
     example: '689a8a9655f410d124d91412'
   })
   @IsOptional()
+  @IsMongoId({ message: 'validation.driver.activeAreaId.isMongoId' })
   activeAreaId?: string;
 
   @ApiPropertyOptional({
@@ -43,5 +59,6 @@ export class UpdateDriverDto {
     example: 'hẻm 12/34, Quận 3, HCMC'
   })
   @IsOptional()
+  @MaxLength(255, { message: 'validation.driver.temporaryAddress.maxLength' })
   temporaryAddress?: string;
 }

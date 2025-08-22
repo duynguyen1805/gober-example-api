@@ -12,8 +12,8 @@ export class CreateDriverRequestDto {
     description: 'Code',
     example: '123123'
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'validation.driver-request.code.isNotEmpty' })
+  @IsString({ message: 'validation.driver-request.code.isString' })
   code: string;
 
   @ApiPropertyOptional({
