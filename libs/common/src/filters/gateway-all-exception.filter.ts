@@ -18,8 +18,6 @@ export class GatewayAllExceptionFilter implements ExceptionFilter {
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();
 
-    console.log('exception: ', exception);
-
     const acceptLang = req.headers['accept-language'] as string | undefined;
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let messageCode: string | undefined;
@@ -49,7 +47,6 @@ export class GatewayAllExceptionFilter implements ExceptionFilter {
             };
           })
         );
-        console.log('translatedErrors: ', translatedErrors);
         messageText = translatedErrors[0]?.messages?.[0] || messageCode;
         errors = translatedErrors;
 

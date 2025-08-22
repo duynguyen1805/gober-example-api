@@ -37,8 +37,8 @@ import { FileProxyService } from '@app/proxy/file-proxy/file-proxy.service';
 
 @ApiTags('files')
 @Controller('files')
-// @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class FileProxyController {
   constructor(private readonly fileProxyService: FileProxyService) {}
 
