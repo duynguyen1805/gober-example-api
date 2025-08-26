@@ -9,7 +9,7 @@ services:
     ports:
       - '4000:4000'
     volumes:
-      - /Users/duynguyen/gober/.env.test:/app/.env
+      - /Users/duynguyen/gober/.env.dev:/app/.env
       - /Users/duynguyen/gober/files:/app/files
     environment:
       - TZ=Asia/Bangkok
