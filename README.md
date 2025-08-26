@@ -105,6 +105,8 @@ Make sure you have an `.env` or `.env.dev` file in your root directory:
 cp .env.dev .env
 ```
 
+Edit `docker-compose.test.yml`, replace volume value.
+
 ### Step 2: Start services
 
 Run the following command to start all necessary services:
