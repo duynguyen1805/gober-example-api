@@ -102,10 +102,10 @@ To run required services like **MongoDB**, **PostgreSQL**, **Redis**, **RabbitMQ
 Make sure you have an `.env` or `.env.dev` file in your root directory:
 
 ```bash
-cp .env.dev .env
+cp .env.example .env.dev
 ```
 
-Edit `docker-compose.test.yml`, replace volume value.
+Open `docker-compose.test.yml` and update the volume value as needed.
 
 ### Step 2: Start services
 
