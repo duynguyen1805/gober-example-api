@@ -97,7 +97,7 @@ To run required services like **MongoDB**, **PostgreSQL**, **Redis**, **RabbitMQ
 
 ---
 
-### Step 1: Create `.env` file
+### Step 1: Create `.env.dev` file
 
 Make sure you have an `.env` or `.env.dev` file in your root directory:
 
@@ -116,8 +116,6 @@ docker-compose --env-file .env.dev -f docker-compose.test.yml up --build
 ```
 
 This will start the following services:
-
-- PostgreSQL (port: 6434)
 
 - MongoDB (port: 27017)
 
