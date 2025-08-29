@@ -22,19 +22,42 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Gober Example API
 
-Gober example API - Example project for learning clean architecture and project structure. (**Nestjs, Typescript, Redis, MinIO, RabbitMQ and MongoDB, Mongoose**)
+A sample project for learning clean architecture and project structure. **(NestJS, Typescript, Redis, MinIO, RabbitMQ and MongoDB, Mongoose)**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-Node.js version 20.x (20.18.1)
+### Project Structure
+
+The project follows a traditional **modular monolith** structure using NestJS modules.
+
+Each feature is organized in its own module under `src/modules/`.
+
+#### 🔧 Main Modules:
+
+| Module                    | Description                                                                                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auth Module**           | Handles user authentication, JWT token creation, and role-based access.                                                                                       |
+| **Driver Module**         | Manages driver profiles and driver request submissions. Includes CRUD operations and status updates.                                                          |
+| **Driver Request Module** | Handles logic related to driver application requests, including submission, approval, and rejection workflows.                                                |
+| **File Module**           | Handles file uploads using MinIO and manages file metadata in the database.                                                                                   |
+| **Common/\***             | Provides reusable services, guards, interceptors, and decorators shared across the app. Includes constants, enums, utility functions used throughout the app. |
+| **Config**                | Loads environment variables and application configuration (like MongoDB, Redis, MinIO, etc.).                                                                 |
+
+> This structure is ideal for a single codebase and was the base for refactoring into microservices.
+
+---
+
+## Installation
+
+### Prerequisites:
+
+NodeJs version 20.x (20.18.1)
 
 npm version 8.11.0
 
 yarn version v1.22.22
-
-## Installation
 
 ```bash
 $ npm install
