@@ -24,9 +24,11 @@
 
 ## Description
 
+Gober example API - Example project for learning clean architecture and project structure. (**Nestjs, Typescript, PostgreSQL, TypeORM, Redis, MinIO, RabbitMQ**)
+
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-NodeJs version 20.x (20.18.1)
+Node.js version 20.x (20.18.1)
 
 npm version 8.11.0
 
