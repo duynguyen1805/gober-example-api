@@ -25,7 +25,12 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-Node 20.18.1
+
+NodeJs version 20.x (20.18.1)
+
+npm version 8.11.0
+
+yarn version v1.22.22
 
 ## Installation
 
@@ -35,58 +40,109 @@ $ npm install
 
 ## Running the app
 
-Create .env file with
+Create .env.dev file with
 
 ```bash
-DB_CONNECTION=postgres
-DB_HOST=HOST
-DB_PORT=5432
-DB_DATABASE=DATABASE_NAME
-DB_USERNAME=root
-DB_PASSWORD=PASSWORD
+# Application Configuration
+NODE_ENV=development
+PORT=4000
+CLIENT_API_HOST=http://localhost:3000
+APP_URL=http://localhost:4000
+X_API_KEY=X_API_KEY
+SERVICE_TYPE=MainService
 
 LOGGING=all // boolean | "all" | ["query", "schema", "error", "warn", "info", "log", "migration"];
 
-REDIS_HOST=REDIS_HOST
-REDIS_PORT=REDIS_PORT
+# JWT Configuration
+JWT_SECRET='JWT_SECRET'
+
+DOCKER_IMAGE_NAME=DOCKER_IMAGE_NAME
+DOCKER_IMAGE_TAG=DOCKER_IMAGE_TAG
+
+# Mongo
+MONGO_HOST=mongo-server
+MONGO_PORT=27017
+MONGO_DATABASE=gober-db-mongo
+MONGO_USER=mongo
+MONGO_PASSWORD=123123
+MONGO_URI=mongodb://MONGO_USER:MONGO_PASSWORD@MONGO_HOST:MONGO_PORT/MONGO_DATABASE?authSource=admin
+
+# REDIS
+REDIS_HOST=redis-server
+REDIS_PORT=6379
+REDIS_URL=redis://REDIS_HOST:REDIS_PORT
+
+# Minio Upload
+STORAGE_LOCAL_ENDPOINT=minio_server
+MINIO_UPLOAD_LOCAL_PORT=9000
+USE_SSL=false
+STORAGE_ENDPOINT=minio_server
+MINIO_UPLOAD_PORT=9000
+MINIO_UPLOAD_BUCKET_NAME=MINIO_UPLOAD_BUCKET_NAME
+MINIO_UPLOAD_ACCESS_KEY=MINIO_UPLOAD_ACCESS_KEY
+MINIO_UPLOAD_SECRET_KEY=MINIO_UPLOAD_SECRET_KEY
+
+# RabbitMQ
+RABBITMQ_HOST=rabbitmq-server
+RABBITMQ_PORT=5772
+RABBITMQ_USER=RABBITMQ_USER
+RABBITMQ_PASSWORD=RABBITMQ_PASSWORD
+RABBITMQ_URI=amqp://RABBITMQ_USER:RABBITMQ_PASSWORD@RABBITMQ_HOST:RABBITMQ_HOST
+
 ```
 
-run
+## 🐳 Running Required Services with Docker Compose
+
+To run required services like **MongoDB**, **Redis**, **RabbitMQ**, and **MinIO**, use the included `docker-compose-test.yml`.
+
+> 📦 Ensure you have Docker and Docker Compose installed.
+
+---
+
+### Step 1: Create `.env.dev` file
+
+Make sure you have an `.env` or `.env.dev` file in your root directory:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp .env.example .env.dev
 ```
 
-Check Swagger: http://localhost:3000/api
+Open `docker-compose.test.yml` and update the volume value as needed.
 
-## CRUD Generator
+### Step 2: Start services
+
+Run the following command to start all necessary services:
 
 ```bash
-$ nest g resource models/[module_name]
+docker-compose --env-file .env.dev -f docker-compose.test.yml up --build
 ```
 
-## Migration
+This will start the following services:
+
+- MongoDB (port: 27017)
+
+- Redis (port: 7379)
+
+- RabbitMQ: ( AMQP: 5772, Management UI: http://localhost:15772 )
+
+- MinIO: ( S3 Endpoint: 9000, Console: http://localhost:9001 )
+
+### Step 3: Run the application
+
+In a new terminal window, start the app in development mode:
 
 ```bash
-# Create migration
-$ npm run typeorm:migration:generate -- [migration_name]
-
-# Create empty migration
-$ npm run typeorm:migration:create -- [migration_name]
-
-# Run migration
-$ npm run typeorm:migration:run
-
-# Revert migration
-$ npm run typeorm:migration:revert
+# development watch mode
+$ npm run start:dev:all
 ```
+
+### 📄 Swagger Documentation
+
+Once the application is running, you can access it at:
+
+Application: http://localhost:4000/
+
+Check Swagger: http://localhost:4000/api/
 
 ## Support
 
