@@ -22,17 +22,62 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Gober Example API - Microservice Architecture
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A sample project for learning microservice architecture and project structure. **(NestJS, Typescript, Redis, MinIO, RabbitMQ and MongoDB, Mongoose)**
+
+---
+
+## Services
+
+### 1. API Gateway
+
+- **Responsibilities:**
+  - Acts as the main entry point of the system.
+  - Receives and routes requests from clients to the appropriate microservices.
+  - Handles authentication, logging, and throttling.
+  - Integrate with the `Auth Service` to validate JWT tokens before forwarding requests.
+
+---
+
+### 2. Auth Service
+
+- **Responsibilities:**
+  - Handles user authentication and authorization.
+  - Supports user registration, login, token generation and validation (JWT).
+  - Manages basic user information (email, password, roles, etc.).
+  - Supports refresh tokens and security mechanisms (e.g., Redis for token storage).
+
+---
+
+### 3. Driver Service
+
+- **Responsibilities:**
+  - Manages driver-related data and operations.
+  - Handles collections such as `Driver` and `DriverRequest`.
+  - Includes logic for driver registration, profile updates, sending and processing driver application requests.
+  - Publishes events to RabbitMQ (e.g., when a new driver registers).
+
+---
+
+### 4. File Service
+
+- **Responsibilities:**
+  - Handles file uploads and storage using **MinIO** (S3-compatible).
+  - Interacts with the `File` collection in MongoDB to store file metadata (name, size, path, file type, uploader, etc.).
+  - Supports uploading, downloading, deleting, and generating temporary access URLs for files.
+
+---
+
+## Installation
+
+### Prerequisites:
 
 NodeJs version 20.x (20.18.1)
 
 npm version 8.11.0
 
 yarn version v1.22.22
-
-## Installation
 
 ```bash
 $ npm install
@@ -83,15 +128,17 @@ MINIO_UPLOAD_ACCESS_KEY=MINIO_UPLOAD_ACCESS_KEY
 MINIO_UPLOAD_SECRET_KEY=MINIO_UPLOAD_SECRET_KEY
 
 # RabbitMQ
+RABBITMQ_HOST=rabbitmq-server
+RABBITMQ_PORT=5772
 RABBITMQ_USER=RABBITMQ_USER
 RABBITMQ_PASSWORD=RABBITMQ_PASSWORD
-RABBITMQ_URI=amqp://RABBITMQ_USER:RABBITMQ_PASSWORD@rabbitmq:5772
+RABBITMQ_URI=amqp://RABBITMQ_USER:RABBITMQ_PASSWORD@RABBITMQ_HOST:RABBITMQ_HOST
 
 ```
 
 ## 🐳 Running Required Services with Docker Compose
 
-To run required services like **MongoDB**, **PostgreSQL**, **Redis**, **RabbitMQ**, and **MinIO**, use the included `docker-compose-test.yml`.
+To run required services like **MongoDB**, **Redis**, **RabbitMQ**, and **MinIO**, use the included `docker-compose-test.yml`.
 
 > 📦 Ensure you have Docker and Docker Compose installed.
 
