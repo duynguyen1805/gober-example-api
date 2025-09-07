@@ -24,7 +24,9 @@ export class QueryFileDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({
+    message: 'validation.page.isInt'
+  })
   page?: number = 1;
 
   @ApiPropertyOptional({
@@ -34,6 +36,8 @@ export class QueryFileDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({
+    message: 'validation.pageSize.isInt'
+  })
   pageSize?: number = 20;
 }

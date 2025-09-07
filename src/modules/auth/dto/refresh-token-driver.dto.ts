@@ -3,6 +3,6 @@ import { IsNotEmpty } from 'class-validator';
 
 export class RefreshTokenDriverDto {
   @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6I' })
-  @IsNotEmpty({ message: 'refreshToken là bắt buộc' })
+  @IsNotEmpty({ message: 'validation.driver.refreshToken.isNotEmpty' })
   refreshToken: string;
 }

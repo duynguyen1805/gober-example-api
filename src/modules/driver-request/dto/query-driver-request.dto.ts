@@ -8,7 +8,7 @@ import {
   Max,
   Min
 } from 'class-validator';
-import { ERequestStatus } from '../../../common/enums';
+import { ERequestStatus } from '../../../common/enums/request.enum';
 import { Type } from 'class-transformer';
 
 export class QueryDriverRequestDto {
@@ -41,12 +41,12 @@ export class QueryDriverRequestDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({ message: 'validation.page.isInt' })
   page?: number = 1;
 
   @ApiPropertyOptional({ description: 'Page size', example: 20, default: 20 })
   @IsOptional()
   @Type(() => Number)
-  @IsInt()
+  @IsInt({ message: 'validation.pageSize.isInt' })
   pageSize?: number = 20;
 }
