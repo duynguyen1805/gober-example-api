@@ -1,5 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -12,8 +14,8 @@ export class CreateDriverRequestDto {
     description: 'Code',
     example: '123123'
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'validation.driver-request.code.isNotEmpty' })
+  @IsString({ message: 'validation.driver-request.code.isString' })
   code: string;
 
   @ApiPropertyOptional({
@@ -26,16 +28,17 @@ export class CreateDriverRequestDto {
 
   @ApiPropertyOptional({
     description: 'requestTypeId lấy từ bảng request_type',
-    example: 3
+    example: 1
   })
   @IsNotEmpty()
-  @IsNumber()
+  @Type(() => Number)
+  @IsInt({ message: 'validation.driver-request.typeId.isInt' })
   typeId?: number;
 
   @ApiPropertyOptional({
     description: 'fileId sau khi upload file lên Minio',
-    example: 1
+    example: ['1']
   })
   @IsOptional()
-  fileIds?: [number];
+  fileIds?: [string];
 }

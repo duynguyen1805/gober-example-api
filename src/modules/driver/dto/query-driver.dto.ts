@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
-import { EDriverStatus } from '../enums/driver.enum';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
+import { EDriverStatus } from '../../../common/enums';
+import { Type } from 'class-transformer';
 
 export class QueryDriverDto {
   @ApiPropertyOptional({
@@ -16,15 +17,19 @@ export class QueryDriverDto {
     description: 'Lọc theo trạng thái driver'
   })
   @IsOptional()
-  @IsEnum(EDriverStatus)
+  @IsEnum(EDriverStatus, {
+    message: 'validation.driver.status.invalid'
+  })
   status?: EDriverStatus;
 
   @ApiPropertyOptional({
     description: 'Lọc theo id của khu vực hoạt động',
-    example: 1
+    example: '689a915c4ce57ddcc6800c3d'
   })
   @IsOptional()
-  activeAreaId?: number;
+  @Type(() => Number)
+  @IsInt({ message: 'validation.driver.activeAreaId.isInt' })
+  activeAreaId?: string;
 
   @ApiPropertyOptional({
     description: 'Page number (1-based)',
@@ -32,9 +37,13 @@ export class QueryDriverDto {
     default: 1
   })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'validation.page.isInt' })
   page?: number = 1;
 
   @ApiPropertyOptional({ description: 'Page size', example: 20, default: 20 })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'validation.pageSize.isInt' })
   pageSize?: number = 20;
 }

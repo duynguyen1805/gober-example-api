@@ -1,5 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEmail,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  Matches,
+  MaxLength,
+  MinLength
+} from 'class-validator';
 
 export class CreateDriverDto {
   @ApiPropertyOptional({
@@ -7,13 +16,18 @@ export class CreateDriverDto {
     example: 'Người dùng 02'
   })
   @IsOptional()
+  @MinLength(2, { message: 'validation.driver.fullName.minLength' })
+  @MaxLength(255, { message: 'validation.driver.fullName.maxLength' })
   fullName?: string;
 
   @ApiProperty({
     description: 'Số điện thoại',
     example: '0900000002'
   })
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'validation.driver.phoneNumber.isNotEmpty' })
+  @Matches(/^(0[3|5|7|8|9])[0-9]{8}$/, {
+    message: 'validation.driver.phoneNumber.invalid'
+  })
   phoneNumber: string;
 
   @ApiPropertyOptional({
@@ -21,13 +35,15 @@ export class CreateDriverDto {
     example: 'driver02@example.com'
   })
   @IsOptional()
+  @IsEmail({ message: 'validation.driver.email.invalid' })
   email?: string;
 
   @ApiPropertyOptional({
     description: 'Mật khẩu',
     example: '123123'
   })
-  @IsOptional()
+  @IsNotEmpty({ message: 'validation.driver.password.isNotEmpty' })
+  @MinLength(6, { message: 'validation.driver.password.minLength' })
   password?: string;
 
   @ApiPropertyOptional({
@@ -42,13 +58,17 @@ export class CreateDriverDto {
     example: 101
   })
   @IsOptional()
-  avatar?: string | number;
+  @Type(() => Number)
+  @IsInt({ message: 'validation.driver.avatarFileId.isInt' })
+  avatarFileId?: number;
 
   @ApiPropertyOptional({
     description: 'provinceId được cho phép',
-    example: 1
+    example: '689a8a9655f410d124d91412'
   })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'validation.driver.activeAreaId.isInt' })
   activeAreaId?: number;
 
   @ApiPropertyOptional({
@@ -56,5 +76,6 @@ export class CreateDriverDto {
     example: 'hẻm 12/34, Quận 3, HCMC'
   })
   @IsOptional()
+  @MaxLength(255, { message: 'validation.driver.temporaryAddress.maxLength' })
   temporaryAddress?: string;
 }

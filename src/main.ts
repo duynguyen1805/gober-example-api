@@ -6,6 +6,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { AllExceptionsFilter } from './common/exceptions/all-exception.filter';
 import { ServerErrorFilter } from './common/exceptions/server-error-exception.filter';
+import { CustomValidationException } from './common/exceptions/custom-validation.exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +24,16 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter(), new ServerErrorFilter());
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  // app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  // custom validation exception
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: false,
+      transform: true,
+      exceptionFactory: (errors) => new CustomValidationException(errors)
+    })
+  );
 
   const config = new DocumentBuilder()
     .setTitle('GOBER API')
