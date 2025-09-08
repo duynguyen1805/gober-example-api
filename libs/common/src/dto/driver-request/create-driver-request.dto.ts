@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -29,6 +30,7 @@ export class CreateDriverRequestDto {
     example: '689a915c4ce57ddcc6800c3d'
   })
   @IsNotEmpty()
+  @IsMongoId({ message: 'validation.driver-request.typeId.isMongoId' })
   typeId?: string;
 
   @ApiPropertyOptional({

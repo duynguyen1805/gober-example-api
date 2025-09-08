@@ -35,6 +35,7 @@
   "validation.driver-request.id.isMongoId": "Driver request ID is not valid",
   "validation.driver-request.code.isNotEmpty": "Driver request code cannot be empty",
   "validation.driver-request.code.isString": "Driver request code must be a string",
+  "validation.driver-request.typeId.isMongoId": "Driver request type ID is not valid",
   "INVALID_PASSWORD": "Invalid password",
   "INVALID_EMAIL": "Invalid email",
   "INVALID_PHONE_NUMBER": "Invalid phone number",
