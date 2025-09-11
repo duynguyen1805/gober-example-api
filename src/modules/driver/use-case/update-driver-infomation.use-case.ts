@@ -74,10 +74,10 @@ export class UpdateDriverInfomationUseCase {
       );
     }
     // Kiểm tra avatar
-    if (input?.avatar) {
-      makeSure(!isNaN(Number(input?.avatar)), EError.INVALID_AVATAR);
+    if (input?.avatarFileId) {
+      makeSure(!isNaN(Number(input?.avatarFileId)), EError.INVALID_AVATAR);
       // Kiểm tra thêm có trong bảng File chưa
-      const file = await this.fileService.findFileById(+input?.avatar);
+      const file = await this.fileService.findFileById(+input?.avatarFileId);
       makeSure(!isNil(file), EError.INVALID_AVATAR);
     }
     // Kiểm tra activeAreaId
